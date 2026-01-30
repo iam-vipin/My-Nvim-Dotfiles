@@ -1204,7 +1204,16 @@ const processCommentAttachments = async (
     // Extract image URLs from comment HTML
     const assetIds = [];
     const imageUrls = extractImageUrlsFromHtml(processedComment.comment_html || "");
-    for (const imageUrl of imageUrls) {
+    for (const recievedImageUrl of imageUrls) {
+      let imageUrl = recievedImageUrl;
+      if (!recievedImageUrl.startsWith("http")) {
+        if (!credentials.source_hostname) {
+          logger.error("Source hostname not found, skipping comment attachment");
+          continue;
+        }
+        imageUrl = `${credentials.source_hostname}${recievedImageUrl}`;
+      }
+
       // Set up auth token based on source
       let sourceAccessToken = credentials.source_access_token;
       let authPrefix = "Bearer";

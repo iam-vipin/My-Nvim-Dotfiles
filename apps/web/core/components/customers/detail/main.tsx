@@ -186,6 +186,7 @@ export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps
           entityId={customerId}
           fileAssetType={EFileAssetType.CUSTOMER_DESCRIPTION}
           initialValue={customer.description_html}
+          key={customerId}
           onSubmit={async (value) => {
             await handleUpdateCustomer({ description_html: value.description_html });
           }}

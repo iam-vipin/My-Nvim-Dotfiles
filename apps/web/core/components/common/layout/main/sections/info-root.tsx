@@ -104,6 +104,7 @@ export function InfoSection(props: TInfoSectionProps) {
           editorRef={editorRef}
           entityId={itemId}
           fileAssetType={fileAssetType}
+          key={itemId}
           initialValue={descriptionValue}
           onSubmit={(value, isMigrationUpdate) => onDescriptionSubmit(value.description_html, isMigrationUpdate)}
           projectId={projectId}

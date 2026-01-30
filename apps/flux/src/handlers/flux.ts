@@ -14,20 +14,20 @@
 import { Effect } from "effect";
 import type { Server as SocketIOServer, Socket } from "socket.io";
 
-export interface RelayHandlerContext {
+export interface FluxHandlerContext {
   runFork: <A, E>(effect: Effect.Effect<A, E, never>) => void;
 }
 
 /**
  * Setup handler for the default namespace (/)
- * Provides general pub/sub relay functionality
+ * Provides general pub/sub flux functionality
  */
-export const setupRelayNamespace = (io: SocketIOServer, ctx: RelayHandlerContext): void => {
+export const setupFluxNamespace = (io: SocketIOServer, ctx: FluxHandlerContext): void => {
   io.on("connection", (socket: Socket) => {
     const clientId = socket.id;
 
     ctx.runFork(
-      Effect.logInfo("RELAY: Client connected", {
+      Effect.logInfo("FLUX: Client connected", {
         clientId,
         remoteAddress: socket.handshake.address,
       })
@@ -42,7 +42,7 @@ export const setupRelayNamespace = (io: SocketIOServer, ctx: RelayHandlerContext
     socket.on("subscribe", (channel: string) => {
       socket.join(channel);
       ctx.runFork(
-        Effect.logInfo("RELAY: Client subscribed to channel", {
+        Effect.logInfo("FLUX: Client subscribed to channel", {
           clientId,
           channel,
         })
@@ -54,7 +54,7 @@ export const setupRelayNamespace = (io: SocketIOServer, ctx: RelayHandlerContext
     socket.on("unsubscribe", (channel: string) => {
       socket.leave(channel);
       ctx.runFork(
-        Effect.logInfo("RELAY: Client unsubscribed from channel", {
+        Effect.logInfo("FLUX: Client unsubscribed from channel", {
           clientId,
           channel,
         })
@@ -65,7 +65,7 @@ export const setupRelayNamespace = (io: SocketIOServer, ctx: RelayHandlerContext
     // Broadcast to a channel
     socket.on("broadcast", (data: { channel: string; payload: unknown }) => {
       ctx.runFork(
-        Effect.logInfo("RELAY: Broadcasting to channel", {
+        Effect.logInfo("FLUX: Broadcasting to channel", {
           clientId,
           channel: data.channel,
         })
@@ -85,7 +85,7 @@ export const setupRelayNamespace = (io: SocketIOServer, ctx: RelayHandlerContext
 
     socket.on("disconnect", (reason: string) => {
       ctx.runFork(
-        Effect.logInfo("RELAY: Client disconnected", {
+        Effect.logInfo("FLUX: Client disconnected", {
           clientId,
           reason,
         })

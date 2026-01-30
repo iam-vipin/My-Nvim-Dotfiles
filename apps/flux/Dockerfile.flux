@@ -18,7 +18,7 @@ WORKDIR /app
 ARG TURBO_VERSION=2.7.4
 RUN corepack enable pnpm && pnpm add -g turbo@${TURBO_VERSION}
 COPY . .
-RUN turbo prune --scope=relay --docker
+RUN turbo prune --scope=flux --docker
 
 # *****************************************************************************
 # STAGE 2: Install dependencies & build the project
@@ -45,7 +45,7 @@ RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store CI=true pnpm install --o
 
 ENV TURBO_TELEMETRY_DISABLED=1
 
-RUN pnpm turbo run build --filter=relay
+RUN pnpm turbo run build --filter=flux
 
 # *****************************************************************************
 # STAGE 3: Run the project
@@ -55,14 +55,14 @@ FROM base AS runner
 WORKDIR /app
 
 COPY --from=installer /app/packages ./packages
-COPY --from=installer /app/apps/relay/dist ./apps/relay/dist
-COPY --from=installer /app/apps/relay/node_modules ./apps/relay/node_modules
+COPY --from=installer /app/apps/flux/dist ./apps/flux/dist
+COPY --from=installer /app/apps/flux/node_modules ./apps/flux/node_modules
 COPY --from=installer /app/node_modules ./node_modules
-COPY --from=installer /app/apps/relay/package.json ./apps/relay/package.json
+COPY --from=installer /app/apps/flux/package.json ./apps/flux/package.json
 
 ENV TURBO_TELEMETRY_DISABLED=1
 ENV PORT=3000
 
 EXPOSE 3000
 
-CMD ["node", "apps/relay"]
+CMD ["node", "apps/flux"]

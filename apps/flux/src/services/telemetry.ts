@@ -30,7 +30,7 @@ const TelemetryConfigSchema = Config.all({
   sentryEnvironment: Config.string("SENTRY_ENVIRONMENT").pipe(Config.withDefault("development")),
   sentryRelease: Config.string("APP_VERSION").pipe(Config.withDefault("v1.0.0")),
   tracesSampleRate: Config.number("SENTRY_TRACES_SAMPLE_RATE").pipe(Config.withDefault(0.5)),
-  serviceName: Config.string("SERVICE_NAME").pipe(Config.withDefault("relay")),
+  serviceName: Config.string("SERVICE_NAME").pipe(Config.withDefault("flux")),
 });
 
 export interface TelemetryService {

@@ -78,7 +78,7 @@ RESTRICTED_WORKSPACE_SLUGS = [
     "oauth",
     "applications",
     "workspace-selector",
-    "relay",
+    "flux",
     "work-item",
     "work-items",
     "work-item-types",

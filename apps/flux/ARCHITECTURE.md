@@ -1,12 +1,12 @@
-# Relay Service Architecture
+# Flux Service Architecture
 
-This document explains the architecture and Effect patterns used in the relay service.
+This document explains the architecture and Effect patterns used in the flux service.
 
 ## Overview
 
-The relay service provides two main functionalities:
+The flux service provides two main functionalities:
 
-1. **WebSocket Relay Server** - Enables horizontal scaling through Redis pub/sub. When a client broadcasts a message, it's published to Redis and all server instances relay it to their connected clients.
+1. **WebSocket Flux Server** - Enables horizontal scaling through Redis pub/sub. When a client broadcasts a message, it's published to Redis and all server instances relay it to their connected clients.
 
 2. **AMQP Event Consumer** - Listens to events from RabbitMQ's `plane.event_stream` exchange for processing backend events.
 
@@ -43,7 +43,7 @@ src/
 
 ### Main Server (`index.ts`)
 
-The main entry point starts the WebSocket relay server with HTTP health endpoints.
+The main entry point starts the WebSocket flux server with HTTP health endpoints.
 
 ```bash
 pnpm dev        # Development with hot reload
@@ -62,14 +62,14 @@ pnpm dev:consumer    # Development with hot reload
 
 The server exposes HTTP endpoints for health checks and Kubernetes probes:
 
-| Endpoint            | Description                                          |
-| ------------------- | ---------------------------------------------------- |
-| `GET /relay/health` | Full health status with connections and Redis status |
-| `GET /relay/ready`  | Readiness probe - checks Redis connection            |
-| `GET /relay/live`   | Liveness probe - always returns alive                |
-| `GET /relay/`       | Service info (name, version, base path)              |
+| Endpoint           | Description                                          |
+| ------------------ | ---------------------------------------------------- |
+| `GET /flux/health` | Full health status with connections and Redis status |
+| `GET /flux/ready`  | Readiness probe - checks Redis connection            |
+| `GET /flux/live`   | Liveness probe - always returns alive                |
+| `GET /flux/`       | Service info (name, version, base path)              |
 
-All endpoints are also available without the `/relay` prefix for direct access.
+All endpoints are also available without the `/flux` prefix for direct access.
 
 ## Effect Patterns Explained
 
@@ -106,10 +106,10 @@ console.log(config.port);
 **Providing Layers (`index.ts`):**
 
 ```typescript
-const MainLive = Layer.mergeAll(AppConfigLive, RedisPubSubLive, RelayServerLive);
+const MainLive = Layer.mergeAll(AppConfigLive, RedisPubSubLive, FluxServerLive);
 
 const program = Effect.gen(function* () {
-  const server = yield* RelayServer;
+  const server = yield* FluxServer;
   yield* server.start;
 });
 
@@ -314,16 +314,16 @@ const handleHttpRequest = (req, res) => {
 
 ## Data Flow
 
-### WebSocket Relay Flow
+### WebSocket Flux Flow
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                         Client                                   │
 └─────────────────────────────────┬───────────────────────────────┘
-                                  │ WebSocket (/relay/ws)
+                                  │ WebSocket (/flux/ws)
                                   ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                      RelayServer                                 │
+│                      FluxServer                                   │
 │  ┌─────────────┐  ┌──────────────────┐  ┌───────────────────┐   │
 │  │   clients   │  │channelSubscribers│  │   handleMessage   │   │
 │  │  Ref<Map>   │  │    Ref<Map>      │  │                   │   │
@@ -392,7 +392,7 @@ Effect adds complexity but provides:
 4. **Structured Concurrency**: Fibers are managed, interruption is handled
 5. **Observability**: Built-in logging, tracing, metrics
 
-For a simple relay, this may be overkill. The choice was made for consistency with the `live` app which uses Effect extensively.
+For a simple service, this may be overkill. The choice was made for consistency with the `live` app which uses Effect extensively.
 
 ## Testing
 

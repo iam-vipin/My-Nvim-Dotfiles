@@ -18,10 +18,10 @@ export class AppConfig extends Effect.Service<AppConfig>()("AppConfig", {
     const port = yield* Config.number("PORT").pipe(Config.withDefault(3004));
     const nodeEnv = yield* Config.string("NODE_ENV").pipe(Config.withDefault("development"));
     const redisUrl = yield* Config.redacted("REDIS_URL");
-    const channelPrefix = yield* Config.string("CHANNEL_PREFIX").pipe(Config.withDefault("relay"));
+    const channelPrefix = yield* Config.string("CHANNEL_PREFIX").pipe(Config.withDefault("flux"));
 
-    // Relay base path for proxy deployment
-    const relayBasePath = yield* Config.string("RELAY_BASE_PATH").pipe(Config.withDefault("/relay"));
+    // Flux base path for proxy deployment
+    const fluxBasePath = yield* Config.string("FLUX_BASE_PATH").pipe(Config.withDefault("/flux"));
 
     // API base URL for authentication
     const apiBaseUrl = yield* Config.string("API_BASE_URL").pipe(Config.withDefault("http://api:8000"));
@@ -41,7 +41,7 @@ export class AppConfig extends Effect.Service<AppConfig>()("AppConfig", {
       nodeEnv,
       redisUrl,
       channelPrefix,
-      relayBasePath,
+      fluxBasePath,
       apiBaseUrl,
       corsOrigin,
       isProduction: nodeEnv === "production",

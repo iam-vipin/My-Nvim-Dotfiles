@@ -13,4 +13,4 @@
 
 export * from "./health";
 export * from "./events";
-export * from "./relay";
+export * from "./flux";

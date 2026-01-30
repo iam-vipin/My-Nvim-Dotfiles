@@ -20,7 +20,7 @@ export class SocketEmitter extends Effect.Service<SocketEmitter>()("SocketEmitte
   scoped: Effect.gen(function* () {
     const config = yield* AppConfig;
     const redisUrl = Redacted.value(config.redisUrl);
-    const basePath = config.relayBasePath.endsWith("/") ? config.relayBasePath.slice(0, -1) : config.relayBasePath;
+    const basePath = config.fluxBasePath.endsWith("/") ? config.fluxBasePath.slice(0, -1) : config.fluxBasePath;
 
     const redisClient = new Redis(redisUrl, {
       lazyConnect: false,

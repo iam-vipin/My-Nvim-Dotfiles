@@ -23,12 +23,12 @@ import {
   handleReadinessRequest,
   handleLivenessRequest,
   setupEventsNamespace,
-  setupRelayNamespace,
+  setupFluxNamespace,
 } from "./handlers";
 import type { WorkspaceConnection } from "./handlers";
 import { createAuthMiddleware } from "./middleware";
 
-export class RelayServer extends Effect.Service<RelayServer>()("RelayServer", {
+export class FluxServer extends Effect.Service<FluxServer>()("FluxServer", {
   effect: Effect.gen(function* () {
     const config = yield* AppConfig;
     const runtime = yield* Effect.runtime<never>();
@@ -53,7 +53,7 @@ export class RelayServer extends Effect.Service<RelayServer>()("RelayServer", {
       redisConnected: () => Effect.succeed(true),
     };
 
-    const basePath = config.relayBasePath.endsWith("/") ? config.relayBasePath.slice(0, -1) : config.relayBasePath;
+    const basePath = config.fluxBasePath.endsWith("/") ? config.fluxBasePath.slice(0, -1) : config.fluxBasePath;
 
     // HTTP request handler for health endpoints
     const handleHttpRequest = (req: IncomingMessage, res: ServerResponse) => {
@@ -76,7 +76,7 @@ export class RelayServer extends Effect.Service<RelayServer>()("RelayServer", {
 
       if (url === basePath || url === `${basePath}/` || url === "/") {
         res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ service: "relay", version: "1.0.0", basePath }));
+        res.end(JSON.stringify({ service: "flux", version: "1.0.0", basePath }));
         return;
       }
 
@@ -134,7 +134,7 @@ export class RelayServer extends Effect.Service<RelayServer>()("RelayServer", {
       const eventsNamespace = io.of(/^\/events\/[\w-]+$/);
       eventsNamespace.use(authMiddleware);
       setupEventsNamespace(eventsNamespace, { workspaceConnections, runFork });
-      setupRelayNamespace(io, { runFork });
+      setupFluxNamespace(io, { runFork });
 
       // Start HTTP server
       yield* Effect.async<void>((resume) => {
@@ -143,7 +143,7 @@ export class RelayServer extends Effect.Service<RelayServer>()("RelayServer", {
         });
       });
 
-      yield* Effect.logInfo(`Relay server listening on port ${config.port}`);
+      yield* Effect.logInfo(`Flux server listening on port ${config.port}`);
       yield* Effect.logInfo(`Socket.IO path: ${basePath}/socket.io`);
       yield* Effect.logInfo(`Events namespace: /events/{workspaceId}`);
       yield* Effect.logInfo(`Health endpoint: ${basePath}/health`);
@@ -154,4 +154,4 @@ export class RelayServer extends Effect.Service<RelayServer>()("RelayServer", {
   dependencies: [AppConfig.Default],
 }) {}
 
-export const RelayServerLive = RelayServer.Default;
+export const FluxServerLive = FluxServer.Default;

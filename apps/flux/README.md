@@ -1,6 +1,6 @@
-# Relay Service
+# Flux Service (Fast Live Unified Exchange) RealTime Hub
 
-WebSocket relay service for horizontal scaling with Redis pub/sub. Enables real-time event broadcasting across multiple server instances. Also includes an AMQP consumer for processing backend events from RabbitMQ.
+Flux service for horizontal scaling with Redis pub/sub. Enables real-time event broadcasting across multiple server instances. Also includes an AMQP consumer for processing backend events from RabbitMQ.
 
 ## Quick Start
 
@@ -16,7 +16,7 @@ WebSocket relay service for horizontal scaling with Redis pub/sub. Enables real-
 1. Install dependencies:
 
 ```bash
-pnpm install --filter relay
+pnpm install --filter flux
 ```
 
 2. Configure environment:
@@ -34,10 +34,10 @@ NODE_ENV=development
 
 # Redis Configuration
 REDIS_URL=redis://localhost:6379
-CHANNEL_PREFIX=relay
+CHANNEL_PREFIX=flux
 
-# Relay Base Path (for proxy deployment)
-RELAY_BASE_PATH=/relay
+# Flux Base Path (for proxy deployment)
+FLUX_BASE_PATH=/flux
 
 # AMQP Configuration (for consumer)
 AMQP_URL=amqp://localhost:5672
@@ -48,32 +48,32 @@ PREFETCH_COUNT=10
 3. Start development server:
 
 ```bash
-pnpm --filter relay dev
+pnpm --filter flux dev
 ```
 
 4. Start AMQP consumer (optional, separate process):
 
 ```bash
-pnpm --filter relay dev:consumer
+pnpm --filter flux dev:consumer
 ```
 
 ### Production
 
 ```bash
-pnpm --filter relay build
-pnpm --filter relay start
+pnpm --filter flux build
+pnpm --filter flux start
 ```
 
 ## Health Endpoints
 
-The relay server exposes HTTP endpoints for health checks and Kubernetes probes:
+The flux server exposes HTTP endpoints for health checks and Kubernetes probes:
 
-| Endpoint            | Description                                   |
-| ------------------- | --------------------------------------------- |
-| `GET /relay/health` | Full health status with connections and Redis |
-| `GET /relay/ready`  | Readiness probe - checks Redis connection     |
-| `GET /relay/live`   | Liveness probe - always returns alive         |
-| `GET /relay/`       | Service info (name, version, base path)       |
+| Endpoint           | Description                                   |
+| ------------------ | --------------------------------------------- |
+| `GET /flux/health` | Full health status with connections and Redis |
+| `GET /flux/ready`  | Readiness probe - checks Redis connection     |
+| `GET /flux/live`   | Liveness probe - always returns alive         |
+| `GET /flux/`       | Service info (name, version, base path)       |
 
 ### Health Response Example
 
@@ -96,7 +96,7 @@ The relay server exposes HTTP endpoints for health checks and Kubernetes probes:
 
 ### Connecting
 
-Connect to `ws://localhost:3004/relay/ws`. On connection, you'll receive:
+Connect to `ws://localhost:3004/flux/ws`. On connection, you'll receive:
 
 ```json
 {
@@ -151,7 +151,7 @@ When another client broadcasts to a channel you're subscribed to:
 
 ## AMQP Consumer
 
-The relay service includes an AMQP consumer that listens to events from RabbitMQ.
+The flux service includes an AMQP consumer that listens to events from RabbitMQ.
 
 ### Event Message Format
 
@@ -176,7 +176,7 @@ The relay service includes an AMQP consumer that listens to events from RabbitMQ
 
 ```bash
 # Development with hot reload
-pnpm --filter relay dev:consumer
+pnpm --filter flux dev:consumer
 
 # Production (after build)
 node --env-file=.env ./dist/consumer.mjs
@@ -197,7 +197,7 @@ Run multiple instances behind a load balancer. Redis pub/sub ensures messages ar
               ┌────────────┼────────────┐
               │            │            │
        ┌──────▼──────┐ ┌───▼───┐ ┌──────▼──────┐
-       │  Relay :1   │ │Relay:2│ │  Relay :3   │
+       │  Flux :1    │ │Flux:2 │ │  Flux :3    │
        └──────┬──────┘ └───┬───┘ └──────┬──────┘
               │            │            │
               └────────────┼────────────┘
@@ -209,14 +209,14 @@ Run multiple instances behind a load balancer. Redis pub/sub ensures messages ar
 
 ## Proxy Deployment
 
-The relay service is designed to run behind a proxy at `/relay`. Configure the base path using the `RELAY_BASE_PATH` environment variable.
+The flux service is designed to run behind a proxy at `/flux`. Configure the base path using the `FLUX_BASE_PATH` environment variable.
 
 Example Caddy configuration:
 
 ```caddyfile
 example.com {
-    handle /relay/* {
-        reverse_proxy relay:3004
+    handle /flux/* {
+        reverse_proxy flux:3004
     }
 }
 ```
@@ -245,14 +245,14 @@ src/
 
 ## Scripts
 
-| Command                            | Description                    |
-| ---------------------------------- | ------------------------------ |
-| `pnpm --filter relay dev`          | Start server with hot reload   |
-| `pnpm --filter relay dev:consumer` | Start consumer with hot reload |
-| `pnpm --filter relay build`        | Build for production           |
-| `pnpm --filter relay start`        | Run production build           |
-| `pnpm --filter relay check:types`  | Type check                     |
-| `pnpm --filter relay check:lint`   | Lint                           |
+| Command                           | Description                    |
+| --------------------------------- | ------------------------------ |
+| `pnpm --filter flux dev`          | Start server with hot reload   |
+| `pnpm --filter flux dev:consumer` | Start consumer with hot reload |
+| `pnpm --filter flux build`        | Build for production           |
+| `pnpm --filter flux start`        | Run production build           |
+| `pnpm --filter flux check:types`  | Type check                     |
+| `pnpm --filter flux check:lint`   | Lint                           |
 
 ## Environment Variables
 
@@ -261,8 +261,8 @@ src/
 | `PORT`                  | No       | `3004`               | Server port                     |
 | `NODE_ENV`              | No       | `development`        | Environment mode                |
 | `REDIS_URL`             | Yes      | -                    | Redis connection URL            |
-| `CHANNEL_PREFIX`        | No       | `relay`              | Prefix for Redis channels       |
-| `RELAY_BASE_PATH`       | No       | `/relay`             | Base path for HTTP/WS endpoints |
+| `CHANNEL_PREFIX`        | No       | `flux`               | Prefix for Redis channels       |
+| `FLUX_BASE_PATH`        | No       | `/flux`              | Base path for HTTP/WS endpoints |
 | `AMQP_URL`              | Yes\*    | -                    | RabbitMQ connection URL         |
 | `EVENT_STREAM_EXCHANGE` | No       | `plane.event_stream` | AMQP exchange name              |
 | `PREFETCH_COUNT`        | No       | `10`                 | AMQP prefetch count             |

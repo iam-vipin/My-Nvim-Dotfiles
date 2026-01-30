@@ -114,7 +114,7 @@ export type TWorkItemEventType = keyof TEventDataMap;
 export type TEventData<T extends TWorkItemEventType> = T extends keyof TEventDataMap ? TEventDataMap[T] : unknown;
 
 /**
- * Work item event payload structure from relay server (consumer.ts lines 64-73)
+ * Work item event payload structure from flux server (consumer.ts lines 64-73)
  * Generic type parameter T allows type-safe payload.data based on event_type
  *
  * @example

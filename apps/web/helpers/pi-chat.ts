@@ -25,8 +25,20 @@ export const showFloatingBot = () => {
   }
 };
 
-export const isPiAllowed = (pathname: string, workspaceSlug: string): boolean => {
-  if (pathname.includes(`/${workspaceSlug?.toString()}/pi-chat/`)) return false;
-  if (pathname.includes(`/${workspaceSlug?.toString()}/settings/`)) return false;
+export const isPiAllowed = (
+  pathname: string,
+  workspaceSlug: string,
+  projectId: string | undefined,
+  workItem: string | undefined
+): boolean => {
+  // restricted routes
+  if (pathname.includes(`/${workspaceSlug}/pi-chat/`)) return false;
+  if (pathname.includes(`/${workspaceSlug}/settings/`)) return false;
+  // allowed routes
+  if (pathname.includes(`/${workspaceSlug}/initiatives/`)) return true;
+  if (pathname.includes(`/${workspaceSlug}/teamspaces/`)) return true;
+  if (pathname.includes(`/${workspaceSlug}/wiki/`)) return true;
+  // default to false
+  if (!projectId && !workItem) return false;
   return true;
 };

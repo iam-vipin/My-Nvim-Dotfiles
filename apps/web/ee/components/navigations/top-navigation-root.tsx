@@ -72,10 +72,9 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
   );
 
   const shouldRenderPiChat =
-    useFlag(workspaceSlug?.toString() ?? "", E_FEATURE_FLAGS.PI_CHAT) &&
-    isPiAllowed(pathname, workspaceSlug?.toString() ?? "") &&
-    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED) &&
-    (projectId || workItem);
+    useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.PI_CHAT) &&
+    isPiAllowed(pathname, workspaceSlug, projectId, workItem) &&
+    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
 
   const isAdvancedSearchEnabled = useFlag(workspaceSlug?.toString(), "ADVANCED_SEARCH");
   const isOpenSearch = config?.is_opensearch_enabled;

@@ -111,13 +111,23 @@ export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
       modifierShortcut: "cmd+a",
       action: () => (activeSidecar === "pi-chat" ? closeSidecar() : openPiChatSidecar()),
       isEnabled: (ctx) =>
+        !!ctx.params.workspaceSlug &&
         isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED) &&
-        Boolean(ctx.params.projectId?.toString() || ctx.params.workItem?.toString()) &&
-        isPiAllowed(pathname, ctx.params.workspaceSlug?.toString() ?? ""),
+        isPiAllowed(
+          pathname,
+          ctx.params.workspaceSlug.toString(),
+          ctx.params.projectId?.toString(),
+          ctx.params.workItem?.toString()
+        ),
       isVisible: (ctx) =>
+        !!ctx.params.workspaceSlug &&
         isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED) &&
-        Boolean(ctx.params.projectId?.toString() || ctx.params.workItem?.toString()) &&
-        isPiAllowed(pathname, ctx.params.workspaceSlug?.toString() ?? ""),
+        isPiAllowed(
+          pathname,
+          ctx.params.workspaceSlug.toString(),
+          ctx.params.projectId?.toString(),
+          ctx.params.workItem?.toString()
+        ),
       closeOnSelect: true,
     },
   ];

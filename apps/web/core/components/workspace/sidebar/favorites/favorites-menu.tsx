@@ -258,7 +258,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
           leaveTo="transform scale-95 opacity-0"
         >
           {isFavoriteMenuOpen && (
-            <CollapsibleContent className="flex flex-col mt-0.5 gap-0.5">
+            <CollapsibleContent className="flex flex-col mt-0.5 gap-0.5 overflow-visible">
               {createNewFolder && <NewFavoriteFolder setCreateNewFolder={setCreateNewFolder} actionType="create" />}
               {Object.keys(groupedFavorites).length === 0 ? (
                 <>

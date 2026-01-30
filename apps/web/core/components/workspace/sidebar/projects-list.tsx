@@ -231,7 +231,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
               </Loader>
             )}
             {isAllProjectsListOpen && (
-              <CollapsibleContent className="flex flex-col gap-0.5">
+              <CollapsibleContent className="flex flex-col gap-0.5 overflow-visible">
                 <>
                   {displayedProjects.map((projectId, index) => (
                     <SidebarProjectsListItem

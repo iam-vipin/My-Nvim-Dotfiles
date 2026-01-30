@@ -45,6 +45,14 @@ log = logger.getChild(__name__)
 # S3 Configuration
 S3_BUCKET = settings.AWS_S3_BUCKET
 
+# List of plotting tool names for detection logic
+PLOTTING_TOOL_NAMES = {
+    "create_pie_chart",
+    "create_bar_chart",
+    "create_line_chart",
+    "create_stacked_bar_chart",
+}
+
 # ============================================================================
 # MODERN TRENDY COLOR PALETTE
 # Inspired by modern UI design systems (Tailwind, Radix, Linear)
@@ -643,12 +651,72 @@ def create_plotting_tools(
             log.error(f"Error creating stacked bar chart: {e}")
             return f"Error creating stacked bar chart: {str(e)}"
 
-    return [
+    @tool
+    async def create_histogram_chart(
+        title: str,
+        data: List[float],
+        x_label: Optional[str] = None,
+        y_label: Optional[str] = None,
+    ) -> str:
+        """Create a histogram chart visualization from data.
+
+        Use this tool when you want to visualize the distribution of a single variable.
+        Good for: showing frequency of issue counts, time spent, etc.
+
+        Args:
+            title: Chart title (e.g., "Distribution of Issue Counts")
+            data: List of numerical data points
+            x_label: Optional label for X-axis
+            y_label: Optional label for Y-axis
+
+        Returns:
+            Markdown image link to the generated chart, or error message
+        """
+        try:
+            if not data:
+                return "Error: data is required"
+
+            _apply_modern_style()
+            fig, ax = plt.subplots(figsize=(12, 7))
+
+            ax.hist(data, bins=10, edgecolor="white", alpha=0.75, color=MODERN_COLORS[0], zorder=3)
+
+            if x_label:
+                ax.set_xlabel(x_label, fontweight="medium")
+            if y_label:
+                ax.set_ylabel(y_label, fontweight="medium")
+
+            ax.set_title(title, fontsize=16, fontweight="bold", color=CHART_TEXT, pad=20)
+
+            # Subtle grid
+            ax.yaxis.grid(True, linestyle="--", alpha=0.5, color=CHART_GRID, zorder=0)
+            ax.xaxis.grid(False)
+
+            _add_chart_footer(fig)
+
+            plot_bytes = _generate_plot_bytes(fig)
+
+            # Upload to S3
+            filename = f"histogram_chart_{datetime.now().strftime("%Y%m%d_%H%M%S")}.png"
+            url, _attachment_id = await upload_plot_to_s3(plot_bytes, filename, workspace_id, chat_id, user_id, db)
+
+            if url:
+                return f"![{title}]({url})"
+            else:
+                return "Error: Failed to upload chart to storage"
+
+        except Exception as e:
+            log.error(f"Error creating histogram chart: {e}")
+            return f"Error creating histogram chart: {str(e)}"
+
+    tools = [
         create_bar_chart,
         create_pie_chart,
         create_line_chart,
         create_stacked_bar_chart,
     ]
+
+    return tools
 
 
 def get_plotting_tools(
@@ -669,9 +737,17 @@ def get_plotting_tools(
     Returns:
         List of LangChain tool functions
     """
-    return create_plotting_tools(
+    tools = create_plotting_tools(
         workspace_id=workspace_id,
         chat_id=chat_id,
         user_id=user_id,
         db=db,
     )
+
+    # Verify consistency with PLOTTING_TOOL_NAMES constant
+    # This ensures the constant used for streaming optimization matches actual tools
+    actual_names = {t.name for t in tools}
+    if actual_names != PLOTTING_TOOL_NAMES:
+        log.info(f"PLOTTING_TOOL_NAMES mismatch. Expected: {actual_names}. Found: {PLOTTING_TOOL_NAMES}")
+
+    return tools

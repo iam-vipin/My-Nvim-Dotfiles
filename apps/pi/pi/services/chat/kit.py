@@ -1662,7 +1662,11 @@ Provide concise, relevant context from the attachment(s):"""
 
                 async for chunk in stream_generator:
                     error_context.add_chunk(chunk)
-                    content = chunk.content if hasattr(chunk, "content") else str(chunk)
+                    # Use helper to handle both OpenAI (string) and Anthropic (list of blocks) formats
+                    from pi.services.chat.helpers.tool_utils import extract_text_from_content
+
+                    raw_content = chunk.content if hasattr(chunk, "content") else str(chunk)
+                    content = extract_text_from_content(raw_content) if raw_content else ""
                     yield content
 
             except Exception:

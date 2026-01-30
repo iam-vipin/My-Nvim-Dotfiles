@@ -43,7 +43,7 @@ export const ReasoningBlock = (props: TProps) => {
       // Use setTimeout to avoid synchronous setState in effect
       const closeTimer = setTimeout(() => {
         setIsOpen(false);
-      }, 5000);
+      }, 500);
       return () => {
         clearTimeout(closeTimer);
       };

@@ -13,6 +13,7 @@
 Also includes tools for ask mode."""
 
 import json
+import re
 from collections.abc import AsyncIterator
 from typing import Any
 from typing import Dict
@@ -34,10 +35,11 @@ from pi.services.chat.helpers.flow_tracking import execute_tool_step
 from pi.services.chat.helpers.flow_tracking import orchestrate_llm_step
 from pi.services.chat.helpers.flow_tracking import persist_precomputed_ai_message
 from pi.services.chat.helpers.flow_tracking import store_and_format_clarification
-from pi.services.chat.helpers.tool_utils import format_tool_message_for_display
+from pi.services.chat.helpers.tool_utils import extract_text_from_content
 from pi.services.chat.helpers.tool_utils import format_tool_query_for_display
 from pi.services.chat.helpers.tool_utils import stream_content_in_chunks
 from pi.services.chat.helpers.tool_utils import tool_name_shown_to_user
+from pi.services.chat.plotting import PLOTTING_TOOL_NAMES
 from pi.services.chat.prompts import pai_ask_system_prompt
 from pi.services.chat.utils import reasoning_dict_maker
 from pi.services.llm.cache_utils import create_claude_cached_system_message
@@ -204,6 +206,8 @@ async def execute_tools_for_ask_mode(
         # Delimiter-based routing: all reasoning flows until ππANSWERππ, then final answer
         final_answer_streamed = False
         final_response_marker_emitted = False
+        # Track if any plotting tool produced a result (to conditionalize URL buffering)
+        has_plotting_tool_result = False
 
         async def _orchestrate_llm_step_with_ui_ticks(
             *,
@@ -233,6 +237,9 @@ async def execute_tools_for_ask_mode(
             streamed_reasoning_chunks = False
             ai_message: Any = None
 
+            # Buffer for final answer to prevent splitting plane-attachment:// URLs
+            final_answer_buffer = ""
+
             async for event in stream_llm_with_delimiter(llm_with_tools, messages, stream_final_answer=stream_final_answer):
                 event_type = event.get("type", "")
 
@@ -259,7 +266,59 @@ async def execute_tools_for_ask_mode(
                                     "content": "",
                                     "stage": "final_response",
                                 }
-                        yield content
+                        if not has_plotting_tool_result:
+                            # Fast path: No plotting tools used, so no plane-attachment:// URLs expected.
+                            # Stream raw chunks immediately.
+                            yield content
+                        else:
+                            final_answer_buffer += content
+
+                            # --- Buffering Logic for plane-attachment:// ---
+
+                        PREFIX = "plane-attachment://"
+
+                        # Case 1: Buffer contains the full prefix
+                        if PREFIX in final_answer_buffer:
+                            # Search for complete URL pattern: plane-attachment://UUID/UUID
+                            # We look for the pattern followed by a non-URL character or end of string if sufficient length
+                            # But safest is to look for the known structure: 36 chars + / + 36 chars
+                            match = re.search(r"plane-attachment://[a-f0-9-]{36}/[a-f0-9-]{36}", final_answer_buffer)
+
+                            if match:
+                                # Found a complete URL!
+                                end_idx = match.end()
+                                to_yield = final_answer_buffer[:end_idx]
+                                remaining = final_answer_buffer[end_idx:]
+
+                                yield to_yield
+                                final_answer_buffer = remaining
+                            elif len(final_answer_buffer) > 300:
+                                # Safety valve: if buffer gets too huge without a match, flush it
+                                # This prevents infinite buffering if something malformed appears
+                                yield final_answer_buffer
+                                final_answer_buffer = ""
+                            # Else: keep buffering (wait for rest of URL)
+
+                        else:
+                            # Case 2: Buffer might end with a partial prefix
+                            partial_match = False
+                            # Check suffixes up to len(PREFIX)-1
+                            for i in range(1, len(PREFIX)):
+                                suffix = final_answer_buffer[-i:]
+                                if PREFIX.startswith(suffix):
+                                    partial_match = True
+                                    # We have a partial match at the end.
+                                    # Yield everything BEFORE that suffix.
+                                    to_yield = final_answer_buffer[:-i]
+                                    if to_yield:
+                                        yield to_yield
+                                    final_answer_buffer = suffix
+                                    break
+
+                            if not partial_match:
+                                # No prefix, no partial prefix. Safe to yield everything.
+                                yield final_answer_buffer
+                                final_answer_buffer = ""
 
                 elif event_type == "tool_detected":
                     # Ask mode announces individual tools during streaming
@@ -275,6 +334,10 @@ async def execute_tools_for_ask_mode(
 
                 elif event_type == "complete":
                     ai_message = event.get("accumulated_message")
+
+            # Flush any remaining buffer
+            if final_answer_buffer:
+                yield final_answer_buffer
 
             # If streaming produced no message (unexpected), fail fast
             if ai_message is None:
@@ -391,7 +454,8 @@ async def execute_tools_for_ask_mode(
             if ai_message.content and not final_answer_streamed:
                 # Stream the final answer in chunks to simulate streaming
                 # Only if smart streaming didn't already handle it (which splits out the delimiter)
-                async for chunk in stream_content_in_chunks(str(ai_message.content)):
+                final_text = extract_text_from_content(ai_message.content)
+                async for chunk in stream_content_in_chunks(final_text):
                     yield chunk
             return
 
@@ -399,7 +463,7 @@ async def execute_tools_for_ask_mode(
         # Only stream as reasoning if there ARE tool calls (otherwise it's the final answer)
         try:
             if hasattr(ai_message, "content") and ai_message.content:
-                reasoning_content = str(ai_message.content).strip()
+                reasoning_content = extract_text_from_content(ai_message.content).strip()
                 if reasoning_content:
                     # If we already streamed content deltas during astream_events, don't emit the full block again
                     # (would duplicate text in the UI).
@@ -450,6 +514,9 @@ async def execute_tools_for_ask_mode(
                     # Find and execute the tool (decorator persists success/error)
                     tool_to_execute = next((t for t in tools if t.name == tool_name), None)
                     if tool_to_execute:
+                        if tool_name in PLOTTING_TOOL_NAMES:
+                            has_plotting_tool_result = True
+
                         if tool_name == "web_search_tool":
                             original_query = enhanced_query_for_processing
                             tool_query = tool_args.get("query") if isinstance(tool_args, dict) else None
@@ -519,17 +586,17 @@ async def execute_tools_for_ask_mode(
                             # Format and stream tool message content for user-friendly display (remove UUIDs, URLs, etc.)
                             # IMPORTANT: For structured DB queries, do not stream raw row/column output to the UI.
                             # The LLM still receives the full ToolMessage above to generate the final answer.
-                            if tool_name != "structured_db_tool":
-                                cleaned_content = format_tool_message_for_display(tool_content)
-                                if cleaned_content and cleaned_content.strip():
-                                    stage = "retrieval_tool_execution_message"
-                                    content = f"{user_friendly_tool_name}'s result: {cleaned_content}\n\n"
-                                    reasoning_chunk_dict = reasoning_dict_maker(
-                                        stage=stage, tool_name=user_friendly_tool_name, tool_query=tool_query_str, content=content
-                                    )
-                                    if reasoning_container is not None:
-                                        reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
-                                    yield reasoning_chunk_dict
+                            # if tool_name not in ["structured_db_tool"] + list(PLOTTING_TOOL_NAMES):
+                            #     cleaned_content = format_tool_message_for_display(tool_content)
+                            #     if cleaned_content and cleaned_content.strip():
+                            #         stage = "retrieval_tool_execution_message"
+                            #         content = f"{user_friendly_tool_name}'s result: {cleaned_content}\n\n"
+                            #         reasoning_chunk_dict = reasoning_dict_maker(
+                            #             stage=stage, tool_name=user_friendly_tool_name, tool_query=tool_query_str, content=content
+                            #         )
+                            #         if reasoning_container is not None:
+                            #             reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+                            #         yield reasoning_chunk_dict
 
                         except Exception as e:
                             log.error(f"ChatID: {chat_id} - Error executing tool {tool_name}: {str(e)}")
@@ -639,7 +706,7 @@ async def execute_tools_for_ask_mode(
             if has_more_tool_calls:
                 try:
                     if hasattr(ai_message, "content") and ai_message.content:
-                        reasoning_content = str(ai_message.content).strip()
+                        reasoning_content = extract_text_from_content(ai_message.content).strip()
                         # Strip content after delimiter (keep only reasoning part)
                         ANSWER_DELIMITER = "ππANSWERππ"
                         if ANSWER_DELIMITER in reasoning_content:
@@ -676,7 +743,7 @@ async def execute_tools_for_ask_mode(
             # Already streamed token-by-token from the LLM call above.
             return
         if ai_message.content:
-            final_content = str(ai_message.content)
+            final_content = extract_text_from_content(ai_message.content)
             # Strip content before delimiter (keep only answer part)
             ANSWER_DELIMITER = "ππANSWERππ"
             if ANSWER_DELIMITER in final_content:

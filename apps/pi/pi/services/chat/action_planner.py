@@ -59,7 +59,6 @@ from .helpers.build_mode_helpers import run_category_router_and_persist
 from .helpers.build_mode_helpers import selected_action_categories_display
 from .helpers.tool_utils import build_method_prompt
 from .helpers.tool_utils import classify_tool
-from .helpers.tool_utils import format_tool_message_for_display
 from .helpers.tool_utils import format_tool_query_for_display
 from .helpers.tool_utils import preflight_missing_required_fields
 from .helpers.tool_utils import tool_name_shown_to_user
@@ -938,17 +937,17 @@ async def execute_tools_for_build_mode(
                         ## change point: "πspecial reasoning blockπ:
                         # IMPORTANT: For structured DB queries, do not stream raw row/column output to the UI.
                         # The LLM still receives the full ToolMessage to generate the final response/actions.
-                        if tool_name != "structured_db_tool":
-                            stage = "retrieval_tool_execution_message"
-                            cleaned_content = format_tool_message_for_display(tool_message.content)
-                            user_friendly_tool_name = tool_name_shown_to_user(tool_name)
-                            content = f"{user_friendly_tool_name}'s result: {cleaned_content}\n\n"
-                            reasoning_chunk_dict = reasoning_dict_maker(
-                                stage=stage, tool_name=user_friendly_tool_name, tool_query=tool_query, content=content
-                            )
-                            if reasoning_container is not None:
-                                reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
-                            yield reasoning_chunk_dict
+                        # if tool_name not in ["structured_db_tool", "docs_search_tool"]:
+                        #     stage = "retrieval_tool_execution_message"
+                        #     cleaned_content = format_tool_message_for_display(tool_message.content)
+                        #     user_friendly_tool_name = tool_name_shown_to_user(tool_name)
+                        #     content = f"{user_friendly_tool_name}'s result: {cleaned_content}\n\n"
+                        #     reasoning_chunk_dict = reasoning_dict_maker(
+                        #         stage=stage, tool_name=user_friendly_tool_name, tool_query=tool_query, content=content
+                        #     )
+                        #     if reasoning_container is not None:
+                        #         reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+                        #     yield reasoning_chunk_dict
                     else:
                         tool_messages.append(tool_message)
                     if flow_step is not None:

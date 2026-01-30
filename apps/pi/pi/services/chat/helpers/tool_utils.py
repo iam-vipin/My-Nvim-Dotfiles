@@ -34,6 +34,42 @@ from pi.services.chat.prompts import HISTORY_FRESHNESS_WARNING
 log = logging.getLogger(__name__)
 
 
+def extract_text_from_content(content: Any) -> str:
+    """Extract text from streaming chunk content, handling both OpenAI and Anthropic formats.
+
+    OpenAI returns `chunk.content` as a plain string during streaming.
+    Anthropic returns `chunk.content` as a list of content block dicts:
+      - Text blocks: [{'text': 'content here', 'type': 'text', 'index': 0}]
+      - Tool input deltas: [{'partial_json': '...', 'type': 'input_json_delta', 'index': 1}]
+
+    Args:
+        content: The chunk.content value from a streaming LLM response
+
+    Returns:
+        Extracted text string (empty string if no text found)
+    """
+    if content is None:
+        return ""
+
+    # OpenAI format: already a string
+    if isinstance(content, str):
+        return content
+
+    # Anthropic format: list of content block dicts
+    if isinstance(content, list):
+        text_parts = []
+        for block in content:
+            if isinstance(block, dict):
+                # Extract 'text' from text blocks (type: 'text')
+                if block.get("type") == "text" and "text" in block:
+                    text_parts.append(str(block["text"]))
+                # Skip input_json_delta blocks - those are tool call inputs, not reasoning text
+        return "".join(text_parts)
+
+    # Fallback: try converting to string (shouldn't normally reach here)
+    return str(content)
+
+
 # ------------------------------------
 # Smart Buffering Streaming Utility
 # ------------------------------------
@@ -124,10 +160,13 @@ async def stream_llm_with_delimiter(
                 except Exception:
                     accumulated = chunk
 
-            # 1. Extract content from chunk
+            # 1. Extract content from chunk (handles OpenAI string and Anthropic content blocks)
             chunk_text = getattr(chunk, "content", None)
             if chunk_text:
-                content_buffer += str(chunk_text)
+                # Use helper to normalize between OpenAI (string) and Anthropic (list of blocks)
+                text_content = extract_text_from_content(chunk_text)
+                if text_content:
+                    content_buffer += text_content
 
             # 2. Detect and announce tool names (for UI display only, not for routing)
             tool_call_chunks = getattr(chunk, "tool_call_chunks", None) or []
@@ -554,6 +593,11 @@ def tool_name_shown_to_user(tool_name: str) -> str:
         "search_user_by_name": "Search User",
         "search_workitem_by_name": "Search Work-item",
         "search_workitem_by_identifier": "Search Work-item by ID",
+        # Plotting Tools
+        "create_pie_chart": "Generate a Pie Chart",
+        "create_bar_chart": "Generate a Bar Chart",
+        "create_line_chart": "Generate a Line Chart",
+        "create_stacked_bar_chart": "Generate a Stacked Bar Chart",
         # Other common tools
         "states_list": "List States",
         "projects_list": "List Projects",

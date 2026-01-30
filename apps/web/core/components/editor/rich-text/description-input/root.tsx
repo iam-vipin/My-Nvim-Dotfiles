@@ -138,6 +138,8 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
   });
   // ref to track if there are unsaved changes
   const hasUnsavedChanges = useRef(false);
+  // ref to track last saved content (to skip onChange when content hasn't actually changed)
+  const lastSavedContent = useRef(initialValue?.trim() === "" ? "<p></p>" : (initialValue ?? "<p></p>"));
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
   const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
@@ -164,6 +166,8 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
         },
         formData.isMigrationUpdate
       );
+      // Update lastSavedContent after successful save
+      lastSavedContent.current = formData.description_html;
     },
     [onSubmit]
   );
@@ -171,14 +175,17 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
   // reset form values
   useEffect(() => {
     if (!entityId) return;
+    const normalizedValue = initialValue?.trim() === "" ? "<p></p>" : (initialValue ?? "<p></p>");
+    // Update last saved content when entity/initialValue changes
+    lastSavedContent.current = normalizedValue;
     reset({
       id: entityId,
-      description_html: initialValue?.trim() === "" ? "<p></p>" : (initialValue ?? "<p></p>"),
+      description_html: normalizedValue,
       isMigrationUpdate: false,
     });
     setLocalDescription({
       id: entityId,
-      description_html: initialValue?.trim() === "" ? "<p></p>" : (initialValue ?? "<p></p>"),
+      description_html: normalizedValue,
       isMigrationUpdate: false,
     });
     // Reset unsaved changes flag when form is reset
@@ -257,6 +264,8 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
           projectId={projectId}
           dragDropEnabled
           onChange={(description_json, description_html, options) => {
+            // Skip if content hasn't actually changed (handles editor normalization on init)
+            if (description_html === lastSavedContent.current) return;
             setIsSubmitting("submitting");
             onChange(description_html);
             setValue("isMigrationUpdate", options?.isMigrationUpdate ?? false);

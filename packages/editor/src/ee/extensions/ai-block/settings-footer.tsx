@@ -29,7 +29,7 @@ type CustomAIBlockSettingsFooterProps = {
   };
   isEmpty: boolean;
   isDisabled: boolean;
-  aiBlockHandlers: TAIBlockHandlers;
+  aiBlockHandlers: TAIBlockHandlers | undefined;
   selectedBlockType: TAIBlockType | undefined;
   block: Partial<TAIBlockDetails> | undefined;
   blockId: string | null;

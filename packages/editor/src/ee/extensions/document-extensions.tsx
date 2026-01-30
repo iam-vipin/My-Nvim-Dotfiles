@@ -299,14 +299,11 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
   {
     // AI block extension (edit-only)
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("ai-block"),
-    getExtension: ({ isEditable, extendedEditorProps }) => {
-      if (!isEditable) return undefined;
-
-      return CustomAIBlockExtension({
+    getExtension: ({ extendedEditorProps }) =>
+      CustomAIBlockExtension({
         aiBlockHandlers: extendedEditorProps?.aiBlockHandlers,
-        widgetCallback: extendedEditorProps?.widgetCallback,
-      });
-    },
+        aiBlockWidgetCallback: extendedEditorProps?.aiBlockWidgetCallback,
+      }),
   },
 ];
 

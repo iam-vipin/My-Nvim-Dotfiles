@@ -33,24 +33,11 @@ export function AIBlockWidget(props: TAIBlockNodeViewProps) {
     return response?.types ?? [];
   });
 
-  // Fetch revision types
-  const { data: revisionTypesData } = useSWR("ai-block-revision-types", async () => {
-    const response = await piService.getRevisionTypes();
-    return response?.types ?? [];
-  });
-
   // Fetch blocks list
   const { data: blocksData } = useSWR(pageId ? `ai-block-list-${pageId}` : null, async () => {
     const response = await piService.listBlocks(pageId);
     return response?.blocks ?? [];
   });
 
-  return (
-    <CustomAIBlockUI
-      {...props}
-      blockTypes={blockTypesData ?? []}
-      revisionTypes={revisionTypesData ?? []}
-      blocks={blocksData ?? []}
-    />
-  );
+  return <CustomAIBlockUI {...props} blockTypes={blockTypesData ?? []} blocks={blocksData ?? []} />;
 }

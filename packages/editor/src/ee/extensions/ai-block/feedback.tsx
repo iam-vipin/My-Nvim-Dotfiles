@@ -28,7 +28,7 @@ export const AIBlockFeedback = ({
 }: {
   feedback: EAiFeedback | null | undefined;
   blockId: string | null;
-  aiBlockHandlers: TAIBlockHandlers;
+  aiBlockHandlers: TAIBlockHandlers | undefined;
   type: "revision" | "settings";
 }) => {
   const [feedback, setFeedback] = useState<EAiFeedback | undefined | null>(undefined);
@@ -41,7 +41,7 @@ export const AIBlockFeedback = ({
         return;
       }
       setFeedback(feedbackValue);
-      await aiBlockHandlers.postFeedback({
+      await aiBlockHandlers?.postFeedback({
         usage_type: type === "revision" ? "ai_block_revision" : "ai_block",
         usage_id: blockId,
         feedback: feedbackValue,

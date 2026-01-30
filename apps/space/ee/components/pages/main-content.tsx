@@ -15,7 +15,7 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { DocumentEditorWithRef } from "@plane/editor";
+import { CustomAIBlockUI, DocumentEditorWithRef } from "@plane/editor";
 import type { EditorRefApi } from "@plane/editor";
 import { ERowVariant, Row } from "@plane/ui";
 // components
@@ -106,6 +106,7 @@ export const PageDetailsMainContent = observer(function PageDetailsMainContent(p
                   workspaceSlug: "",
                 },
               },
+              aiBlockWidgetCallback: (props) => <CustomAIBlockUI {...props} />,
               isSmoothCursorEnabled: false,
               commentConfig: {
                 canComment: false,

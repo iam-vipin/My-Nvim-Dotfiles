@@ -49,7 +49,7 @@ export type TExtendedEditorExtensionsConfig = Pick<
   | "logoSpinner"
   | "selectionConversion"
   | "aiBlockHandlers"
-  | "widgetCallback"
+  | "aiBlockWidgetCallback"
 >;
 
 const piService = new PIService();
@@ -172,7 +172,7 @@ export const useExtendedEditorProps = (
       logoSpinner: LogoSpinner,
       selectionConversion: selectionConversionProps,
       aiBlockHandlers: aiBlockHandlersProps,
-      widgetCallback: AIBlockWidget,
+      aiBlockWidgetCallback: AIBlockWidget,
     }),
     [embedProps, extensionHandlers, is_smooth_cursor_enabled, selectionConversionProps, aiBlockHandlersProps, page.id]
   );

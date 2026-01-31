@@ -1,0 +1,734 @@
+planeVersion: v26.01.27-1
+
+deployment_notification:
+  slack:
+    enabled: false
+    bot_token: '' # Slack Bot Token (xoxb-...)
+    channel: '' # Slack channel ID (e.g., C1234567890) or channel name (e.g., #deployments)
+
+dockerhub:
+  enabled: true
+  login_id: planeengineering
+  password: ''
+
+ingress:
+  app_host: 'plane.example.com'
+  ingress_class: 'nginx'
+  client_max_body_size: 10m
+  custom_domains:
+    enabled: false
+    live: ''
+    relay: ''
+    silo: ''
+    sites: ''
+    admin: ''
+    api: ''
+    minio: ''
+    marketplace: ''
+    auth: ''
+    iframely: ''
+    pi: ''
+    external_api: ''
+ssl:
+  create_issuer: false
+  issuer: cloudflare # Allowed : cloudflare, digitalocean, http
+  token: '' # not required for http
+  server: https://acme-v02.api.letsencrypt.org/directory
+  email: engineering@plane.so
+  generate_certs: false
+
+services:
+  storage_class: ''
+
+  redis:
+    local_setup: true
+    image: valkey/valkey:7.2.11-alpine
+    service_port: 6379
+    volume_size: 500Mi
+    remote_redis_url: '' # INCASE OF REMOTE REDIS ONLY
+
+  postgres:
+    local_setup: true
+    image: postgres:15.5-alpine
+    service_port: 5432
+    cli_connect_port: ''
+    volume_size: 500Mi
+    read_replica:
+      enabled: false
+      remote_url: '' # INCASE OF REMOTE PG DB URL ONLY
+    # postgres db values
+    pg_db_user: plane
+    pg_db_password: plane
+    pg_db_name: plane
+    pg_pi_db_name: plane_pi
+    pg_db_remote_url: '' # INCASE OF REMOTE PG DB URL ONLY
+    pg_silo_db_remote_url: '' # INCASE OF REMOTE PG DB URL ONLY
+    pg_pi_db_remote_url: '' # INCASE OF REMOTE PG DB URL ONLY
+
+  rabbitmq:
+    local_setup: true
+    image: rabbitmq:3-management
+    service_port: 5672
+    management_port: 15672
+    volume_size: 500Mi
+    default_user: plane
+    default_password: plane
+    external_rabbitmq_url: ''
+
+  minio:
+    local_setup: true
+    image: minio/minio:latest
+    volume_size: 500Mi
+    root_user: admin
+    root_password: password
+
+  web:
+    enabled: false
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 50Mi
+    cpu_request: 50m
+    image: makeplane/web-cloud
+
+  space:
+    enabled: false
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 50Mi
+    cpu_request: 50m
+    image: makeplane/space-cloud
+
+  admin:
+    enabled: false
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 50Mi
+    cpu_request: 50m
+    image: makeplane/admin-cloud
+
+  api:
+    enabled: true
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 1000Mi
+    cpu_request: 500m
+    image: makeplane/backend-cloud
+    gunicorn_workers: 1
+    # Sentry Settings
+    sentry:
+      enabled: false
+      dsn: ''
+      environment: 'development'
+      profile_sample_rate: 0.1
+    push_notification:
+      enabled: false
+      firebase_project_id: ''
+      firebase_private_key_id: ''
+      firebase_private_key: ''
+      firebase_client_email: ''
+      firebase_client_id: ''
+      firebase_client_cert_url: ''
+    mailmodo:
+      enabled: false
+      api_key: ''
+    backup_database:
+      enabled: false
+      url: ''
+      database: ''
+    turnstile:
+      enabled: false
+      secret_key: ''
+    zerobounce:
+      enabled: false
+      api_key: ''
+    email_normalization_rate_limiting:
+      enabled: false
+      max_attempts: '5'
+      block_duration: '3600'
+      expiry_multiplier: '60'
+
+  live:
+    enabled: true
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 250Mi
+    cpu_request: 100m
+    image: makeplane/live-cloud
+    base_path: '/live'
+    # service url settings
+    cors_allowed_origins: ''
+    api_base_url: ''
+    secret_key: 'some-random-secret-key'
+    external_iframely_url: ''
+    # sentry settings
+    sentry:
+      enabled: false
+      dsn: ''
+      environment: 'development'
+      traces_sample_rate: 0.1
+
+  relay:
+    enabled: false
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 500Mi
+    cpu_request: 250m
+    image: makeplane/relay-cloud
+    envs:
+      exchange_name: 'plane.event_stream'
+      prefetch_count: 10
+      channel_prefix: 'relay'
+      relay_base_path: ''
+      cors_allowed_origins: ''
+      api_base_url: ''
+      app_base_url: ''
+    # Sentry Settings
+    sentry:
+      enabled: false
+      dsn: ''
+      environment: 'development'
+      traces_sample_rate: 0.5
+
+  silo:
+    enabled: true
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 250Mi
+    cpu_request: 100m
+    image: makeplane/silo-cloud
+    base_path: ''
+    app_base_url: ''
+    api_base_url: ''
+    api_internal_base_url: ''
+    ai_service_base_url: ''
+    hmac_secret_key: ''
+    aes_secret_key: ''
+    silo_base_url: ''
+    importers_queue_name: 'celery'
+    cors_allowed_origins: 'https://app.plane.so'
+    mq_prefetch_count: 10
+    batch_size: 60
+    request_interval: 400
+    sentry:
+      enabled: false
+      dsn: ''
+      environment: 'development'
+      traces_sample_rate: 0.1
+    mongo_database:
+      enabled: false
+      url: ''
+      database: ''
+    connectors:
+      slack:
+        enabled: false
+        client_id: '--slack-client-id--'
+        client_secret: '--slack-client-secret--'
+        signing_secret: '--slack-signing-secret--'
+      github:
+        enabled: false
+        client_id: '--github-client-id--'
+        client_secret: '--github-client-secret--'
+        app_name: '--github-app-name--'
+        app_id: '--github-app-id--'
+        private_key: '--github-private-key--'
+        webhook_secret: '--github-webhook-secret--'
+      gitlab:
+        enabled: false
+        client_id: '--gitlab-client-id--'
+        client_secret: '--gitlab-client-secret--'
+      sentry:
+        enabled: false
+        client_id: '--sentry-client-id--'
+        client_secret: '--sentry-client-secret--'
+        integration_slug: 'plane'
+      flatfile:
+        enabled: false
+        api_key: '--flatfile-api-key--'
+
+  silo_imports:
+    enabled: false
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 250Mi
+    cpu_request: 100m
+
+  silo_integrations:
+    enabled: false
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 250Mi
+    cpu_request: 100m
+
+  worker:
+    enabled: true
+    replicas: 1
+    queue_name: 'celery'
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 1000Mi
+    cpu_request: 500m
+
+  worker_importers:
+    enabled: false
+    replicas: 1
+    queue_name: 'celery.importer'
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 1000Mi
+    cpu_request: 500m
+
+  beatworker:
+    enabled: true
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 250Mi
+    cpu_request: 100m
+
+  marketplace:
+    enabled: true
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 1000Mi
+    cpu_request: 500m
+    gunicorn_workers: 1
+
+  auth:
+    enabled: true
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 1000Mi
+    cpu_request: 500m
+    gunicorn_workers: 1
+
+  graphql:
+    enabled: true
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 1000Mi
+    cpu_request: 500m
+    gunicorn_workers: 1
+
+  external_api:
+    enabled: true
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 1000Mi
+    cpu_request: 500m
+    gunicorn_workers: 1
+
+  email_service:
+    enabled: true
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 250Mi
+    cpu_request: 100m
+    image: makeplane/email-cloud
+    webhook_url: ''
+    smtp_domain: 'intake.plane.email'
+
+  outbox_poller:
+    enabled: false
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 1000Mi
+    cpu_request: 500m
+    # Outbox Poller Settings
+    memory_limit_mb: 400
+    interval_min: 0.25
+    interval_max: 2
+    batch_size: 250
+    memory_check_interval: 30
+    pool:
+      size: 4
+      min_size: 2
+      max_size: 10
+      timeout: 30.0
+      max_idle: 300.0
+      max_lifetime: 3600
+      reconnect_timeout: 5.0
+      health_check_interval: 60
+
+  automation_consumer:
+    enabled: false
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 1000Mi
+    cpu_request: 500m
+    envs:
+      event_stream_queue_name: 'plane.event_stream.automations'
+      event_stream_prefetch: 10
+      exchange_name: 'plane.event_stream'
+      event_types: 'issue'
+
+  webhook_consumer:
+    enabled: false
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 500Mi
+    cpu_request: 250m
+    envs:
+      queue_name: 'plane.webhook'
+      prefetch_count: 10
+
+  relay_consumer:
+    enabled: false
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 500Mi
+    cpu_request: 250m
+    image: makeplane/relay-cloud
+    envs:
+      queue_name: 'plane.relay'
+      prefetch_count: 10
+
+  iframely:
+    enabled: false
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 50Mi
+    cpu_request: 50m
+    image: artifacts.plane.so/makeplane/iframely
+    default_tag: v1.2.0
+
+  pi:
+    enabled: true
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 1000Mi
+    cpu_request: 500m
+    image: makeplane/plane-pi-cloud
+    app_workers: 1
+    app_worker_timeout: 60
+    base_path: ''
+    plane_api_host: ''
+    plane_frontend_url: https://app.plane.so
+    internal_secret: ''
+    cors_allowed_origins: ''
+    session_cookie_name: session-id
+    plane_oauth:
+      enabled: false
+      redirect_uri: ''
+      state_expiry_seconds: 82800
+    sentry:
+      enabled: false
+      dsn: ''
+      environment: 'development'
+    ai_providers:
+      openai:
+        enabled: false
+        base_url: ''
+        api_key: ''
+      claude:
+        enabled: false
+        base_url: ''
+        api_key: ''
+      groq:
+        enabled: false
+        api_key: ''
+    aws:
+      enabled: false
+      access_key_id: ''
+      secret_access_key: ''
+      s3_bucket: ''
+      s3_region: 'us-east-1'
+    celery:
+      vector_sync_enabled: true
+      vector_sync_interval: 3
+      workspace_plan_sync_enabled: true
+      workspace_plan_sync_interval: 86400
+      docs_sync_enabled: true
+      docs_sync_interval: 86400
+      pi_message_index_sync_enabled: false
+    debug: false
+
+  pi_worker:
+    enabled: true
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 1000Mi
+    cpu_request: 500m
+
+  pi_beat_worker:
+    enabled: true
+    replicas: 1
+    memory_limit: 1000Mi
+    cpu_limit: 500m
+    memory_request: 1000Mi
+    cpu_request: 500m
+
+smtp:
+  enabled: false
+  host: ''
+  user: ''
+  password: ''
+  port: 587
+  from: 'Plane Cloud Mailer <do-not-reply@mailer.plane.tools>'
+  use_tls: 1
+  use_ssl: 0
+
+integrations:
+  openai:
+    enabled: false
+    api_key: ''
+    gpt_engine: ''
+  chat_support:
+    enabled: false
+    app_id: ''
+    identity_verification_secret: ''
+  pylon:
+    enabled: false
+    app_id: ''
+  posthog:
+    enabled: false
+    api_key: ''
+    host: ''
+  unsplash:
+    enabled: false
+    access_key: ''
+  llm:
+    enabled: false
+    llm_api_key: ''
+    llm_provider: ''
+    llm_model: ''
+  common_room:
+    enabled: false
+    signup_destination_id: ''
+    api_token: ''
+
+auth_providers:
+  enable_magic_link: true
+  enable_email_password: true
+  google:
+    enabled: false
+    google_client_id:
+    google_client_secret:
+  github:
+    enabled: false
+    github_client_id: ''
+    github_client_secret: ''
+    app_name: ''
+  gitlab:
+    enabled: false
+    gitlab_host: ''
+    gitlab_client_id: ''
+    gitlab_client_secret: ''
+  oidc:
+    enabled: false
+    provider_name: ''
+    oidc_client_id: ''
+    oidc_client_secret: ''
+    oidc_token_url: ''
+    oidc_userinfo_url: ''
+    oidc_authorize_url: ''
+    oidc_logout_url: ''
+  saml:
+    enabled: false
+    provider_name: ''
+    saml_entity_id: ''
+    saml_sso_url: ''
+    saml_logout_url: ''
+    saml_certificate: ''
+
+disco:
+  # Payment server settings
+  payment_server_base_url: 'https://preview.disco.plane.town'
+  payment_server_auth_token: 'kympwkfr80evpCRN2vwp'
+  # feature flags server
+  feature_flag_server_base_url: 'https://preview.disco.plane.town'
+  feature_flag_server_auth_token: 'kympwkfr80evpCRN2vwp'
+
+instance:
+  # instance admin settings
+  instance_admin_email: 'dev@plane.so'
+  instance_changelog_url: 'https://sites.uat.plane.tools/pages/3b313e4e1fbf4ed8b8d1f7902c4ae327/'
+
+datadog:
+  enabled: false
+  services:
+    plane_api:
+      enabled: false
+    plane_silo:
+      enabled: false
+    plane_live:
+      enabled: false
+    plane_pi:
+      enabled: false
+  envs:
+    environment: ''
+    agent_host: ''
+    version: ''
+    trace_sample_rate: 1
+
+django_backend:
+  secret_key: '60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5'
+  is_multi_tenant: true
+  skip_env_var: 1
+  cors_allowed_origins: ''
+  enable_signup: true
+  slack_bot_token: ''
+  # Session Cookie Settings
+  session_cookie_name: 'plane-session-id'
+  session_cookie_domain: '.plane.so'
+  session_cookie_age: '604800'
+  # Other Services
+  app_base_url: ''
+  admin_base_url: ''
+  admin_base_path: '/'
+  live_base_url: ''
+  live_base_path: '/live'
+  pi_base_url: ''
+  pi_base_path: '/pi'
+  silo_base_url: ''
+  silo_base_path: '/silo'
+  space_base_url: ''
+  space_base_path: '/'
+
+# Common OpenSearch Configuration
+opensearch:
+  enabled: true
+  url: ''
+  username: ''
+  password: ''
+  index_prefix: 'plane_'
+  shard_count: 1
+  replica_count: 1
+  update_chunk_size: 1000
+  ml_model_id: ''
+
+block_storage:
+  # REQUIRED IF MINIO LOCAL SETUP IS FALSE
+  aws_access_key: ''
+  aws_secret_access_key: ''
+  aws_region: ''
+  # Uploads Store
+  docstore_bucket: 'uploads'
+  doc_upload_size_limit: '5242880' # 5MB
+
+external_secrets:
+  enabled: false
+  secret_name: ''
+  provider: 'aws' # Options: aws, gcp, azure
+  aws:
+    access_key: ''
+    secret_access_key: ''
+    role: ''
+    region: ''
+  # gcp:
+  #   project_id: ''
+  #   service_account_key: ''
+  # azure:
+  #   tenant_id: ''
+  #   client_id: ''
+  #   client_secret: ''
+  #   subscription_id: ''
+  # Doc Store
+  doc_store_existing_secret: false
+  pgdb_existing_secret: false
+  rabbitmq_existing_secret: false
+  app_env_existing_secret: false
+  silo_env_existing_secret: false
+  live_env_existing_secret: false
+  relay_env_existing_secret: false
+  smtp_existing_secret: false
+  pi_api_env_existing_secret: false
+  pi_common_env_existing_secret: false
+
+nodeAffinityTolerations:
+  admin: {}
+  web: {}
+  space: {}
+  redis: {}
+  postgres: {}
+  rabbitmq: {}
+  minio: {}
+  outbox_poller: {}
+  automation_consumer: {}
+  webhook_consumer: {}
+  relay_consumer: {}
+  relay: {}
+  pi: {}
+  pi_worker: {}
+  pi_beat_worker: {}
+  api:
+    tolerations:
+    - effect: NoSchedule
+      key: django_api
+      operator: Equal
+      value: "true"
+    # affinity:
+    #   nodeAffinity:
+    #     requiredDuringSchedulingIgnoredDuringExecution:
+    #       nodeSelectorTerms:
+    #       - matchExpressions:
+    #         - key: django_api
+    #           operator: Exists
+  worker:
+    tolerations:
+    - effect: NoSchedule
+      key: django_api
+      operator: Equal
+      value: "true"
+
+  beatworker:
+    tolerations:
+    - effect: NoSchedule
+      key: django_api
+      operator: Equal
+      value: "true"
+
+  email_service:
+    tolerations:
+    - effect: NoSchedule
+      key: django_api
+      operator: Equal
+      value: "true"
+
+  silo:
+    tolerations:
+    - effect: NoSchedule
+      key: django_api
+      operator: Equal
+      value: "true"
+
+  silo_imports:
+    tolerations:
+    - effect: NoSchedule
+      key: django_api
+      operator: Equal
+      value: "true"
+
+  silo_integrations:
+    tolerations:
+    - effect: NoSchedule
+      key: django_api
+      operator: Equal
+      value: "true"
+
+  live:
+    tolerations:
+    - effect: NoSchedule
+      key: django_api
+      operator: Equal
+      value: "true"

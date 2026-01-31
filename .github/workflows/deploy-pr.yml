@@ -1,0 +1,456 @@
+name: Deploy PR on demand
+
+on:
+    # This workflow is only triggered by the `/build-deploy-preview` command dispatch
+    repository_dispatch:
+      types: [deploy-pr-command]
+
+jobs:
+  pre-requisites:
+    runs-on: ubuntu-latest
+    outputs:
+      release_version: ${{ steps.set_env_variables.outputs.RELEASE_VERSION }}
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Validate deploy type
+        run: |
+          DEPLOY_TYPE="${{ github.event.client_payload.slash_command.args.named.type }}"
+          if [ "${DEPLOY_TYPE}" != "cloud" ] && [ "${DEPLOY_TYPE}" != "enterprise" ]; then
+            echo "::error::Invalid type '${DEPLOY_TYPE}'. Only 'cloud' or 'enterprise' are supported."
+            exit 1
+          fi
+          echo "Deploy type: ${DEPLOY_TYPE}"
+
+      - name: Add a comment on the PR with link to workflow run
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          token: ${{ secrets.PAT }}
+          issue-number: ${{ github.event.client_payload.pull_request.number }}
+          body: |
+            Deploying Your PR: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}>.
+            type: ${{ github.event.client_payload.slash_command.args.named.type }}
+            airgap: ${{ github.event.client_payload.slash_command.args.named.airgap }}
+            aio: ${{ github.event.client_payload.slash_command.args.named.aio }}
+            identifier: ee-${{ github.event.client_payload.pull_request.number }}
+
+      - name: Set Environment Variables
+        id: set_env_variables
+        run: |
+            echo "RELEASE_VERSION=ee-${{ github.event.client_payload.pull_request.number }}" >> $GITHUB_OUTPUT
+            echo "BUILDX_DRIVER=docker-container" >> $GITHUB_OUTPUT
+            echo "BUILDX_VERSION=latest" >> $GITHUB_OUTPUT
+            echo "BUILDX_PLATFORMS=linux/amd64" >> $GITHUB_OUTPUT
+            echo "BUILDX_ENDPOINT=" >> $GITHUB_OUTPUT
+
+      - name: Print PR number
+        run: |
+            echo "PR number: ${{ github.event.client_payload.pull_request.number }}"
+
+  branch_build_push_admin:
+    name: Build-Push Admin Docker Image
+    needs: [pre-requisites]
+    runs-on: ubuntu-22.04
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ github.event.client_payload.pull_request.number }}/merge
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          context: .
+          file: ./apps/admin/Dockerfile.admin
+          tags: makeplane/plane-admin:${{ needs.pre-requisites.outputs.release_version }}
+
+  branch_build_push_web:
+    name: Build-Push Web Docker Image
+    runs-on: ubuntu-22.04
+    needs: [pre-requisites]
+    permissions:
+        id-token: write
+        contents: read
+    steps:
+        - name: Checkout Code
+          uses: actions/checkout@v4
+          with:
+            ref: refs/pull/${{ github.event.client_payload.pull_request.number }}/merge
+        - name: Login to Docker Hub
+          uses: docker/login-action@v3
+          with:
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_TOKEN }}
+        - name: Set up QEMU
+          uses: docker/setup-qemu-action@v3
+        - name: Set up Docker Buildx
+          uses: docker/setup-buildx-action@v3
+        - name: Build and push
+          uses: docker/build-push-action@v6
+          with:
+            push: true
+            context: .
+            file: ./apps/web/Dockerfile.web
+            tags: makeplane/plane-web:${{ needs.pre-requisites.outputs.release_version }}
+
+  branch_build_push_space:
+    name: Build-Push Space Docker Image
+    runs-on: ubuntu-22.04
+    needs: [pre-requisites]
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ github.event.client_payload.pull_request.number }}/merge
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          context: .
+          file: ./apps/space/Dockerfile.space
+          tags: makeplane/plane-space:${{ needs.pre-requisites.outputs.release_version }}
+
+  branch_build_push_live:
+    name: Build-Push Live Collaboration Docker Image
+    runs-on: ubuntu-22.04
+    needs: [pre-requisites]
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ github.event.client_payload.pull_request.number }}/merge
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          context: .
+          file: ./apps/live/Dockerfile.live
+          tags: makeplane/plane-live:${{ needs.pre-requisites.outputs.release_version }}
+
+  branch_build_push_api:
+    name: Build-Push API Server Docker Image
+    runs-on: ubuntu-22.04
+    needs: [pre-requisites]
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ github.event.client_payload.pull_request.number }}/merge
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          context: ./apps/api
+          file: ./apps/api/Dockerfile.api
+          tags: makeplane/plane-backend:${{ needs.pre-requisites.outputs.release_version }}
+
+  branch_build_push_proxy:
+    name: Build-Push Proxy Docker Image
+    runs-on: ubuntu-22.04
+    needs: [pre-requisites]
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ github.event.client_payload.pull_request.number }}/merge
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          context: ./apps/proxy
+          file: ./apps/proxy/Dockerfile.ce
+          tags: makeplane/plane-proxy:${{ needs.pre-requisites.outputs.release_version }}
+
+  branch_build_push_aio:
+    name: Build-Push AIO Docker Image
+    if: ${{ github.event.client_payload.slash_command.args.named.aio == 'true' }}
+    runs-on: ubuntu-22.04
+    needs:
+      - pre-requisites
+      - branch_build_push_admin
+      - branch_build_push_web
+      - branch_build_push_space
+      - branch_build_push_live
+      - branch_build_push_api
+      - branch_build_push_proxy
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ github.event.client_payload.pull_request.number }}/merge
+
+      - name: Prepare AIO Assets
+        id: prepare_aio_assets
+        run: |
+          cd deployments/aio/community
+
+          aio_version=${{ needs.pre-requisites.outputs.release_version }}
+          bash ./build.sh --release $aio_version
+          echo "AIO_BUILD_VERSION=${aio_version}" >> $GITHUB_OUTPUT
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          context: ./deployments/aio/community
+          file: ./deployments/aio/community/Dockerfile
+          tags: makeplane/plane-aio:${{ needs.pre-requisites.outputs.release_version }}
+          build-args: |
+            PLANE_VERSION=${{ steps.prepare_aio_assets.outputs.AIO_BUILD_VERSION }}
+
+  deploy-plane:
+    name: Deploy plane
+    needs: [pre-requisites,
+      branch_build_push_admin,
+      branch_build_push_web,
+      branch_build_push_space,
+      branch_build_push_live,
+      branch_build_push_api,
+      branch_build_push_proxy
+    ]
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_SECRET_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
+
+      - name: Retrieve deploy secrets from AWS Secrets Manager
+        id: deploy-secrets
+        run: |
+          SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id ${{ secrets.AWS_SECRET_NAME || 'github-actions/github-actions-secrets' }} --query SecretString --output text)
+          CLOUDFLARE_TOKEN=$(echo $SECRET_JSON | jq -r '.cloudflare_api_token')
+          echo "cloudflare_token=$CLOUDFLARE_TOKEN" >> $GITHUB_ENV
+          echo "::add-mask::$CLOUDFLARE_TOKEN"
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_EKS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig \
+            --region ${{ secrets.AWS_REGION || 'us-east-1' }} \
+            --name ${{ secrets.EKS_CLUSTER_NAME || 'plane-eks-dev'}}
+
+      - name: Verify access
+        run: |
+          kubectl get nodes
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.4
+
+      - name: Verify Helm
+        run: |
+          helm version
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ github.event.client_payload.pull_request.number }}/merge
+
+      - name: Decide the type of helm chart to deploy
+        id: decide_chart
+        run: |
+          if [ "${{ github.event.client_payload.slash_command.args.named.type }}" == "enterprise" ]; then
+            HELM_CHART="plane-enterprise"
+          else
+            HELM_CHART="plane-cloud"
+          fi
+          echo "HELM_CHART=${HELM_CHART}" >> $GITHUB_OUTPUT
+          echo "Using helm chart: ${HELM_CHART}"
+
+      - name: Add helm chart repository
+        run: |
+          helm repo add plane-cloud https://private-helm.plane.tools
+          helm repo add plane-enterprise https://helm.plane.so
+          helm repo update
+
+      - name: Compare goldenset with Helm chart default values
+        id: goldenset-diff
+        run: |
+          set -e
+          GOLDENSET_DIR="./deployments/local_deployments"
+          BODY_FILE="./goldenset-diff-comment.md"
+          HAS_DIFF="false"
+
+          for TYPE in cloud enterprise; do
+            GOLDENSET="${GOLDENSET_DIR}/goldenset_${TYPE}.yml"
+            CHART_VALUES="/tmp/chart-${TYPE}.yaml"
+            DIFF_OUTPUT="/tmp/diff-${TYPE}.txt"
+
+            echo "Fetching default values for plane-${TYPE}..."
+            helm show values "plane-${TYPE}/plane-${TYPE}" > "${CHART_VALUES}" 2>/dev/null || true
+
+            if [ -f "${GOLDENSET}" ]; then
+              diff -u "${CHART_VALUES}" "${GOLDENSET}" 2>/dev/null | head -500 > "${DIFF_OUTPUT}" || true
+              if [ -s "${DIFF_OUTPUT}" ]; then
+                HAS_DIFF="true"
+                if [ ! -f "${BODY_FILE}" ] || [ ! -s "${BODY_FILE}" ]; then
+                  echo "# Goldenset vs Helm chart default values" > "${BODY_FILE}"
+                  echo "" >> "${BODY_FILE}"
+                  echo "Differences between \`goldenset_*.yml\` (this PR) and the default values from the Helm chart." >> "${BODY_FILE}"
+                  echo "" >> "${BODY_FILE}"
+                fi
+                echo "## goldenset_${TYPE}.yml vs chart defaults" >> "${BODY_FILE}"
+                echo "" >> "${BODY_FILE}"
+                echo "<details><summary>Unified diff (chart defaults → goldenset overrides)</summary>" >> "${BODY_FILE}"
+                echo "" >> "${BODY_FILE}"
+                echo '```diff' >> "${BODY_FILE}"
+                cat "${DIFF_OUTPUT}" >> "${BODY_FILE}"
+                echo '```' >> "${BODY_FILE}"
+                echo "</details>" >> "${BODY_FILE}"
+                echo "" >> "${BODY_FILE}"
+              fi
+            fi
+          done
+
+          echo "has_diff=${HAS_DIFF}" >> $GITHUB_OUTPUT
+
+      - name: Comment goldenset diff on PR
+        if: steps.goldenset-diff.outputs.has_diff == 'true'
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          token: ${{ secrets.PAT }}
+          issue-number: ${{ github.event.client_payload.pull_request.number }}
+          body-path: goldenset-diff-comment.md
+          comment-id: goldenset-vs-helm-diff
+
+      - name: Deploy using helm with custom values
+        run: |
+          RELEASE_NAME="${{ needs.pre-requisites.outputs.release_version }}"
+          CHART_REF="${{ steps.decide_chart.outputs.HELM_CHART }}/${{ steps.decide_chart.outputs.HELM_CHART }}"
+          NAMESPACE="${{ needs.pre-requisites.outputs.release_version }}"
+          APP_HOST="${{ needs.pre-requisites.outputs.release_version }}.feat.plane.town"
+          DEPLOY_TYPE="${{ github.event.client_payload.slash_command.args.named.type }}"
+          GOLDENSET="./deployments/local_deployments/goldenset_${DEPLOY_TYPE}.yml"
+
+          if [ "${DEPLOY_TYPE}" == "enterprise" ]; then
+            helm upgrade --install ${RELEASE_NAME} ${CHART_REF} \
+              --namespace ${NAMESPACE} \
+              --create-namespace \
+              --set dockerRegistry.password=${{ secrets.DOCKERHUB_TOKEN }} \
+              --set dockerRegistry.enabled=true \
+              --set env.web_url=https://${APP_HOST} \
+              --set ssl.createIssuer=true \
+              --set ssl.issuer=cloudflare \
+              --set ssl.token=${{ env.cloudflare_token }} \
+              --set ssl.email=engineering@plane.so \
+              --set ssl.generateCerts=true \
+              --set env.storageClass=gp2 \
+              --values ${GOLDENSET} \
+              --dry-run
+          else
+            helm upgrade --install ${RELEASE_NAME} ${CHART_REF} \
+              --namespace ${NAMESPACE} \
+              --create-namespace \
+              --set dockerhub.password=${{ secrets.DOCKERHUB_TOKEN }} \
+              --set ingress.app_host=${APP_HOST} \
+              --set ssl.create_issuer=true \
+              --set ssl.issuer=cloudflare \
+              --set ssl.token=${{ env.cloudflare_token }} \
+              --set ssl.email=engineering@plane.so \
+              --set ssl.generate_certs=true \
+              --set services.storage_class=gp2 \
+              --set web.enabled=true \
+              --set space.enabled=true \
+              --set admin.enabled=true \
+              --set api.enabled=true \
+              --set proxy.enabled=true \
+              --set live.enabled=true \
+              --set silo.enabled=true \
+              --set pi.enabled=false \
+              --set marketplace.enabled=false \
+              --set auth.enabled=false \
+              --set external_api.enabled=false \
+              --set email_service.enabled=false \
+              --set pi_worker.enabled=false \
+              --set pi_beat_worker.enabled=false \
+              --set django_backend.session_cookie_domain=.plane.town \
+              --set opensearch.enabled=false \
+              --values ${GOLDENSET} \
+              --dry-run
+          fi

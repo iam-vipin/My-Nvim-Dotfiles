@@ -22,7 +22,7 @@ jobs:
           issue-number: ${{ github.event.client_payload.pull_request.number }}
           body: |
             ## Deploy PR Guidelines
-            Please fix merge conflicts before using the deploy-pr command.
+            Please fix merge conflicts IF ANY before using the deploy-pr command.
           comment-id: deploy-pr-guidelines
 
       - name: Validate deploy type
@@ -467,14 +467,16 @@ jobs:
               --create-namespace \
               --set dockerRegistry.password=${{ secrets.DOCKERHUB_TOKEN }} \
               --set dockerRegistry.enabled=true \
-              --set services.api.image=makeplane/plane-backend:${IMAGE_TAG} \
-              --set services.silo.image=makeplane/plane-silo:${IMAGE_TAG} \
-              --set services.web.image=makeplane/plane-web:${IMAGE_TAG} \
-              --set services.space.image=makeplane/plane-space:${IMAGE_TAG} \
-              --set services.live.image=makeplane/plane-live:${IMAGE_TAG} \
-              --set services.admin.image=makeplane/plane-admin:${IMAGE_TAG} \
-              --set services.proxy.image=makeplane/plane-proxy:${IMAGE_TAG} \
+              --set services.api.image=makeplane/plane-backend \
+              --set services.silo.image=makeplane/plane-silo \
+              --set services.web.image=makeplane/plane-web \
+              --set services.space.image=makeplane/plane-space \
+              --set services.live.image=makeplane/plane-live \
+              --set services.admin.image=makeplane/plane-admin \
+              --set services.proxy.image=makeplane/plane-proxy \
               --set planeVersion=${IMAGE_TAG} \
+              --set ingress.enabled=true \
+              --set license.licenseDomain={APP_HOST} \
               --set env.web_url=https://${APP_HOST} \
               --set ssl.createIssuer=true \
               --set ssl.issuer=cloudflare \
@@ -482,7 +484,7 @@ jobs:
               --set ssl.email=engineering@plane.so \
               --set ssl.generateCerts=true \
               --set env.storageClass=gp2 \
-              --values ${GOLDENSET} --dry-run
+              --values ${GOLDENSET}
           else
             helm upgrade --install "${RELEASE_NAME}" "${CHART_REF}" \
               --namespace ${NAMESPACE} \
@@ -512,7 +514,7 @@ jobs:
               --set django_backend.session_cookie_domain=.plane.town \
               --set opensearch.enabled=false \
               --set planeVersion=${IMAGE_TAG} \
-              --values ${GOLDENSET} --dry-run
+              --values ${GOLDENSET}
           fi
 
       - name: Comment URL to access plane deployment
@@ -521,5 +523,5 @@ jobs:
           token: ${{ secrets.PAT }}
           issue-number: ${{ github.event.client_payload.pull_request.number }}
           body: |
-            Plane deployment is available at <https://${APP_HOST}>.
+            Plane deployment will be available at https://${{ needs.pre-requisites.outputs.release_version }}.feat.plane.town in few minutes.
           comment-id: deploy-plane-url

@@ -19,8 +19,10 @@ jobs:
         uses: peter-evans/create-or-update-comment@v3
         with:
           token: ${{ secrets.PAT }}
+          issue-number: ${{ github.event.client_payload.pull_request.number }}
           body: |
-            Please fix merge conflicts to use deploy-pr command.
+            ## Deploy PR Guidelines
+            Please fix merge conflicts before using the deploy-pr command.
           comment-id: deploy-pr-guidelines
 
       - name: Validate deploy type

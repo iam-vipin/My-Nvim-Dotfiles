@@ -126,13 +126,6 @@ export const WORKSPACE_SETTINGS: Record<TWorkspaceSettingsTabs, TWorkspaceSettin
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/customers/`,
   },
-  applications: {
-    key: "applications",
-    i18n_label: "workspace_settings.settings.applications.title",
-    href: "/settings/applications",
-    access: [EUserWorkspaceRoles.ADMIN],
-    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/settings/applications/`),
-  },
   templates: {
     key: "templates",
     i18n_label: "common.templates",
@@ -146,13 +139,6 @@ export const WORKSPACE_SETTINGS: Record<TWorkspaceSettingsTabs, TWorkspaceSettin
     href: `/settings/plane-intelligence`,
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/plane-intelligence/`,
-  },
-  wiki: {
-    key: "wiki",
-    i18n_label: "workspace_settings.settings.wiki.title",
-    href: `/settings/wiki`,
-    access: [EUserWorkspaceRoles.ADMIN],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/wiki/`,
   },
   "access-tokens": {
     key: "access-tokens",
@@ -175,7 +161,7 @@ export const GROUPED_WORKSPACE_SETTINGS: Record<WORKSPACE_SETTINGS_CATEGORY, TWo
     WORKSPACE_SETTINGS["import"],
     WORKSPACE_SETTINGS["export"],
     WORKSPACE_SETTINGS["worklogs"],
-    // WORKSPACE_SETTINGS["identity"], // TODO: Enable it back once production testing is complete
+    WORKSPACE_SETTINGS["identity"],
   ],
   [WORKSPACE_SETTINGS_CATEGORY.FEATURES]: [
     WORKSPACE_SETTINGS["project_states"],

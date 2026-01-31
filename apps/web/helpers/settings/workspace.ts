@@ -13,11 +13,11 @@
 
 import { store } from "@/lib/store-context";
 import { E_FEATURE_FLAGS } from "@plane/constants";
+import type { TWorkspaceSettingsTabs } from "@plane/types";
 
-export type TRenderSettingsLink = (workspaceSlug: string, settingKey: string) => boolean;
+export type TRenderSettingsLink = (workspaceSlug: string, settingKey: TWorkspaceSettingsTabs) => boolean;
 
 export const shouldRenderSettingLink: TRenderSettingsLink = (workspaceSlug, settingKey) => {
-  const isApplicationsEnabled = store.featureFlags.getFeatureFlag(workspaceSlug, E_FEATURE_FLAGS.APPLICATIONS, false);
   const isPiChatEnabled = store.featureFlags.getFeatureFlag(workspaceSlug, E_FEATURE_FLAGS.PI_CHAT, false);
   const isEditorOPSEnabled = store.featureFlags.getFeatureFlag(workspaceSlug, E_FEATURE_FLAGS.EDITOR_AI_OPS, false);
   const isPiDedupeEnabled = store.featureFlags.getFeatureFlag(workspaceSlug, E_FEATURE_FLAGS.PI_DEDUPE, false);
@@ -29,8 +29,6 @@ export const shouldRenderSettingLink: TRenderSettingsLink = (workspaceSlug, sett
   // Cloud SSO is enabled if the instance is not self-managed (i.e cloud only)
   const isCloudSSOEnabled = store.instance.config?.is_self_managed === false ? true : false;
   switch (settingKey) {
-    case "applications":
-      return isApplicationsEnabled;
     case "plane-intelligence":
       return isPiChatEnabled || isEditorOPSEnabled || isPiDedupeEnabled;
     case "identity":

@@ -31,10 +31,8 @@ export type TWorkspaceSettingsTabs =
   | "teamspaces"
   | "initiatives"
   | "customers"
-  | "applications"
   | "templates"
   | "plane-intelligence"
-  | "wiki"
   | "connections"
   | "access-tokens";
 export type TWorkspaceSettingsItem = {

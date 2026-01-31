@@ -27,7 +27,6 @@ import {
   WorkItemsIcon,
   StartDatePropertyIcon,
   ChevronDownIcon,
-  ChevronRightIcon,
   InfoIcon,
 } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -269,17 +268,6 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
         updateLink={handleUpdateLink}
       />
       <>
-        <div className={`sticky z-10 top-0 flex items-center justify-between bg-surface-1 pb-5 pt-5`}>
-          <div>
-            <button
-              className="flex h-5 w-5 items-center justify-center rounded-full bg-layer-3"
-              onClick={() => handleClose()}
-            >
-              <ChevronRightIcon className="h-3 w-3 stroke-2 text-on-color" />
-            </button>
-          </div>
-        </div>
-
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-5 pt-2">
             <Controller

@@ -15,6 +15,14 @@ jobs:
       pull-requests: write
       issues: write
     steps:
+      - name: Guidelines
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          token: ${{ secrets.PAT }}
+          body: |
+            Please fix merge conflicts to use deploy-pr command.
+          comment-id: deploy-pr-guidelines
+
       - name: Validate deploy type
         run: |
           DEPLOY_TYPE="${{ github.event.client_payload.slash_command.args.named.type }}"
@@ -432,15 +440,27 @@ jobs:
       - name: Deploy using helm with custom values
         run: |
           RELEASE_NAME="${{ needs.pre-requisites.outputs.release_version }}"
-          CHART_REF="${{ steps.decide_chart.outputs.HELM_CHART }}/${{ steps.decide_chart.outputs.HELM_CHART }}"
+          DEPLOY_TYPE="${{ github.event.client_payload.slash_command.args.named.type }}"
           NAMESPACE="${{ needs.pre-requisites.outputs.release_version }}"
           APP_HOST="${{ needs.pre-requisites.outputs.release_version }}.feat.plane.town"
-          DEPLOY_TYPE="${{ github.event.client_payload.slash_command.args.named.type }}"
-          GOLDENSET="./deployments/local_deployments/goldenset_${DEPLOY_TYPE}.yml"
           IMAGE_TAG="${{ needs.pre-requisites.outputs.release_version }}"
+          GOLDENSET="./deployments/local_deployments/goldenset_${DEPLOY_TYPE}.yml"
 
           if [ "${DEPLOY_TYPE}" == "enterprise" ]; then
-            helm upgrade --install ${RELEASE_NAME} ${CHART_REF} \
+            CHART_REF="plane-enterprise/plane-enterprise"
+          else
+            CHART_REF="plane-cloud/plane-cloud"
+          fi
+
+          if [ -z "${RELEASE_NAME}" ] || [ -z "${CHART_REF}" ]; then
+            echo "::error::RELEASE_NAME or CHART_REF is empty. RELEASE_NAME='${RELEASE_NAME}' CHART_REF='${CHART_REF}'"
+            exit 1
+          fi
+
+          echo "Deploying release=${RELEASE_NAME} chart=${CHART_REF} namespace=${NAMESPACE}"
+
+          if [ "${DEPLOY_TYPE}" == "enterprise" ]; then
+            helm upgrade --install "${RELEASE_NAME}" "${CHART_REF}" \
               --namespace ${NAMESPACE} \
               --create-namespace \
               --set dockerRegistry.password=${{ secrets.DOCKERHUB_TOKEN }} \
@@ -452,7 +472,7 @@ jobs:
               --set services.live.image=makeplane/plane-live:${IMAGE_TAG} \
               --set services.admin.image=makeplane/plane-admin:${IMAGE_TAG} \
               --set services.proxy.image=makeplane/plane-proxy:${IMAGE_TAG} \
-              --set planeVersion=${IMAGE_TAG} \              
+              --set planeVersion=${IMAGE_TAG} \
               --set env.web_url=https://${APP_HOST} \
               --set ssl.createIssuer=true \
               --set ssl.issuer=cloudflare \
@@ -460,10 +480,9 @@ jobs:
               --set ssl.email=engineering@plane.so \
               --set ssl.generateCerts=true \
               --set env.storageClass=gp2 \
-              --values ${GOLDENSET} \
-              --dry-run
+              --values ${GOLDENSET} --dry-run
           else
-            helm upgrade --install ${RELEASE_NAME} ${CHART_REF} \
+            helm upgrade --install "${RELEASE_NAME}" "${CHART_REF}" \
               --namespace ${NAMESPACE} \
               --create-namespace \
               --set dockerhub.password=${{ secrets.DOCKERHUB_TOKEN }} \
@@ -474,23 +493,31 @@ jobs:
               --set ssl.email=engineering@plane.so \
               --set ssl.generate_certs=true \
               --set services.storage_class=gp2 \
-              --set web.enabled=true \
-              --set space.enabled=true \
-              --set admin.enabled=true \
-              --set api.enabled=true \
-              --set proxy.enabled=true \
-              --set live.enabled=true \
-              --set silo.enabled=true \
-              --set pi.enabled=false \
-              --set marketplace.enabled=false \
-              --set auth.enabled=false \
-              --set external_api.enabled=false \
-              --set email_service.enabled=false \
-              --set pi_worker.enabled=false \
-              --set pi_beat_worker.enabled=false \
+              --set services.web.enabled=true \
+              --set services.space.enabled=true \
+              --set services.admin.enabled=true \
+              --set services.api.enabled=true \
+              --set services.proxy.enabled=true \
+              --set services.live.enabled=true \
+              --set services.silo.enabled=true \
+              --set services.pi.enabled=false \
+              --set services.marketplace.enabled=false \
+              --set services.auth.enabled=false \
+              --set services.external_api.enabled=false \
+              --set services.email_service.enabled=false \
+              --set services.pi_worker.enabled=false \
+              --set services.pi_beat_worker.enabled=false \
               --set django_backend.session_cookie_domain=.plane.town \
               --set opensearch.enabled=false \
               --set planeVersion=${IMAGE_TAG} \
-              --values ${GOLDENSET} \
-              --dry-run
+              --values ${GOLDENSET} --dry-run
           fi
+
+      - name: Comment URL to access plane deployment
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          token: ${{ secrets.PAT }}
+          issue-number: ${{ github.event.client_payload.pull_request.number }}
+          body: |
+            Plane deployment is available at <https://${APP_HOST}>.
+          comment-id: deploy-plane-url

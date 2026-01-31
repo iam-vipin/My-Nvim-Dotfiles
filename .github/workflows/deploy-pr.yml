@@ -490,9 +490,9 @@ jobs:
             helm upgrade --install "${RELEASE_NAME}" "${CHART_REF}" \
               --namespace ${NAMESPACE} \
               --create-namespace \
-              --set dockerRegistry.loginid=${{ secrets.DOCKERHUB_USERNAME }} \
-              --set dockerRegistry.password=${{ secrets.DOCKERHUB_TOKEN }} \
-              --set dockerRegistry.enabled=true \
+              --set dockerhub.login_id=${{ secrets.DOCKERHUB_USERNAME }} \
+              --set dockerhub.password=${{ secrets.DOCKERHUB_TOKEN }} \
+              --set docker.enabled=true \
               --set ingress.app_host=${APP_HOST} \
               --set ssl.create_issuer=true \
               --set ssl.issuer=cloudflare \

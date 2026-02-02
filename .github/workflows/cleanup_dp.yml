@@ -42,6 +42,8 @@ jobs:
           helm version
 
       - name: Cleanup merged or closed PR deployments
+        env:
+          GH_TOKEN: ${{ secrets.PAT }}
         run: |
           set -e
           # Match release names ee-<PR>-ent or ee-<PR>-cloud (e.g. ee-5657-ent, ee-5657-cloud)
@@ -57,11 +59,11 @@ jobs:
               pv_list=$(kubectl get pv -o json 2>/dev/null | jq -r --arg ns "$namespace" '.items[] | select(.spec.claimRef.namespace == $ns) | .metadata.name' 2>/dev/null) || true
               for pv in $pv_list; do
                 echo "Removing PV $pv (was bound to namespace $namespace)"
-                kubectl patch pv "$pv" -p '{"metadata":{"finalizers":null}}' --type=merge 2>/dev/null || true
+                kubectl patch pv "$pv" --type=json -p='[{"op": "remove", "path": "/metadata/finalizers"}]' 2>/dev/null || true
                 kubectl delete pv "$pv" --grace-period=0 --force 2>/dev/null || true
               done
               # Remove namespace finalizers if stuck, then delete namespace
-              kubectl patch ns "$namespace" -p '{"metadata":{"finalizers":null}}' --type=merge 2>/dev/null || true
+              kubectl patch ns "$namespace" --type=json -p='[{"op": "remove", "path": "/metadata/finalizers"}]' 2>/dev/null || true
               kubectl delete ns "$namespace" --grace-period=0 --force 2>/dev/null || true
             fi
           done

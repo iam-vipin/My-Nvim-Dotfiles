@@ -233,7 +233,7 @@ class IssueExportSerializer(IssueSerializer):
     project_identifier = serializers.CharField(source="project.identifier", read_only=True, default="")
     state_name = serializers.CharField(source="state.name", read_only=True, default="")
     created_by_name = serializers.CharField(source="created_by.full_name", read_only=True, default="")
-
+    description = serializers.SerializerMethodField()
     assignees = serializers.SerializerMethodField()
     parent = serializers.SerializerMethodField()
     labels = serializers.SerializerMethodField()
@@ -257,6 +257,7 @@ class IssueExportSerializer(IssueSerializer):
             "state_name",
             "priority",
             "assignees",
+            "description",
             "subscribers",
             "created_by_name",
             "start_date",
@@ -363,3 +364,8 @@ class IssueExportSerializer(IssueSerializer):
             }
             for comment in obj.issue_comments.all()
         ]
+
+    def get_description(self, obj):
+        if (obj.description_stripped):
+            return obj.description_stripped
+        return ""

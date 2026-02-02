@@ -52,6 +52,10 @@ RUN rm -rf /app/space/apps/space/.next/cache
 COPY --from=proxy-img /usr/bin/caddy /usr/bin/caddy
 COPY dist/Caddyfile /app/proxy/Caddyfile
 
+COPY LICENSE.txt .
+RUN mkdir -p /usr/share/licenses/plane/
+COPY LICENSE.txt /usr/share/licenses/plane/LICENSE.txt
+
 COPY --from=email-img /opt/email /app/email
 
 COPY --from=backend-img /code /app/backend

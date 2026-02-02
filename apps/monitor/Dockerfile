@@ -19,5 +19,9 @@ FROM alpine:latest AS run
 WORKDIR /app
 COPY --from=build /app/prime-monitor /usr/local/bin/prime-monitor
 
+COPY LICENSE.txt .
+RUN mkdir -p /usr/share/licenses/plane/
+COPY LICENSE.txt /usr/share/licenses/plane/LICENSE.txt
+
 CMD [ "prime-monitor", "start" ]
 

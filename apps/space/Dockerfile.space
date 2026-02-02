@@ -82,7 +82,12 @@ COPY --from=installer /app/apps/space/build ./apps/space/build
 COPY --from=installer /app/apps/space/node_modules ./apps/space/node_modules
 COPY --from=installer /app/node_modules ./node_modules
 
+
 WORKDIR /app/apps/space
+
+COPY LICENSE.txt .
+RUN mkdir -p /usr/share/licenses/plane/
+COPY LICENSE.txt /usr/share/licenses/plane/LICENSE.txt
 
 EXPOSE 3000
 

@@ -50,6 +50,10 @@ COPY package.json package.json
 RUN apk --no-cache add "bash~=5.2"
 COPY ./bin ./bin/
 
+COPY LICENSE.txt .
+RUN mkdir -p /usr/share/licenses/plane/
+COPY LICENSE.txt /usr/share/licenses/plane/LICENSE.txt
+
 RUN mkdir -p /code/plane/logs
 RUN chmod +x ./bin/*
 RUN chmod -R 777 /code

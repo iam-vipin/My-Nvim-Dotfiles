@@ -60,6 +60,10 @@ COPY --from=installer /app/apps/live/node_modules ./apps/live/node_modules
 COPY --from=installer /app/node_modules ./node_modules
 COPY --from=installer /app/apps/live/package.json ./apps/live/package.json
 
+COPY LICENSE.txt .
+RUN mkdir -p /usr/share/licenses/plane/
+COPY LICENSE.txt /usr/share/licenses/plane/LICENSE.txt
+
 ENV TURBO_TELEMETRY_DISABLED=1
 
 EXPOSE 3000

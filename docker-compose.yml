@@ -42,7 +42,7 @@ services:
       - .env
     build:
       context: .
-      dockerfile: ./live/Dockerfile.live
+      dockerfile: ./apps/live/Dockerfile.live
       args:
         DOCKER_BUILDKIT: 1
     restart: always
@@ -56,7 +56,7 @@ services:
       - .env
     build:
       context: .
-      dockerfile: ./silo/Dockerfile.silo
+      dockerfile: ./apps/silo/Dockerfile.silo
       args:
         DOCKER_BUILDKIT: 1
     restart: always
@@ -68,8 +68,18 @@ services:
     env_file:
       - .env
     build:
-      context: .
-      dockerfile: ./monitor/Dockerfile
+      context: ./apps/monitor
+      dockerfile: Dockerfile
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+
+  email:
+    env_file:
+      - .env
+    build:
+      context: ./apps/email
+      dockerfile: Dockerfile
       args:
         DOCKER_BUILDKIT: 1
     restart: always

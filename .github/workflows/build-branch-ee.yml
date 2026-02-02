@@ -168,7 +168,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Admin Build and Push
-        uses: makeplane/actions/build-push@v1.1.0
+        uses: makeplane/actions/build-push@v1.3.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -190,7 +190,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Web Build and Push
-        uses: makeplane/actions/build-push@v1.1.0
+        uses: makeplane/actions/build-push@v1.3.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -212,7 +212,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Space Build and Push
-        uses: makeplane/actions/build-push@v1.1.0
+        uses: makeplane/actions/build-push@v1.3.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -234,7 +234,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Live Build and Push
-        uses: makeplane/actions/build-push@v1.1.0
+        uses: makeplane/actions/build-push@v1.3.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -256,7 +256,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Silo Build and Push
-        uses: makeplane/actions/build-push@v1.1.0
+        uses: makeplane/actions/build-push@v1.3.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -278,7 +278,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Backend Build and Push
-        uses: makeplane/actions/build-push@v1.1.0
+        uses: makeplane/actions/build-push@v1.3.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -300,7 +300,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Proxy Build and Push
-        uses: makeplane/actions/build-push@v1.1.0
+        uses: makeplane/actions/build-push@v1.3.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -336,7 +336,7 @@ jobs:
           echo "PRIVATE_KEY=${PRIVATE_KEY}" >> $GITHUB_ENV
 
       - name: Monitor Build and Push
-        uses: makeplane/actions/build-push@v1.1.0
+        uses: makeplane/actions/build-push@v1.3.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -364,7 +364,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Email Build and Push
-        uses: makeplane/actions/build-push@v1.1.0
+        uses: makeplane/actions/build-push@v1.3.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -379,16 +379,16 @@ jobs:
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+
   branch_build_push_plane_pi:
     name: Build-Push Plane PI Docker Image
     runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
       - name: Plane PI Build and Push
-        uses: makeplane/actions/build-push@v1.1.0
+        uses: makeplane/actions/build-push@v1.3.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
-
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -442,18 +442,13 @@ jobs:
           name: aio-assets-dist
 
       - name: AIO Build and Push
-        uses: makeplane/actions/build-push@v1.1.0
+        uses: makeplane/actions/build-push@v1.3.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          private-registry-push: ${{ needs.branch_build_setup.outputs.harbor_push }}
-          private-registry-username: ${{ secrets.HARBOR_USERNAME }}
-          private-registry-token: ${{ secrets.HARBOR_TOKEN }}
-          private-registry-addr: ${{ vars.HARBOR_REGISTRY }}
-          private-registry-project: ${{ vars.HARBOR_PROJECT }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_aio }}
           build-context: ./deployments/aio/commercial

@@ -197,7 +197,7 @@ export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps
       </div>
       <div className="mt-4">
         <Tabs defaultValue={CUSTOMER_TABS[0].key}>
-          <Tabs.List>
+          <Tabs.List className="w-fit">
             {CUSTOMER_TABS.map((tab) => (
               <Tabs.Trigger key={tab.key} value={tab.key} size="sm">
                 {tab.label}

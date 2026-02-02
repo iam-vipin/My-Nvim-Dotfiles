@@ -11,6 +11,14 @@ on:
       - "ready_for_review"
       - "review_requested"
       - "reopened"
+    paths-ignore:
+      - ".github/**"
+      - "**/*.md"
+      - "docs/**"
+      - ".gitignore"
+      - ".editorconfig"
+      - "LICENSE"
+      - "**/Dockerfile*"
 
 jobs:
   license-check:

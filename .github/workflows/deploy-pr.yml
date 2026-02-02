@@ -448,7 +448,6 @@ jobs:
           PR_NUMBER="${{ github.event.client_payload.pull_request.number }}"
           DEPLOY_TYPE="${{ github.event.client_payload.slash_command.args.named.type }}"
           IMAGE_TAG="${{ needs.pre-requisites.outputs.release_version }}"
-          GOLDENSET="./deployments/local_deployments/goldenset_${DEPLOY_TYPE}.yml"
 
           if [ "${DEPLOY_TYPE}" == "enterprise" ]; then
             CHART_REF="plane-enterprise/plane-enterprise"
@@ -489,8 +488,7 @@ jobs:
               --set ssl.token=${{ env.cloudflare_token }} \
               --set ssl.email=engineering@plane.so \
               --set ssl.generateCerts=true \
-              --set env.storageClass=gp2 \
-              --values ${GOLDENSET}
+              --set env.storageClass=gp2
           else
             RELEASE_NAME="${RELEASE_NAME}-cloud"
             APP_HOST="feat-${PR_NUMBER}-cloud.feat.plane.town"
@@ -531,8 +529,7 @@ jobs:
               --set services.pi_beat_worker.enabled=false \
               --set django_backend.session_cookie_domain=.plane.town \
               --set opensearch.enabled=false \
-              --set planeVersion=${IMAGE_TAG} \
-              --values ${GOLDENSET}
+              --set planeVersion=${IMAGE_TAG}
           fi
 
       - name: Comment URL to access plane deployment

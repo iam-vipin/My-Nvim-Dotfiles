@@ -1,4 +1,4 @@
-name: Cleanup Deploy Previews
+name: Cleanup Closed PRs
 
 on:
   workflow_dispatch:
@@ -8,6 +8,10 @@ on:
 jobs:
   execute:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write    
     steps:
       # Checkout the code
       - uses: actions/checkout@v2

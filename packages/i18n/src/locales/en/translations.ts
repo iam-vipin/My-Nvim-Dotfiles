@@ -3251,6 +3251,9 @@ if you are sure your search is right. `,
     role: "Role",
   },
   power_k: {
+    actions_commands: {
+      bulk_delete_work_items: "Bulk delete work items",
+    },
     contextual_actions: {
       work_item: {
         title: "Work item actions",
@@ -3453,6 +3456,7 @@ if you are sure your search is right. `,
       workspace_level: "Workspace level",
     },
     group_titles: {
+      actions: "Actions",
       contextual: "Contextual",
       navigation: "Navigate",
       create: "Create",

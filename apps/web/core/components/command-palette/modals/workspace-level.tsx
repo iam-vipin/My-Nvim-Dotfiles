@@ -13,11 +13,19 @@
 
 import { lazy, Suspense } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "react-router";
+// plane imports
+import { EIssueServiceType } from "@plane/types";
+import type { TIssue } from "@plane/types";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useDashboards } from "@/plane-web/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 // lazy imports
+const CreateUpdateWorkItemModal = lazy(() =>
+  import("@/components/issues/issue-modal/modal").then((module) => ({ default: module.CreateUpdateIssueModal }))
+);
 const CreateProjectModal = lazy(() =>
   import("@/components/project/create-project-modal").then((module) => ({ default: module.CreateProjectModal }))
 );
@@ -48,10 +56,13 @@ export type TWorkspaceLevelModalsProps = {
 };
 
 export const WorkspaceLevelModals = observer(function WorkspaceLevelModals(props: TWorkspaceLevelModalsProps) {
-  // router
   const { workspaceSlug } = props;
+  // router
+  const { cycleId, moduleId, workItem: workItemIdentifier } = useParams();
   // store hooks
   const {
+    isCreateIssueModalOpen,
+    toggleCreateIssueModal,
     isCreateProjectModalOpen,
     toggleCreateProjectModal,
     createUpdateTeamspaceModal,
@@ -62,7 +73,13 @@ export const WorkspaceLevelModals = observer(function WorkspaceLevelModals(props
     toggleCreateInitiativeModal,
     createUpdateCustomerModal,
     toggleCreateCustomerModal,
+    createWorkItemAllowedProjectIds,
   } = useCommandPalette();
+  const {
+    issue: { getIssueById, getIssueIdByIdentifier },
+  } = useIssueDetail();
+  const { fetchSubIssues: fetchSubWorkItems } = useIssueDetail(EIssueServiceType.ISSUES);
+  const { fetchSubIssues: fetchEpicSubWorkItems } = useIssueDetail(EIssueServiceType.EPICS);
   const {
     workspaceDashboards: {
       isCreateUpdateModalOpen: isWorkspaceDashboardModalOpen,
@@ -71,9 +88,32 @@ export const WorkspaceLevelModals = observer(function WorkspaceLevelModals(props
       updateCreateUpdateModalPayload: updateWorkspaceDashboardModalPayload,
     },
   } = useDashboards();
+  // derived values
+  const workItemId = workItemIdentifier ? getIssueIdByIdentifier(workItemIdentifier) : undefined;
+  const workItemDetails = workItemId ? getIssueById(workItemId) : undefined;
+
+  const handleWorkItemSubmit = async (newWorkItem: TIssue) => {
+    if (!newWorkItem.project_id || !newWorkItem.id || newWorkItem.parent_id !== workItemDetails?.id) return;
+
+    const fetchAction = workItemDetails?.is_epic ? fetchEpicSubWorkItems : fetchSubWorkItems;
+    await fetchAction(workspaceSlug, newWorkItem.project_id, workItemDetails.id);
+  };
+
+  const getCreateIssueModalData = () => {
+    if (cycleId) return { cycle_id: cycleId };
+    if (moduleId) return { module_ids: [moduleId] };
+    return undefined;
+  };
 
   return (
     <Suspense>
+      <CreateUpdateWorkItemModal
+        isOpen={isCreateIssueModalOpen}
+        onClose={() => toggleCreateIssueModal(false)}
+        data={getCreateIssueModalData()}
+        onSubmit={handleWorkItemSubmit}
+        allowedProjectIds={createWorkItemAllowedProjectIds}
+      />
       <CreateProjectModal
         isOpen={isCreateProjectModalOpen}
         onClose={() => toggleCreateProjectModal(false)}

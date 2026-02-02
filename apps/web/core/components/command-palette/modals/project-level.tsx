@@ -13,13 +13,8 @@
 
 import { lazy, Suspense } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "react-router";
-// plane imports
-import { EIssueServiceType } from "@plane/types";
-import type { TIssue } from "@plane/types";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 import { EPageStoreType } from "@/plane-web/hooks/store/use-page-store";
 
@@ -41,9 +36,6 @@ const CreateUpdateAutomationModal = lazy(() =>
     default: module.CreateUpdateAutomationModal,
   }))
 );
-const CreateUpdateIssueModal = lazy(() =>
-  import("@/components/issues/issue-modal/modal").then((module) => ({ default: module.CreateUpdateIssueModal }))
-);
 const BulkDeleteIssuesModal = lazy(() =>
   import("@/components/core/modals/bulk-delete-issues-modal").then((module) => ({
     default: module.BulkDeleteIssuesModal,
@@ -57,12 +49,8 @@ export type TProjectLevelModalsProps = {
 
 export const ProjectLevelModals = observer(function ProjectLevelModals(props: TProjectLevelModalsProps) {
   const { workspaceSlug, projectId } = props;
-  // router
-  const { cycleId, moduleId, workItem: workItemIdentifier } = useParams();
   // store hooks
   const {
-    isCreateIssueModalOpen,
-    toggleCreateIssueModal,
     isBulkDeleteIssueModalOpen,
     toggleBulkDeleteIssueModal,
     isCreateCycleModalOpen,
@@ -73,43 +61,19 @@ export const ProjectLevelModals = observer(function ProjectLevelModals(props: TP
     toggleCreateViewModal,
     createPageModal,
     toggleCreatePageModal,
-    createWorkItemAllowedProjectIds,
   } = useCommandPalette();
-  const {
-    issue: { getIssueById, getIssueIdByIdentifier },
-  } = useIssueDetail();
-  const { fetchSubIssues: fetchSubWorkItems } = useIssueDetail(EIssueServiceType.ISSUES);
-  const { fetchSubIssues: fetchEpicSubWorkItems } = useIssueDetail(EIssueServiceType.EPICS);
   const {
     projectAutomations: { createUpdateModalConfig, setCreateUpdateModalConfig },
   } = useAutomations();
-  // derived values
-  const workItemId = workItemIdentifier ? getIssueIdByIdentifier(workItemIdentifier) : undefined;
-  const workItemDetails = workItemId ? getIssueById(workItemId) : undefined;
-
-  const handleWorkItemSubmit = async (newWorkItem: TIssue) => {
-    if (!newWorkItem.project_id || !newWorkItem.id || newWorkItem.parent_id !== workItemDetails?.id) return;
-
-    const fetchAction = workItemDetails?.is_epic ? fetchEpicSubWorkItems : fetchSubWorkItems;
-    await fetchAction(workspaceSlug, newWorkItem.project_id, workItemDetails.id);
-  };
-
-  const getCreateIssueModalData = () => {
-    if (cycleId) return { cycle_id: cycleId };
-    if (moduleId) return { module_ids: [moduleId] };
-    return undefined;
-  };
 
   return (
     <Suspense>
-      <CreateUpdateIssueModal
-        isOpen={isCreateIssueModalOpen}
-        onClose={() => toggleCreateIssueModal(false)}
-        data={getCreateIssueModalData()}
-        onSubmit={handleWorkItemSubmit}
-        allowedProjectIds={createWorkItemAllowedProjectIds}
+      <BulkDeleteIssuesModal
+        isOpen={isBulkDeleteIssueModalOpen}
+        onClose={() => toggleBulkDeleteIssueModal(false)}
+        projectId={projectId}
+        workspaceSlug={workspaceSlug}
       />
-      <BulkDeleteIssuesModal isOpen={isBulkDeleteIssueModalOpen} onClose={() => toggleBulkDeleteIssueModal(false)} />
       <CycleCreateUpdateModal
         isOpen={isCreateCycleModalOpen}
         handleClose={() => toggleCreateCycleModal(false)}

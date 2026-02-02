@@ -70,6 +70,7 @@ export type TPowerKCommandGroup =
   | "contextual"
   | "navigation"
   | "create"
+  | "actions"
   | "general"
   | "settings"
   | "help"

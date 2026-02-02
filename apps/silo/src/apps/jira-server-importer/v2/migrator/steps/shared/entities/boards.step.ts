@@ -166,7 +166,7 @@ export class JiraBoardsStep implements IStep {
 
     if (result.hasMore) {
       return createContinueContext({
-        nextStartAt: startAt + this.PAGE_SIZE, // Fixed: nextStartAt instead of startAt
+        nextStartAt: startAt + result.items.length,
         totalProcessed,
         pulled,
         pushed: pulled,

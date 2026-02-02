@@ -236,7 +236,7 @@ export class JiraCyclesStep implements IStep {
     if (pulled.hasMore) {
       return {
         pageCtx: {
-          startAt: sprintsStartAt + this.PAGE_SIZE,
+          startAt: sprintsStartAt + pulled.items.length,
           hasMore: true,
           totalProcessed: newTotalProcessed,
         },
@@ -247,7 +247,7 @@ export class JiraCyclesStep implements IStep {
         },
         state: {
           currentBoardIndex,
-          sprintsStartAt: sprintsStartAt + this.PAGE_SIZE,
+          sprintsStartAt: sprintsStartAt + pulled.items.length,
         },
       };
     }

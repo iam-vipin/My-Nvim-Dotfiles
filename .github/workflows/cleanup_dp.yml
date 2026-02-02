@@ -9,9 +9,9 @@ jobs:
   execute:
     runs-on: ubuntu-latest
     permissions:
+      id-token: write
       contents: read
-      pull-requests: write
-      issues: write    
+      pull-requests: read    
     steps:
       # Checkout the code
       - uses: actions/checkout@v2

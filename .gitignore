@@ -107,7 +107,6 @@ monitor/prime.key
 monitor/prime.key.pub
 monitor.db
 
-.cursorrules
 .cursor
 
 build/

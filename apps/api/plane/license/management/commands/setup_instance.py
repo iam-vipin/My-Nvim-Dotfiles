@@ -10,6 +10,7 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Python imports
+import os
 import secrets
 import uuid
 
@@ -26,15 +27,11 @@ from plane.db.models import User, Profile
 class Command(BaseCommand):
     help = "Check if instance in registered else register"
 
-    def add_arguments(self, parser):
-        # Positional argument
-        parser.add_argument("admin_email", type=str, help="Admin Email")
-
     def handle(self, *args, **options):
-        admin_email = options.get("admin_email", False)
+        admin_email = os.environ.get("INSTANCE_ADMIN_EMAIL", "").strip()
 
         if not admin_email:
-            raise CommandError("admin email is required")
+            raise CommandError("INSTANCE_ADMIN_EMAIL environment variable is required")
 
         user = User.objects.filter(email=admin_email).first()
         if user is None:

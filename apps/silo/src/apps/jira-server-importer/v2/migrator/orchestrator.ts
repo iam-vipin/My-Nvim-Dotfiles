@@ -27,7 +27,7 @@ import type {
 } from "@/apps/jira-server-importer/v2/types";
 import { getJobCredentials, getJobData } from "@/helpers/job";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
-import { getAPIClient, getAPIClientInternal } from "@/services/client";
+import { getAPIClientInternal } from "@/services/client";
 import type { TaskHandler, TaskHeaders } from "@/types";
 import type { MQ, Store } from "@/worker/base";
 import { redisStorageService } from "../services/storage.service";
@@ -171,7 +171,8 @@ export class JiraImportOrchestrator implements TaskHandler {
     step: IStep,
     error: unknown
   ): Promise<void> {
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMessage =
+      error instanceof Error ? error.message : typeof error === "object" ? JSON.stringify(error) : String(error);
 
     logger.error(`[ORCHESTRATOR] Step failed, continuing to next step`, {
       jobId: state.jobId,
@@ -376,8 +377,6 @@ export class JiraImportOrchestrator implements TaskHandler {
       [timestamp]: stateSnapshot,
     };
 
-    // Mark job complete
-    const client = getAPIClient();
     await client.importJob.updateImportJob(jobId, {
       success_metadata: updatedMetadata,
       status: "FINISHED",
@@ -493,7 +492,7 @@ export class JiraImportOrchestrator implements TaskHandler {
 
     // Append to existing error_metadata
     const updatedErrorMetadata = {
-      error: error instanceof Error ? error.message : String(error),
+      error: error instanceof Error ? error.message : typeof error === "object" ? JSON.stringify(error) : String(error),
       stateSnapshots: {
         [timestamp]: stateSnapshot,
       },

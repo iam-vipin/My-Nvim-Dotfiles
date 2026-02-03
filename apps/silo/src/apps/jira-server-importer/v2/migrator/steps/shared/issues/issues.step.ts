@@ -42,7 +42,7 @@ import type {
 } from "@/apps/jira-server-importer/v2/types";
 import { E_ADDITIONAL_STORAGE_KEYS, EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import { generateIssuePayloadV2 } from "@/etl/migrator/issues.migrator";
-import { getAPIClient } from "@/services/client";
+import { getAPIClientInternal } from "@/services/client";
 import type { BulkIssuePayload } from "@/types";
 import { celeryProducer } from "@/worker";
 
@@ -88,7 +88,7 @@ export class JiraIssuesStep implements IStep {
       });
 
       // Get property data from dependencies (needed for property value transformation)
-      const propertyData = this.getPropertyData(dependencyData);
+      const propertyData = this.getPropertyData(job.id, dependencyData);
       const additionalData = await this.getAdditionalData(storage, job);
 
       // Pull paginated issues from Jira (can be overridden in subclasses)
@@ -188,9 +188,9 @@ export class JiraIssuesStep implements IStep {
     if (paginationCtx.startAt !== 0 || !totalIssues) return;
 
     const totalBatches = Math.ceil(totalIssues / this.PAGE_SIZE);
-    const client = getAPIClient();
 
-    await client.importReport.updateImportReport(job.report_id, {
+    const apiClient = getAPIClientInternal();
+    await apiClient.importReport.updateImportReport(job.report_id, {
       total_batch_count: totalBatches,
     });
 
@@ -385,7 +385,10 @@ export class JiraIssuesStep implements IStep {
   /**
    * Get property data from dependencyData (loaded by orchestrator)
    */
-  private getPropertyData(dependencyData: Record<string, any> | undefined): {
+  private getPropertyData(
+    jobId: string,
+    dependencyData: Record<string, any> | undefined
+  ): {
     issueTypes: TIssueTypesData;
     planeIssueProperties: ExIssueProperty[];
     planeIssuePropertiesOptions: ExIssuePropertyOption[];
@@ -402,8 +405,12 @@ export class JiraIssuesStep implements IStep {
     const propertiesData = dependencyData[EJiraStep.ISSUE_PROPERTIES] as TIssuePropertiesData;
     const optionsData = dependencyData[EJiraStep.ISSUE_PROPERTY_OPTIONS];
 
+    logger.info(`[${jobId}] [getPropertyData] issueTypes`, issueTypes);
+    logger.info(`[${jobId}] [getPropertyData] propertiesData`, propertiesData);
+    logger.info(`[${jobId}] [getPropertyData] optionsData`, optionsData);
+
     return {
-      issueTypes,
+      issueTypes: issueTypes || [],
       planeIssueProperties: (propertiesData as ExIssueProperty[]) || [],
       planeIssuePropertiesOptions: (optionsData as ExIssuePropertyOption[]) || [],
     };
@@ -574,11 +581,12 @@ export class JiraIssuesStep implements IStep {
 
   private extractComponents(job: TImportJob<JiraConfig>, issue: IJiraIssue): string[] {
     const { projectId, resourceId } = extractJobData(job);
-    return (
-      issue.fields.components
-        .map((c) => buildExternalId(projectId, resourceId, c.id!))
-        .filter((c) => c !== undefined) || []
-    );
+
+    // Handle both array and non-array cases
+    const components = issue.fields.components;
+    if (!components) return [];
+
+    return components.map((c) => buildExternalId(projectId, resourceId, c.id!)).filter((c) => c !== undefined);
   }
 
   /**
@@ -593,7 +601,11 @@ export class JiraIssuesStep implements IStep {
     const links: string[] = [];
     const { projectId, resourceId } = extractJobData(job);
 
-    issue.fields.issuelinks?.forEach((link) => {
+    // Handle both array and non-array cases
+    const issuelinks = issue.fields.issuelinks;
+    if (!issuelinks) return links;
+
+    issuelinks.forEach((link) => {
       if (link.type?.name === linkType) {
         if (direction === "outward" || direction === "both") {
           if (link.outwardIssue?.id) links.push(buildExternalId(projectId, resourceId, link.outwardIssue.id));

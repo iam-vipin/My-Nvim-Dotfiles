@@ -158,7 +158,9 @@ export class JiraCloudIssuesStep extends JiraIssuesStep {
     for (const [fieldKey, fieldValue] of Object.entries(issue.fields)) {
       if (!fieldKey.startsWith("customfield_")) continue;
       if (isSprintField(fieldValue)) {
-        return (fieldValue as any[]).map((s: any) => buildExternalId(projectId, resourceId, s.id.toString()));
+        // Handle both array and non-array cases
+        const sprints = Array.isArray(fieldValue) ? fieldValue : [fieldValue];
+        return sprints.map((s: any) => buildExternalId(projectId, resourceId, s.id.toString()));
       }
     }
 

@@ -299,12 +299,11 @@ CELERY_RESULT_SERIALIZER = "json"
 CELERY_ACCEPT_CONTENT = ["application/json"]
 
 # Automation Consumer Settings
-AUTOMATION_EVENT_TYPES = os.environ.get("AUTOMATION_EVENT_TYPES", "issue.").split(",")
 AUTOMATION_EVENT_STREAM_QUEUE_NAME = os.environ.get(
     "AUTOMATION_EVENT_STREAM_QUEUE_NAME", "plane.event_stream.automations"
 )
 AUTOMATION_EXCHANGE_NAME = os.environ.get("AUTOMATION_EXCHANGE_NAME", "plane.event_stream")
-
+AUTOMATION_EVENT_TYPES = ["workitem.", "issue."]
 
 CELERY_IMPORTS = (
     # scheduled tasks

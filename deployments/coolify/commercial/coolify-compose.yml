@@ -71,8 +71,9 @@ x-docstore-env: &docstore-env
   BUCKET_NAME: ${BUCKET_NAME:-uploads}
   AWS_S3_BUCKET_NAME: ${BUCKET_NAME:-uploads}
 
-x-silo-env: &silo-env
+x-silo-env:
   # Silo App Envs
+  &silo-env
   PORT: 3000
   BATCH_SIZE: ${BATCH_SIZE:-60}
   DEDUP_INTERVAL: ${DEDUP_INTERVAL:-3}
@@ -106,7 +107,6 @@ x-silo-env: &silo-env
   # Slack Envs
   SLACK_CLIENT_ID: ${SLACK_CLIENT_ID}
   SLACK_CLIENT_SECRET: ${SLACK_CLIENT_SECRET}
-
 
 x-app-env: &app-env
   WEB_URL: ${SERVICE_URL_PLANE}
@@ -157,7 +157,6 @@ x-automation-consumer-env: &automation-consumer-env
   AUTOMATION_EVENT_STREAM_QUEUE_NAME: ${AUTOMATION_EVENT_STREAM_QUEUE_NAME:-plane.event_stream.automations}
   AUTOMATION_EVENT_STREAM_PREFETCH: ${AUTOMATION_EVENT_STREAM_PREFETCH:-10}
   AUTOMATION_EXCHANGE_NAME: ${AUTOMATION_EXCHANGE_NAME:-plane.event_stream}
-  AUTOMATION_EVENT_TYPES: ${AUTOMATION_EVENT_TYPES:-issue.}
 
 services:
   admin:

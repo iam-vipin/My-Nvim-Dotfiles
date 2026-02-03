@@ -163,7 +163,6 @@ x-automation-consumer-env: &automation-consumer-env
   AUTOMATION_EVENT_STREAM_QUEUE_NAME: ${AUTOMATION_EVENT_STREAM_QUEUE_NAME:-plane.event_stream.automations}
   AUTOMATION_EVENT_STREAM_PREFETCH: ${AUTOMATION_EVENT_STREAM_PREFETCH:-10}
   AUTOMATION_EXCHANGE_NAME: ${AUTOMATION_EXCHANGE_NAME:-plane.event_stream}
-  AUTOMATION_EVENT_TYPES: ${AUTOMATION_EVENT_TYPES:-issue.}
 
 services:
   admin:
@@ -352,7 +351,8 @@ services:
     image: artifacts.plane.so/makeplane/backend-commercial:${APP_RELEASE_VERSION}
     command: ./bin/docker-entrypoint-automation-consumer.sh
     environment:
-      <<: [*automation-consumer-env, *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env, *opensearch-env]
+      <<:
+        [*automation-consumer-env, *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env, *opensearch-env]
     restart: unless-stopped
     deploy:
       replicas: ${AUTOMATION_CONSUMER_REPLICAS:-1}

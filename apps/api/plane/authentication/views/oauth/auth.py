@@ -40,7 +40,7 @@ from plane.authentication.rate_limit import (
     token_ratelimit_key,
 )
 
-TOKEN_RATE_LIMIT = "5/m"
+TOKEN_RATE_LIMIT = "300/m"
 APP_INSTALLATION_ID_CACHE_TTL = 60  # 1 minute
 
 

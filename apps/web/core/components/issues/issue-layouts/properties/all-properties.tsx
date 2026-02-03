@@ -86,7 +86,8 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
 
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId: projectIdParam } = useParams();
+  const projectId = projectIdParam?.toString() ?? issue.project_id;
 
   // derived values
   const stateDetails = getStateById(issue.state_id);

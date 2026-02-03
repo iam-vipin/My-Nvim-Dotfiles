@@ -36,7 +36,7 @@ type UpdateTeamspaceProjectsButtonProps = {
   renderButton?: (args: { open: () => void; isEditingAllowed: boolean; areProjectsPresent: boolean }) => ReactNode;
 };
 
-const TOOLTIP_CONTENT = "Contact teamspace admin";
+const TOOLTIP_CONTENT = "You don't have permission to add project.";
 
 export const UpdateTeamspaceProjectsButton = observer(function UpdateTeamspaceProjectsButton(
   props: UpdateTeamspaceProjectsButtonProps

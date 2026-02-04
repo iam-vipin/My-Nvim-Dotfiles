@@ -138,6 +138,8 @@ celery_app.conf.update(
     worker_prefetch_multiplier=1,
     task_acks_late=True,
     worker_max_tasks_per_child=1000,
+    result_backend=None,
+    task_ignore_result=True,
 )
 celery_app.conf.task_default_queue = settings.celery.DEFAULT_QUEUE
 celery_app.conf.task_default_exchange = settings.celery.DEFAULT_EXCHANGE
@@ -774,13 +776,12 @@ def _filter_workspaces_via_opensearch(
         skipped_count = 0
 
         for ws_id in workspace_ids:
-            # total_missing = workspace_totals.get(ws_id, 0)
-            # if 0 < total_missing <= threshold:
-            #     processable.append(ws_id)
-            # elif total_missing > threshold:
-            #     skipped_count += 1
-            #     log.info(f"Skipping workspace {ws_id} because it has {total_missing} missing vectors")
-            processable.append(ws_id)
+            total_missing = workspace_totals.get(ws_id, 0)
+            if total_missing > 0:
+                processable.append(ws_id)
+            else:
+                skipped_count += 1
+                log.debug(f"Skipping workspace {ws_id} because it has {total_missing} missing vectors")
 
         log.info(
             "OpenSearch filtering complete: %d/%d workspaces processable, %d skipped",

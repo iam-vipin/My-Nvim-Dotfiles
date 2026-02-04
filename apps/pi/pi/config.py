@@ -323,7 +323,7 @@ class Celery:
     # Using RabbitMQ for message brokering only (no result backend)
     # Tasks run asynchronously but progress is tracked via logs only
     BROKER_URL: str = os.getenv("CELERY_BROKER_URL", "pyamqp://guest@localhost:5672//")  # RabbitMQ default
-    RESULT_BACKEND: str = os.getenv("CELERY_RESULT_BACKEND", "rpc://")
+    RESULT_BACKEND: str | None = None
 
     TASK_SERIALIZER: str = "json"
     RESULT_SERIALIZER: str = "json"

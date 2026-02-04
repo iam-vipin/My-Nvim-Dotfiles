@@ -98,8 +98,8 @@ class IssuePropertyOptionListCreateAPIEndpoint(BaseAPIView):
     )
     def post(self, request, slug, project_id, property_id):
         workspace = Workspace.objects.get(slug=slug)
-        project = Project.objects.get(pk=project_id)
-        issue_property = IssueProperty.objects.get(pk=property_id)
+        project = Project.objects.get(pk=project_id, workspace=workspace)
+        issue_property = IssueProperty.objects.get(pk=property_id, workspace=workspace, project=project)
 
         # crating the issue property options if the property type is OPTION
         if issue_property.property_type == "OPTION":

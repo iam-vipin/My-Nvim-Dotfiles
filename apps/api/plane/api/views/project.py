@@ -449,7 +449,7 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
         """
         try:
             workspace = Workspace.objects.get(slug=slug)
-            project = Project.objects.get(pk=pk)
+            project = Project.objects.get(pk=pk, workspace=workspace)
             current_instance = json.dumps(ProjectSerializer(project).data, cls=DjangoJSONEncoder)
 
             intake_view = request.data.get("intake_view", project.intake_view)

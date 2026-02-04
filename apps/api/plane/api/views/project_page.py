@@ -76,7 +76,7 @@ class ProjectPageDetailAPIEndpoint(BaseAPIView):
         the requesting user then dont show the page
         """
 
-        project = Project.objects.get(id=project_id)
+        project = Project.objects.get(id=project_id, workspace__slug=slug)
         page = self.get_queryset().get(id=pk)
 
         if (

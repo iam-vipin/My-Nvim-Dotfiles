@@ -70,7 +70,7 @@ class WorkItemWorklogEndpoint(BaseAPIView):
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id, logged_by=request.user)
             # Get the issue to update
-            issue = Issue.objects.get(pk=issue_id)
+            issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
             issue.updated_at = timezone.now()
             issue.save(update_fields=["updated_at"])
 
@@ -148,7 +148,7 @@ class WorkItemWorklogEndpoint(BaseAPIView):
             serializer.save()
 
             # Get the issue to update
-            issue = Issue.objects.get(pk=issue_id)
+            issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
             issue.updated_at = timezone.now()
             issue.save(update_fields=["updated_at"])
 
@@ -182,7 +182,7 @@ class WorkItemWorklogEndpoint(BaseAPIView):
         worklog.delete()
 
         # Get the issue to update
-        issue = Issue.objects.get(pk=issue_id)
+        issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
         issue.updated_at = timezone.now()
         issue.save(update_fields=["updated_at"])
 

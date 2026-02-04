@@ -85,7 +85,7 @@ class MilestoneViewSet(BaseViewSet):
     )
     def create(self, request, slug, project_id, *args, **kwargs):
         # Get workspace_id from project
-        project = Project.objects.get(id=project_id)
+        project = Project.objects.get(id=project_id, workspace__slug=slug)
         workspace_id = project.workspace_id
 
         # Create empty description for the milestone

@@ -466,7 +466,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         Create a new work item in the specified project with the provided details.
         Supports external ID tracking for integration purposes.
         """
-        project = Project.objects.get(pk=project_id)
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
         serializer = IssueSerializer(
             data=request.data,
@@ -649,7 +649,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         """
         # Get the entities required for putting the issue, external_id and
         # external_source are must to identify the issue here
-        project = Project.objects.get(pk=project_id)
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
         external_id = request.data.get("external_id")
         external_source = request.data.get("external_source")
 
@@ -818,7 +818,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         Supports external ID validation to prevent conflicts.
         """
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
-        project = Project.objects.get(pk=project_id)
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
         current_instance = json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder)
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         serializer = IssueSerializer(
@@ -2755,7 +2755,7 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
 
         relation_type = serializer.validated_data["relation_type"]
         issues = serializer.validated_data["issues"]
-        project = Project.objects.get(pk=project_id)
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
         issue_relation = IssueRelation.objects.bulk_create(
             [

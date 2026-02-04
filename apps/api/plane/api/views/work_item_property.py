@@ -137,8 +137,8 @@ class IssuePropertyListCreateAPIEndpoint(BaseAPIView):
     )
     def post(self, request, slug, project_id, type_id):
         workspace = Workspace.objects.get(slug=slug)
-        project = Project.objects.get(pk=project_id)
-        issue_type = IssueType.objects.get(pk=type_id)
+        project = Project.objects.get(pk=project_id, workspace=workspace)
+        issue_type = IssueType.objects.get(pk=type_id, workspace=workspace, project=project)
 
         # check if issue property with the same external id and external source already exists
         external_id = request.data.get("external_id")

@@ -214,7 +214,7 @@ class InitiativeViewSet(BaseViewSet):
         new_label_ids = set(label_ids) - set(existing_label_ids)
 
         for label_id in new_label_ids:
-            label = InitiativeLabel.objects.get(id=label_id)
+            label = InitiativeLabel.objects.get(id=label_id, workspace__slug=slug)
             InitiativeLabelAssociation.objects.create(
                 initiative=initiative, label=label, workspace_id=initiative.workspace_id
             )
@@ -251,7 +251,7 @@ class InitiativeViewSet(BaseViewSet):
         initiative = self.get_queryset().get(id=initiative_id)
         label_ids = request.data.get("label_ids", [])
         for label_id in label_ids:
-            label = InitiativeLabel.objects.get(id=label_id)
+            label = InitiativeLabel.objects.get(id=label_id, workspace__slug=slug)
             InitiativeLabelAssociation.objects.filter(initiative=initiative, label=label).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -321,7 +321,7 @@ class InitiativeViewSet(BaseViewSet):
         new_project_ids = set(project_ids) - set(existing_project_ids)
 
         for project_id in new_project_ids:
-            project = Project.objects.get(id=project_id)
+            project = Project.objects.get(id=project_id, workspace__slug=slug)
             InitiativeProject.objects.create(
                 initiative=initiative, project=project, workspace_id=initiative.workspace_id
             )
@@ -358,7 +358,7 @@ class InitiativeViewSet(BaseViewSet):
         initiative = self.get_queryset().get(id=initiative_id)
         project_ids = request.data.get("project_ids", [])
         for project_id in project_ids:
-            project = Project.objects.get(id=project_id)
+            project = Project.objects.get(id=project_id, workspace__slug=slug)
             InitiativeProject.objects.filter(initiative=initiative, project=project).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -430,7 +430,7 @@ class InitiativeViewSet(BaseViewSet):
         new_epic_ids = set(epic_ids) - set(existing_epic_ids)
 
         for epic_id in new_epic_ids:
-            epic = Issue.objects.get(id=epic_id)
+            epic = Issue.objects.get(id=epic_id, workspace__slug=slug)
             InitiativeEpic.objects.create(initiative=initiative, epic=epic, workspace_id=initiative.workspace_id)
         # send new epics in response
         new_epics = Issue.objects.filter(id__in=epic_ids)
@@ -465,7 +465,7 @@ class InitiativeViewSet(BaseViewSet):
         initiative = self.get_queryset().get(id=initiative_id)
         epic_ids = request.data.get("epic_ids", [])
         for epic_id in epic_ids:
-            epic = Issue.objects.get(id=epic_id)
+            epic = Issue.objects.get(id=epic_id, workspace__slug=slug)
             InitiativeEpic.objects.filter(initiative=initiative, epic=epic).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

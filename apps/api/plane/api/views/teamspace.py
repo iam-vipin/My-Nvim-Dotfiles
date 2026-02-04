@@ -203,7 +203,7 @@ class TeamspaceViewSet(BaseViewSet):
         new_project_ids = set(project_ids) - set(existing_project_ids)
 
         for project_id in new_project_ids:
-            project = Project.objects.get(id=project_id)
+            project = Project.objects.get(id=project_id, workspace__slug=slug)
             TeamspaceProject.objects.create(team_space=teamspace, project=project, workspace_id=teamspace.workspace_id)
 
         # send new projects in response
@@ -239,7 +239,7 @@ class TeamspaceViewSet(BaseViewSet):
         teamspace = self.get_queryset().get(id=teamspace_id)
         project_ids = request.data.get("project_ids", [])
         for project_id in project_ids:
-            project = Project.objects.get(id=project_id)
+            project = Project.objects.get(id=project_id, workspace__slug=slug)
             TeamspaceProject.objects.filter(team_space=teamspace, project=project).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

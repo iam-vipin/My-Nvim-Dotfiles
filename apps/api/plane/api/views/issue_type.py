@@ -160,7 +160,7 @@ class IssueTypeListCreateAPIEndpoint(BaseAPIView):
     def post(self, request, slug, project_id):
         with transaction.atomic():
             workspace = Workspace.objects.get(slug=slug)
-            project = Project.objects.get(pk=project_id)
+            project = Project.objects.get(pk=project_id, workspace=workspace)
 
             # check if issue type with the same external id and external source already exists
             # return the issue type id if it exists

@@ -160,7 +160,7 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
     )
     def post(self, request, slug, project_id, issue_id, property_id):
         workspace = Workspace.objects.get(slug=slug)
-        issue_property = IssueProperty.objects.get(pk=property_id)
+        issue_property = IssueProperty.objects.get(pk=property_id, workspace=workspace, project_id=project_id)
 
         # existing issue property values
         existing_issue_property_values = self.model.objects.filter(

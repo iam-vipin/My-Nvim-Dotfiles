@@ -8,6 +8,7 @@ on:
 jobs:
   execute:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       id-token: write
       contents: read
@@ -54,6 +55,7 @@ jobs:
             pr_state="$(gh pr view "$pr" --json state --jq .state)"
             if [[ $pr_state == "MERGED" || $pr_state == "CLOSED" ]]; then
               echo "PR $pr is merged or closed, cleaning up $namespace"
+              kubectl delete namespace $deployed_chart --grace-period=0 --force || true  
               helm uninstall $deployed_chart --namespace $deployed_chart || true
               # Find PVs bound to PVCs in this namespace (works for ee-5657-ent, ee-5657-cloud, or legacy ee-5657)
               pv_list=$(kubectl get pv -o json 2>/dev/null | jq -r --arg ns "$namespace" '.items[] | select(.spec.claimRef.namespace == $ns) | .metadata.name' 2>/dev/null) || true

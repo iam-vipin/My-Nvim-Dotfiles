@@ -17,7 +17,7 @@ import { computedFn } from "mobx-utils";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import type { JiraResource, JiraProject, JiraStatus, JiraPriority } from "@plane/etl/jira";
 // plane web services
-import type { IAdditionalUsersResponse } from "@plane/types";
+import type { IAdditionalUsersResponse, IJiraValidateJQLResponse } from "@plane/types";
 import { JiraServerDataService } from "@/services/importers/jira-server/data.service";
 // plane web store types
 import type { RootStore } from "@/plane-web/store/root.store";
@@ -70,13 +70,20 @@ export interface IJiraServerDataStore {
     workspaceId: string,
     userId: string,
     resourceId: string,
-    projectId: string
+    projectId: string,
+    jql?: string
   ) => Promise<number | undefined>;
   fetchAdditionalUsers: (
     workspaceId: string,
     userId: string,
     workspaceSlug: string
   ) => Promise<IAdditionalUsersResponse | undefined>;
+  validateJql: (
+    workspaceId: string,
+    userId: string,
+    projectKey: string,
+    jql: string
+  ) => Promise<IJiraValidateJQLResponse | undefined>;
 }
 
 export class JiraServerDataStore implements IJiraServerDataStore {
@@ -118,6 +125,7 @@ export class JiraServerDataStore implements IJiraServerDataStore {
       fetchJiraPriorities: action,
       fetchJiraIssueCount: action,
       fetchAdditionalUsers: action,
+      validateJql: action,
     });
 
     this.service = new JiraServerDataService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
@@ -398,11 +406,12 @@ export class JiraServerDataStore implements IJiraServerDataStore {
   fetchJiraIssueCount = async (
     workspaceId: string,
     userId: string,
-    resourceId: string,
-    projectId: string
+    _resourceId: string,
+    projectId: string,
+    jql?: string
   ): Promise<number | undefined> => {
     try {
-      const issueCount = (await this.service.getProjectIssuesCount(workspaceId, userId, projectId)) as any;
+      const issueCount = (await this.service.getProjectIssuesCount(workspaceId, userId, projectId, jql)) as any;
       if (issueCount) {
         runInAction(() => {
           if (!this.jiraIssueCount[projectId]) this.jiraIssueCount[projectId] = 0;
@@ -443,6 +452,28 @@ export class JiraServerDataStore implements IJiraServerDataStore {
       return additionalUserResponse;
     } catch (error) {
       this.error = error as object;
+    }
+  };
+
+  /**
+   * @description Validates JQL
+   * @param { string } workspaceId
+   * @param { string } userId
+   * @param { string } projectKey
+   * @param { string } jql
+   * @returns { Promise<IJiraValidateJQLResponse | undefined> }
+   */
+  validateJql = async (
+    workspaceId: string,
+    userId: string,
+    projectKey: string,
+    jql: string
+  ): Promise<IJiraValidateJQLResponse | undefined> => {
+    try {
+      const response = await this.service.validateJql(workspaceId, userId, projectKey, jql);
+      return response;
+    } catch (error) {
+      throw error;
     }
   };
 }

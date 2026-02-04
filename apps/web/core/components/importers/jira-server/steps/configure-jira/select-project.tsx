@@ -11,10 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import type { JiraProject } from "@plane/etl/jira";
 import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/ui";
 // plane web components

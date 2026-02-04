@@ -45,6 +45,7 @@ export class JiraCloudIssuesStep extends JiraIssuesStep {
   protected async pull(props: {
     jobContext: TJobContext;
     projectKey: string;
+    jql?: string;
     paginationCtx: { startAt: number; totalProcessed: number; nextPageToken?: string };
   }) {
     const { job } = props.jobContext;
@@ -64,7 +65,9 @@ export class JiraCloudIssuesStep extends JiraIssuesStep {
         nextPageToken: props.paginationCtx.nextPageToken,
       },
       props.projectKey,
-      total
+      total,
+      undefined,
+      props.jql
     );
 
     logger.info(`[${job.id}] [${this.name}] Pulled issues from Jira Cloud`, {

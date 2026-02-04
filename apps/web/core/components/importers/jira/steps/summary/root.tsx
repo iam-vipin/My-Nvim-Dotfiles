@@ -67,7 +67,10 @@ export const SummaryRoot = observer(function SummaryRoot() {
   const jiraProjectId = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.projectId;
   const jiraStates = (jiraProjectId && jiraStateIdsByProjectId(jiraProjectId)) || [];
   const jiraPriorities = (jiraProjectId && jiraPriorityIdsByProjectId(jiraProjectId)) || [];
+
   const jiraIssueCount = (jiraProjectId && jiraStoreIssueCount[jiraProjectId]) || 0;
+  const useCustomJql = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.useCustomJql;
+  const jql = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.jql;
 
   const handleOnClickNext = async () => {
     if (planeProjectId) {
@@ -128,10 +131,11 @@ export const SummaryRoot = observer(function SummaryRoot() {
 
   const { isLoading: isJiraIssueCountLoading } = useSWR(
     workspaceId && userId && jiraResourceId && jiraProjectId
-      ? `IMPORTER_JIRA_ISSUE_COUNT_${workspaceId}_${userId}_${jiraResourceId}_${jiraProjectId}`
+      ? `IMPORTER_JIRA_ISSUE_COUNT_${workspaceId}_${userId}_${jiraResourceId}_${jiraProjectId}_${useCustomJql}_${jql}`
       : null,
     workspaceId && userId && jiraResourceId && jiraProjectId
-      ? async () => fetchJiraIssueCount(workspaceId, userId, jiraResourceId, jiraProjectId)
+      ? async () =>
+          fetchJiraIssueCount(workspaceId, userId, jiraResourceId, jiraProjectId, useCustomJql ? jql : undefined)
       : null,
     { errorRetryCount: 0 }
   );
@@ -164,6 +168,15 @@ export const SummaryRoot = observer(function SummaryRoot() {
             name: t("common.priorities"),
             value: `${jiraPriorities?.length || 0} ${t("common.priorities")}`,
           },
+          ...(useCustomJql && jql
+            ? [
+                {
+                  id: "4",
+                  name: "JQL Filter",
+                  value: jql,
+                },
+              ]
+            : []),
         ]}
       />
 

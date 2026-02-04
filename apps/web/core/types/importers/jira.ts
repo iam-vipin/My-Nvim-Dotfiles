@@ -45,6 +45,8 @@ export type TImporterDataPayload = {
   [E_IMPORTER_STEPS.CONFIGURE_JIRA]: {
     resourceId: string | undefined;
     projectId: string | undefined;
+    useCustomJql?: boolean;
+    jql?: string;
   };
   [E_IMPORTER_STEPS.IMPORT_USERS_FROM_JIRA]: {
     userSkipToggle: boolean;

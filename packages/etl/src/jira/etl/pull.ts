@@ -60,7 +60,12 @@ export async function pullLabels(client: JiraService): Promise<string[]> {
   return labels;
 }
 
-export async function pullIssues(client: JiraService, projectKey: string, from?: Date): Promise<IJiraIssue[]> {
+export async function pullIssues(
+  client: JiraService,
+  projectKey: string,
+  from?: Date,
+  jql?: string
+): Promise<IJiraIssue[]> {
   const issues: IJiraIssue[] = [];
 
   let nextPageToken = undefined;
@@ -68,7 +73,8 @@ export async function pullIssues(client: JiraService, projectKey: string, from?:
     const response = await client.getProjectIssues(
       projectKey,
       nextPageToken,
-      from ? formatDateStringForHHMM(from) : ""
+      from ? formatDateStringForHHMM(from) : "",
+      jql
     );
     issues.push(...(response.issues as IJiraIssue[]));
     nextPageToken = response.nextPageToken;
@@ -90,7 +96,8 @@ export async function pullIssuesV2(
   projectKey: string,
   // We are using this property for the pagination context
   total = 0,
-  from?: Date
+  from?: Date,
+  jql?: string
 ): Promise<{
   items: IJiraIssue[];
   hasMore: boolean;
@@ -98,7 +105,12 @@ export async function pullIssuesV2(
   nextPageToken?: string;
 }> {
   const { client, nextPageToken } = ctx;
-  const result = await client.getProjectIssues(projectKey, nextPageToken, from ? formatDateStringForHHMM(from) : "");
+  const result = await client.getProjectIssues(
+    projectKey,
+    nextPageToken,
+    from ? formatDateStringForHHMM(from) : "",
+    jql
+  );
 
   return {
     items: result.issues || [],

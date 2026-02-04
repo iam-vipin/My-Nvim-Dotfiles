@@ -11,17 +11,22 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 // plane web components
-import { ConfigureJiraSelectResource, ConfigureJiraSelectProject } from "@/components/importers/jira";
+import {
+  ConfigureJiraSelectResource,
+  ConfigureJiraSelectProject,
+  ConfigureJiraCustomJQL,
+} from "@/components/importers/jira";
 import { StepperNavigation } from "@/components/importers/ui";
 // plane web hooks
 import { useJiraImporter } from "@/plane-web/hooks/store";
+import { useUser } from "@/hooks/store/user";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web  types
 import type { TImporterDataPayload } from "@/types/importers";
 import { E_IMPORTER_STEPS } from "@/types/importers";
@@ -33,17 +38,37 @@ const currentStepKey = E_IMPORTER_STEPS.CONFIGURE_JIRA;
 export const ConfigureJiraRoot = observer(function ConfigureJiraRoot() {
   // hooks
   const { t } = useTranslation();
-  const { currentStep, handleStepper, importerData, handleImporterData } = useJiraImporter();
+  const {
+    currentStep,
+    handleStepper,
+    handleSyncJobConfig,
+    importerData,
+    handleImporterData,
+    data: dataState,
+  } = useJiraImporter();
+  const { data: userData } = useUser();
+  const { currentWorkspace } = useWorkspace();
+
+  const workspaceSlug = currentWorkspace?.slug;
+  const workspaceId = currentWorkspace?.id;
+  const userId = userData?.id;
 
   // states
   const [formData, setFormData] = useState<TFormData>({
     resourceId: undefined,
     projectId: undefined,
+    useCustomJql: false,
+    jql: "",
   });
+  const [isJqlValid, setIsJqlValid] = useState(true);
 
   // derived values
   const shouldShowProjectSelector = formData.resourceId;
-  const isNextButtonDisabled = !formData.resourceId || !formData?.projectId;
+  const isNextButtonDisabled = !formData.resourceId || !formData?.projectId || !isJqlValid;
+  const projectKey =
+    formData.resourceId && formData.projectId
+      ? dataState.getJiraProjectById(formData.resourceId, formData.projectId)?.key || ""
+      : "";
 
   // handlers
   const handleFormData = <T extends keyof TFormData>(key: T, value: TFormData[T]) => {
@@ -52,6 +77,8 @@ export const ConfigureJiraRoot = observer(function ConfigureJiraRoot() {
 
   const handleOnClickNext = () => {
     handleImporterData(currentStepKey, formData);
+    handleSyncJobConfig("useCustomJql", formData.useCustomJql);
+    handleSyncJobConfig("jql", formData.jql);
     handleStepper("next");
   };
 
@@ -80,6 +107,16 @@ export const ConfigureJiraRoot = observer(function ConfigureJiraRoot() {
             handleFormData={(value: string | undefined) => handleFormData("projectId", value)}
           />
         )}
+        <ConfigureJiraCustomJQL
+          projectId={formData.projectId}
+          projectKey={projectKey}
+          useCustomJql={formData.useCustomJql || false}
+          onFormDataUpdate={handleFormData}
+          onValidationChange={setIsJqlValid}
+          workspaceId={workspaceId}
+          workspaceSlug={workspaceSlug}
+          userId={userId}
+        />
       </div>
 
       {/* stepper button */}

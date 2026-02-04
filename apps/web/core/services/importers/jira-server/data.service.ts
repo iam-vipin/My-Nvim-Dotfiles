@@ -15,7 +15,7 @@ import type { AxiosInstance } from "axios";
 import axios from "axios";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import type { JiraResource, JiraProject, JiraStates, JiraPriority } from "@plane/etl/jira";
-import type { IAdditionalUsersResponse } from "@plane/types";
+import type { IAdditionalUsersResponse, IJiraValidateJQLResponse } from "@plane/types";
 
 export class JiraServerDataService {
   protected baseURL: string;
@@ -134,12 +134,18 @@ export class JiraServerDataService {
    * @property projectId: string
    * @returns project | undefined
    */
-  async getProjectIssuesCount(workspaceId: string, userId: string, projectId: string): Promise<number | undefined> {
+  async getProjectIssuesCount(
+    workspaceId: string,
+    userId: string,
+    projectId: string,
+    jql?: string
+  ): Promise<number | undefined> {
     return this.axiosInstance
       .post(`/api/${E_IMPORTER_KEYS.JIRA_SERVER.toLowerCase().replaceAll("_", "-")}/issue-count/`, {
         workspaceId,
         userId,
         projectId,
+        jql,
       })
       .then((res) => res.data)
       .catch((error) => {
@@ -163,6 +169,33 @@ export class JiraServerDataService {
         `/api/${E_IMPORTER_KEYS.JIRA_SERVER.toLowerCase().replaceAll("_", "-")}/additional-users/${workspaceId}/${workspaceSlug}/${userId}`,
         {}
       )
+      .then((res) => res.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * @description validate jql
+   * @property workspaceId: string
+   * @property userId: string
+   * @property projectKey: string
+   * @property jql: string
+   * @returns IJiraValidateJQLResponse | undefined
+   */
+  async validateJql(
+    workspaceId: string,
+    userId: string,
+    projectKey: string,
+    jql: string
+  ): Promise<IJiraValidateJQLResponse> {
+    return this.axiosInstance
+      .post(`/api/${E_IMPORTER_KEYS.JIRA_SERVER.toLowerCase().replaceAll("_", "-")}/validate-jql/`, {
+        workspaceId,
+        userId,
+        projectKey,
+        jql,
+      })
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;

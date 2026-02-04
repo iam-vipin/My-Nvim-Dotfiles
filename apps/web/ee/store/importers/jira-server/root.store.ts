@@ -43,6 +43,8 @@ const defaultImporterData: TImporterDataPayload = {
   [E_IMPORTER_STEPS.CONFIGURE_JIRA]: {
     resourceId: undefined,
     projectId: undefined,
+    useCustomJql: false,
+    jql: "",
   },
   [E_IMPORTER_STEPS.MAP_STATES]: {},
   [E_IMPORTER_STEPS.MAP_PRIORITY]: {},
@@ -154,6 +156,8 @@ export class JiraServerStore extends ImporterBaseStore implements IJiraServerSto
           [E_IMPORTER_STEPS.CONFIGURE_JIRA]: {
             resourceId: currentValue.resourceId,
             projectId: undefined,
+            useCustomJql: currentValue.useCustomJql,
+            jql: currentValue.jql,
           },
           [E_IMPORTER_STEPS.MAP_STATES]: {},
           [E_IMPORTER_STEPS.MAP_PRIORITY]: {},
@@ -164,10 +168,14 @@ export class JiraServerStore extends ImporterBaseStore implements IJiraServerSto
           [E_IMPORTER_STEPS.CONFIGURE_JIRA]: {
             resourceId: currentValue.resourceId,
             projectId: currentValue.projectId,
+            useCustomJql: currentValue.useCustomJql,
+            jql: currentValue.jql,
           },
           [E_IMPORTER_STEPS.MAP_STATES]: {},
           [E_IMPORTER_STEPS.MAP_PRIORITY]: {},
         }));
+      } else {
+        set(this.importerData, key, value);
       }
     } else {
       set(this.importerData, key, value);

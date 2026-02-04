@@ -43,6 +43,8 @@ export type TImporterDataPayload = {
   [E_IMPORTER_STEPS.CONFIGURE_JIRA]: {
     resourceId: string | undefined;
     projectId: string | undefined;
+    useCustomJql?: boolean;
+    jql?: string;
   };
   [E_IMPORTER_STEPS.MAP_STATES]: {
     [key: string]: string | undefined;

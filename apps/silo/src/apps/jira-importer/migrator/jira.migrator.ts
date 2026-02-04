@@ -78,7 +78,12 @@ export class JiraDataMigrator extends BaseDataMigrator<JiraConfig, JiraEntity> {
       pullIssueTypes(client, projectId),
     ]);
     const issueFields = await pullIssueFields(client, issueTypes, projectId);
-    const issues = await pullIssues(client, projectKey);
+    const issues = await pullIssues(
+      client,
+      projectKey,
+      undefined,
+      job.config.useCustomJql ? job.config.jql : undefined
+    );
     const comments = await pullComments(issues, client);
     /* -------------- Pull Jira Data --------------- */
 

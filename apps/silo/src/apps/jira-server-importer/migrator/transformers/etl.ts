@@ -262,7 +262,7 @@ export const getTransformedIssuePropertyValuesV2 = (
   issues.forEach((issue: IJiraIssue) => {
     if (issue.id && issue.fields) {
       const issueKey = `${projectId}_${resourceId}_${issue.id}`;
-      const issueTypeId = issueTypes.find(
+      const issueTypeId = issueTypes?.find(
         (type) =>
           issue.fields.issuetype?.id &&
           type.external_id === buildExternalId(projectId, resourceId, issue.fields.issuetype?.id)

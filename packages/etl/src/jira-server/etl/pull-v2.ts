@@ -96,14 +96,16 @@ export async function pullLabelsV2(ctx: BasePaginationContext): Promise<Paginate
 export async function pullIssuesV2(
   ctx: BasePaginationContext,
   projectKey: string,
-  from?: Date
+  from?: Date,
+  jql?: string
 ): Promise<PaginatedResult<IJiraIssue>> {
   const { client, startAt, maxResults } = ctx;
   const result = await client.getProjectIssues(
     projectKey,
     startAt,
     from ? formatDateStringForHHMM(from) : "",
-    maxResults
+    maxResults,
+    jql
   );
 
   return {

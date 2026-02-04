@@ -14,7 +14,7 @@
 import type { AxiosInstance } from "axios";
 import axios from "axios";
 import type { JiraResource, JiraProject, JiraStates, JiraPriority, ImportedJiraUser } from "@plane/etl/jira";
-import type { IAdditionalUsersResponse } from "@plane/types";
+import type { IAdditionalUsersResponse, IJiraValidateJQLResponse } from "@plane/types";
 
 export class JiraService {
   protected baseURL: string;
@@ -138,10 +138,11 @@ export class JiraService {
     workspaceId: string,
     userId: string,
     resourceId: string | undefined,
-    projectId: string
+    projectId: string,
+    jql?: string
   ): Promise<number | undefined> {
     return this.axiosInstance
-      .post(`/api/jira/issue-count/`, { workspaceId, userId, cloudId: resourceId, projectId })
+      .post(`/api/jira/issue-count/`, { workspaceId, userId, cloudId: resourceId, projectId, jql })
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -163,6 +164,28 @@ export class JiraService {
   ): Promise<IAdditionalUsersResponse | undefined> {
     return this.axiosInstance
       .post(`/api/jira/additional-users/${workspaceId}/${workspaceSlug}/${userId}`, { userData })
+      .then((res) => res.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * @description validate jql
+   * @param workspaceId
+   * @param userId
+   * @param projectKey
+   * @param jql
+   * @returns
+   */
+  async validateJql(
+    workspaceId: string,
+    userId: string,
+    projectKey: string,
+    jql: string
+  ): Promise<IJiraValidateJQLResponse | undefined> {
+    return this.axiosInstance
+      .post(`/api/jira/validate-jql`, { workspaceId, userId, projectKey, jql })
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;

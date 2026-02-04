@@ -68,6 +68,7 @@ export const SummaryRoot = observer(function SummaryRoot() {
   const planeProjectId = importerData[E_IMPORTER_STEPS.SELECT_PLANE_PROJECT]?.projectId;
   const jiraResourceId = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.resourceId;
   const jiraProjectId = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.projectId;
+  const jql = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.jql;
   const jiraProjectLabels = jiraLabels.filter((jiraLabel) => jiraLabel != undefined && jiraLabel != null);
   const jiraStates = (jiraProjectId && jiraStateIdsByProjectId(jiraProjectId)) || [];
   const jiraPriorities = (jiraProjectId && jiraPriorityIdsByProjectId(jiraProjectId)) || [];
@@ -119,7 +120,6 @@ export const SummaryRoot = observer(function SummaryRoot() {
         jiraLabels.filter((label) => label != undefined && label != null)
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jiraProjectLabels]);
 
   // fetching the jira labels and issue count
@@ -138,7 +138,7 @@ export const SummaryRoot = observer(function SummaryRoot() {
       ? `IMPORTER_JIRA_ISSUE_COUNT_${workspaceId}_${userId}_${jiraResourceId}_${jiraProjectId}`
       : null,
     workspaceId && userId && jiraResourceId && jiraProjectId
-      ? async () => fetchJiraIssueCount(workspaceId, userId, jiraResourceId, jiraProjectId)
+      ? async () => fetchJiraIssueCount(workspaceId, userId, jiraResourceId, jiraProjectId, jql)
       : null,
     { errorRetryCount: 0 }
   );
@@ -184,6 +184,15 @@ export const SummaryRoot = observer(function SummaryRoot() {
             name: t("common.priorities"),
             value: `${jiraPriorities?.length || 0} ${t("common.priorities")}`,
           },
+          ...(configData?.useCustomJql && configData.jql
+            ? [
+                {
+                  id: "4",
+                  name: "JQL Filter",
+                  value: configData.jql,
+                },
+              ]
+            : []),
         ]}
       />
       {isJiraAdditionalUsersDataLoading ? (

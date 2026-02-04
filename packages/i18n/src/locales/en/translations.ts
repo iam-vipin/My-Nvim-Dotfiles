@@ -1475,7 +1475,7 @@ Thanks,
       },
       filter: {
         title: "No matching projects",
-        description: `No projects detected with the matching criteria. 
+        description: `No projects detected with the matching criteria.
  Create a new project instead.`,
       },
       search: {
@@ -2651,7 +2651,7 @@ Create a new project instead`,
         },
         filter: {
           title: "No matching views",
-          description: `No views match the search criteria. 
+          description: `No views match the search criteria.
  Create a new view instead.`,
         },
       },
@@ -2865,12 +2865,12 @@ module can be archived.`,
       },
       all: {
         title: "No work items assigned",
-        description: `Updates for work items assigned to you can be 
+        description: `Updates for work items assigned to you can be
  seen here`,
       },
       mentions: {
         title: "No work items assigned",
-        description: `Updates for work items assigned to you can be 
+        description: `Updates for work items assigned to you can be
  seen here`,
       },
     },
@@ -3725,7 +3725,7 @@ if you are sure your search is right. `,
       },
       filter: {
         title: "No matching views",
-        description: `No views match the search criteria. 
+        description: `No views match the search criteria.
  Create a new view instead.`,
       },
     },
@@ -3822,7 +3822,7 @@ if you are sure your search is right. `,
       },
       search: {
         title: "No matching initiatives",
-        description: `No initiatives detected with the matching criteria. 
+        description: `No initiatives detected with the matching criteria.
  Create a new initiative instead.`,
       },
       not_found: {
@@ -3967,19 +3967,19 @@ if you are sure your search is right. `,
   active_cycle_analytics: {
     empty_state: {
       progress: {
-        title: `Add work items to the cycle to view it's 
+        title: `Add work items to the cycle to view it's
  progress`,
       },
       priority: {
-        title: `Observe high priority work items tackled in 
+        title: `Observe high priority work items tackled in
  the cycle at a glance.`,
       },
       assignee: {
-        title: `Add assignees to work items to see a 
+        title: `Add assignees to work items to see a
  breakdown of work by assignees.`,
       },
       label: {
-        title: `Add labels to work items to see the 
+        title: `Add labels to work items to see the
  breakdown of work by labels.`,
       },
     },
@@ -4712,6 +4712,17 @@ if you are sure your search is right. `,
         "We have automatically matched the priorities to the best of our ability. Please map any remaining priorities before proceeding.",
       title_summary: "Summary",
       description_summary: "Here is a summary of the data that will be migrated from Jira to Plane.",
+      custom_jql_filter: "Custom JQL Filter",
+      jql_filter_description: "Use JQL to filter specific issues for import.",
+      project_code: "PROJECT",
+      enter_filters_placeholder: "Enter filters (e.g., status = 'In Progress')",
+      validating_query: "Validating query...",
+      validation_successful_work_items_selected: "Validation Successful, {count} Work Items Selected.",
+      run_syntax_check: "Run syntax check to verify your query",
+      refresh: "Refresh",
+      check_syntax: "Check Syntax",
+      no_work_items_selected: "No work items selected by the query.",
+      validation_error_default: "Something went wrong while validating the query.",
     },
   },
   asana_importer: {

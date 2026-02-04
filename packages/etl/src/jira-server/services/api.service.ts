@@ -109,9 +109,9 @@ export class JiraV2Service {
   }
 
   // Verified
-  async getNumberOfIssues(projectKey: string) {
+  async getNumberOfIssues(projectKey: string, jql?: string) {
     const issues = await this.jiraClient.issueSearch.searchForIssuesUsingJql({
-      jql: `project = "${projectKey}"`,
+      jql: jql ? jql : `project = "${projectKey}"`,
       maxResults: 0,
     });
     return issues.total;
@@ -350,11 +350,13 @@ export class JiraV2Service {
     });
   }
 
-  async getProjectIssues(projectKey: string, startAt = 0, createdAfter?: string, maxResults = 100) {
+  async getProjectIssues(projectKey: string, startAt = 0, createdAfter?: string, maxResults = 100, jql?: string) {
     return this.jiraClient.issueSearch.searchForIssuesUsingJql({
-      jql: createdAfter
-        ? `project = "${projectKey}" AND (created >= "${createdAfter}" OR updated >= "${createdAfter}") ORDER BY created ASC`
-        : `project = "${projectKey}" ORDER BY created ASC`,
+      jql: jql
+        ? jql
+        : createdAfter
+          ? `project = "${projectKey}" AND (created >= "${createdAfter}" OR updated >= "${createdAfter}") ORDER BY created ASC`
+          : `project = "${projectKey}" ORDER BY created ASC`,
       expand: "renderedFields",
       fields: ["*all", "sprints", "closedSprints"],
       startAt,

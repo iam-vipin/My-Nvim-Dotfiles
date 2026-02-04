@@ -14,3 +14,4 @@
 export * from "./root";
 export * from "./select-resource";
 export * from "./select-project";
+export * from "./configure-jql";

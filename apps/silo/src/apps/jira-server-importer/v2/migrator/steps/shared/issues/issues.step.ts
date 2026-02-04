@@ -80,6 +80,7 @@ export class JiraIssuesStep implements IStep {
 
     try {
       const projectKey = this.getProjectKey(job);
+      const jql = this.getJQL(job);
       const paginationCtx = this.getPaginationContext(previousContext);
 
       logger.info(`[${job.id}] [${this.name}] Starting execution`, {
@@ -95,6 +96,7 @@ export class JiraIssuesStep implements IStep {
       const issuesResult = await this.pull({
         jobContext,
         projectKey,
+        jql,
         paginationCtx,
       });
 
@@ -176,6 +178,10 @@ export class JiraIssuesStep implements IStep {
     return projectKey;
   }
 
+  protected getJQL(job: TImportJob<JiraConfig>): string | undefined {
+    return job.config?.jql;
+  }
+
   /**
    * Initialize report batch count on first page
    */
@@ -240,6 +246,7 @@ export class JiraIssuesStep implements IStep {
   protected async pull(props: {
     jobContext: TJobContext;
     projectKey: string;
+    jql: string | undefined;
     paginationCtx: { startAt: number; totalProcessed: number };
   }): Promise<{
     items: IJiraIssue[];
@@ -252,7 +259,9 @@ export class JiraIssuesStep implements IStep {
         startAt: props.paginationCtx.startAt,
         maxResults: this.PAGE_SIZE,
       },
-      props.projectKey
+      props.projectKey,
+      undefined,
+      props.jql
     );
 
     logger.info(`[${props.jobContext.job.id}] [${this.name}] Pulled issues`, {

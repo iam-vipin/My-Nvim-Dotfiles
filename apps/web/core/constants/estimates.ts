@@ -19,7 +19,7 @@ import {
   ESTIMATE_SYSTEMS,
 } from "@plane/constants";
 
-estimateCount.max = 12;
+estimateCount.max = 50;
 
 ESTIMATE_SYSTEMS.points.templates.fibonacci.values = [
   ...ESTIMATE_SYSTEMS.points.templates.fibonacci.values,

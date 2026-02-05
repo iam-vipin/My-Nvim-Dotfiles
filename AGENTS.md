@@ -103,6 +103,40 @@ python manage.py runserver
 
 **Requirements**: Docker, Node.js 22+, Python 3.8+, 12GB+ RAM recommended
 
+## Copyright Headers
+
+Every source file in this repository contains a copyright/license header. When reading files, **ignore these headers** — they are boilerplate and not relevant to understanding the code logic. Do **not** remove, modify, or omit them when editing existing files. When creating **new** files, include the appropriate header.
+
+**TypeScript / JavaScript / TSX / JSX:**
+```ts
+/**
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+ */
+```
+
+**Python:**
+```python
+# SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+# SPDX-License-Identifier: LicenseRef-Plane-Commercial
+#
+# Licensed under the Plane Commercial License (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# https://plane.so/legals/eula
+#
+# DO NOT remove or modify this notice.
+# NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
+```
+
 ## Code Style
 
 - **TypeScript**: Strict mode, use `workspace:*` for internal packages, `catalog:` for external deps

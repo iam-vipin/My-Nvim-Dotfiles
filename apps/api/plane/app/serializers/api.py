@@ -33,6 +33,9 @@ class APITokenSerializer(BaseSerializer):
             "user",
             "allowed_rate_limit",
             "is_service",
+            "is_active",
+            "last_used",
+            "user_type",
         ]
 
 

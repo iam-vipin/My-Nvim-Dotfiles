@@ -22,22 +22,14 @@ type Props = {
   isLoading?: boolean;
   workspaceSlug: string;
   globalViewId: string;
-  fetchNextPages: () => void;
-  issuesLoading: boolean;
 };
 
 export const WorkspaceTimelineRoot = observer(function WorkspaceTimelineRoot(props: Props) {
-  const { isLoading = false, workspaceSlug, globalViewId, fetchNextPages, issuesLoading } = props;
+  const { workspaceSlug, globalViewId } = props;
 
   return (
     <TimeLineTypeContext.Provider value={GANTT_TIMELINE_TYPE.ISSUE}>
-      <WorkspaceTimelineChart
-        isLoading={isLoading}
-        workspaceSlug={workspaceSlug}
-        globalViewId={globalViewId}
-        fetchNextPages={fetchNextPages}
-        issuesLoading={issuesLoading}
-      />
+      <WorkspaceTimelineChart workspaceSlug={workspaceSlug} globalViewId={globalViewId} />
     </TimeLineTypeContext.Provider>
   );
 });

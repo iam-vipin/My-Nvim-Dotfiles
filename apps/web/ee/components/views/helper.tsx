@@ -45,10 +45,6 @@ const DEFAULT_LAYOUT = EIssueLayoutTypes.SPREADSHEET;
  * @returns {React.ReactNode}
  */
 export function GlobalViewLayoutSelection({ onChange, selectedLayout, workspaceSlug }: TLayoutSelectionProps) {
-  const {
-    issuesFilter: { updateFilters },
-  } = useIssues(EIssuesStoreType.GLOBAL);
-
   // Feature flag checks for each layout
   const isTimelineEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.GLOBAL_VIEWS_TIMELINE);
   const isBoardAndCalendarEnabled = useFlag(workspaceSlug, "GLOBAL_VIEWS_CAL_BOARD");
@@ -77,7 +73,7 @@ export function GlobalViewLayoutSelection({ onChange, selectedLayout, workspaceS
     if (!enabledLayouts.includes(selectedLayout)) {
       onChange(DEFAULT_LAYOUT);
     }
-  }, [enabledLayouts, selectedLayout, workspaceSlug, updateFilters, onChange]);
+  }, [enabledLayouts, selectedLayout, workspaceSlug, onChange]);
 
   // Show layout selection only if there are multiple layouts available
   if (enabledLayouts.length <= 1) return null;

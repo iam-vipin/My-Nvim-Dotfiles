@@ -32,15 +32,12 @@ import { useTimeLineChart, useTimeLineChartStore } from "@/hooks/use-timeline-ch
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 
 type Props = {
-  isLoading?: boolean;
   workspaceSlug: string;
   globalViewId: string;
-  fetchNextPages: () => void;
-  issuesLoading: boolean;
 };
 
 export const WorkspaceTimelineChart = observer(function WorkspaceGanttChart(props: Props) {
-  const { isLoading = false, workspaceSlug, globalViewId, fetchNextPages, issuesLoading } = props;
+  const { workspaceSlug, globalViewId } = props;
 
   // Hooks
   const { t } = useTranslation();
@@ -52,7 +49,7 @@ export const WorkspaceTimelineChart = observer(function WorkspaceGanttChart(prop
   const {
     issues: { getIssueLoader, getPaginationData, groupedIssueIds, updateIssueDates },
   } = useIssues(EIssuesStoreType.GLOBAL);
-  const { updateIssue } = useIssuesActions(EIssuesStoreType.GLOBAL);
+  const { updateIssue, fetchNextIssues, fetchIssues } = useIssuesActions(EIssuesStoreType.GLOBAL);
   const { initGantt } = useTimeLineChart(GANTT_TIMELINE_TYPE.ISSUE);
   const { allowPermissions } = useUserPermissions();
   const { getBlockById } = useTimeLineChartStore();
@@ -60,6 +57,12 @@ export const WorkspaceTimelineChart = observer(function WorkspaceGanttChart(prop
   // Derived values
   const targetDate = new Date();
   targetDate.setDate(targetDate.getDate() + 1);
+
+  useEffect(() => {
+    fetchIssues("init-loader", { canGroup: false, perPageCount: 100 }, globalViewId).catch((error) =>
+      console.error(error)
+    );
+  }, [fetchIssues, globalViewId]);
 
   // Gantt initialization
   useEffect(() => {
@@ -98,11 +101,6 @@ export const WorkspaceTimelineChart = observer(function WorkspaceGanttChart(prop
     [updateIssueDates, workspaceSlug, t]
   );
 
-  // Load more handler
-  const loadMoreIssues = useCallback(() => {
-    fetchNextPages();
-  }, [fetchNextPages]);
-
   // Permission handler
   const checkBlockPermissions = (blockId: string) => {
     const block = getBlockById(blockId);
@@ -116,7 +114,7 @@ export const WorkspaceTimelineChart = observer(function WorkspaceGanttChart(prop
     );
   };
   // Loading state
-  if (isLoading || issuesLoading || !globalViewId || !groupedIssueIds || getIssueLoader() === "init-loader") {
+  if (!globalViewId || !groupedIssueIds || getIssueLoader() === "init-loader") {
     return <TimelineLayoutLoader />;
   }
 
@@ -138,7 +136,7 @@ export const WorkspaceTimelineChart = observer(function WorkspaceGanttChart(prop
           enableBlockLeftResize={checkBlockPermissions}
           enableBlockRightResize={checkBlockPermissions}
           enableAddBlock={checkBlockPermissions}
-          loadMoreBlocks={loadMoreIssues}
+          loadMoreBlocks={fetchNextIssues}
           canLoadMoreBlocks={!!nextPageResults}
           updateBlockDates={updateBlockDates}
           enableDependency={checkBlockPermissions}

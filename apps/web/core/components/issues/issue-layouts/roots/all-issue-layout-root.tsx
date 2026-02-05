@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useCallback, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 import useSWR from "swr";
@@ -34,12 +34,10 @@ import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-propert
 
 type Props = {
   isDefaultView: boolean;
-  isLoading?: boolean;
-  toggleLoading: (value: boolean) => void;
 };
 
 export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Props) {
-  const { isDefaultView, isLoading = false, toggleLoading } = props;
+  const { isDefaultView } = props;
   // router
   const router = useAppRouter();
   const { workspaceSlug: routerWorkspaceSlug, globalViewId: routerGlobalViewId } = useParams();
@@ -50,7 +48,7 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
   // store hooks
   const {
     issuesFilter: { filters, fetchFilters, updateFilterExpression },
-    issues: { clear, groupedIssueIds, fetchIssues, fetchNextIssues },
+    issues: { clear },
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { fetchAllGlobalViews, getViewDetailsById } = useGlobalView();
   // Derived values
@@ -83,11 +81,6 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
     routeFilters[key] = value;
   });
 
-  // Fetch next pages callback
-  const fetchNextPages = useCallback(() => {
-    if (workspaceSlug && globalViewId) fetchNextIssues(workspaceSlug, globalViewId);
-  }, [fetchNextIssues, workspaceSlug, globalViewId]);
-
   // Fetch global views
   const { isLoading: globalViewsLoading } = useSWR(
     workspaceSlug ? `WORKSPACE_GLOBAL_VIEWS_${workspaceSlug}` : null,
@@ -99,26 +92,19 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  // Fetch issues
-  const { isLoading: issuesLoading } = useSWR(
+  const { isLoading: filtersLoading } = useSWR(
     workspaceSlug && globalViewId ? `WORKSPACE_GLOBAL_VIEW_ISSUES_${workspaceSlug}_${globalViewId}` : null,
     async () => {
       if (workspaceSlug && globalViewId) {
         clear();
-        toggleLoading(true);
         await fetchFilters(workspaceSlug, globalViewId);
-        await fetchIssues(workspaceSlug, globalViewId, groupedIssueIds ? "mutation" : "init-loader", {
-          canGroup: false,
-          perPageCount: 100,
-        });
-        toggleLoading(false);
       }
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // Empty state
-  if (!isLoading && !globalViewsLoading && !issuesLoading && !viewDetails && !isDefaultView) {
+  if (!globalViewsLoading && !viewDetails && !isDefaultView) {
     return (
       <EmptyStateDetailed
         title="View does not exist"
@@ -158,14 +144,11 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
               <WorkspaceActiveLayout
                 activeLayout={activeLayout}
                 isDefaultView={isDefaultView}
-                isLoading={isLoading}
-                toggleLoading={toggleLoading}
                 workspaceSlug={workspaceSlug}
                 globalViewId={globalViewId}
                 routeFilters={routeFilters}
-                fetchNextPages={fetchNextPages}
                 globalViewsLoading={globalViewsLoading}
-                issuesLoading={issuesLoading}
+                filtersLoading={filtersLoading}
               />
             </div>
             {/* peek overview */}

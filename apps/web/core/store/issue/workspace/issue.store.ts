@@ -59,7 +59,6 @@ export interface IWorkspaceIssues extends IBaseIssuesStore {
   bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => Promise<void>;
 
   quickAddIssue: undefined;
-  clear(): void;
 }
 
 export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues {

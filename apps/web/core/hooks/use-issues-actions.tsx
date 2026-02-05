@@ -116,7 +116,7 @@ const useProjectIssueActions = () => {
       if (!workspaceSlug || !projectId) return;
       return issues.fetchNextIssues(workspaceSlug.toString(), projectId.toString(), groupId, subGroupId);
     },
-    [issues.fetchIssues, workspaceSlug, projectId]
+    [issues.fetchNextIssues, workspaceSlug, projectId]
   );
 
   const createIssue = useCallback(

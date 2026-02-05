@@ -37,7 +37,7 @@ export const WorkspaceSettingsSidebarItemCategories = observer(function Workspac
   const { t } = useTranslation();
 
   return (
-    <div className="mt-3 flex flex-col divide-y divide-subtle px-3">
+    <div className="mt-1.5 flex flex-col divide-y divide-subtle px-3">
       {WORKSPACE_SETTINGS_CATEGORIES.map((category) => {
         const categoryItems = GROUPED_WORKSPACE_SETTINGS[category];
         const accessibleItems = categoryItems.filter(

@@ -42,7 +42,7 @@ export const WorkspaceSettingsSidebarHeader = observer(function WorkspaceSetting
   if (!currentWorkspaceRole) return null;
 
   return (
-    <div className="shrink-0">
+    <div className="sticky top-0 shrink-0 bg-surface-1 pb-1.5">
       <div className="py-3 pl-4 pr-5 flex items-center gap-1 text-body-md-medium">
         <IconButton
           variant="ghost"

@@ -36,6 +36,8 @@ from plane.ee.models import (
 from plane.utils.exception_logger import log_exception
 from plane.ee.bgtasks.template_task import create_workitems
 from plane.ee.utils.workflow import WorkflowStateManager
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 logger = logging.getLogger("plane.worker")
 
@@ -87,6 +89,15 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
             recurring_task.save(update_fields=["periodic_task", "next_scheduled_at"])
 
         slug = recurring_task.workspace.slug
+
+        if not check_workspace_feature_flag(feature_key=FeatureFlag.RECURRING_WORKITEMS, slug=slug):
+            recurring_task.enabled = False
+            recurring_task.save()
+            logger.info(
+                f"Recurring task {recurring_workitem_task_id} disabled: feature not available for workspace plan"
+            )
+
+            return
 
         # get the user id from the recurring task
         user_id = recurring_task.created_by.id

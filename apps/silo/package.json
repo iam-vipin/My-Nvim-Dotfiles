@@ -14,8 +14,8 @@
   },
   "scripts": {
     "build": "tsdown",
-    "dev": "nodemon --config \"./nodemon.json\"/",
-    "start": "node .",
+    "dev": "tsdown --watch --onSuccess \"node --env-file=.env .\"",
+    "start": "node --env-file=.env .",
     "test": "jest",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=2553",
@@ -84,9 +84,6 @@
     "adm-zip": "^0.5.16",
     "jest": "^30.0.5",
     "node-html-parser": "^6.1.13",
-    "nodemon": "^3.1.4",
-    "tsc-alias": "^1.8.10",
-    "tsconfig-paths": "^4.2.0",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   }

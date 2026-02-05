@@ -14,7 +14,6 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch --onSuccess \"node --env-file=.env .\"",
-    "dev:consumer": "tsdown --watch --onSuccess \"node --env-file=.env ./dist/consumer.mjs\"",
     "start": "node --env-file=.env .",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=160",
     "check:types": "tsc --noEmit",

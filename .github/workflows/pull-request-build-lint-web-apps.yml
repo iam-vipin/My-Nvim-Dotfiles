@@ -9,16 +9,21 @@ on:
       - "opened"
       - "synchronize"
       - "ready_for_review"
-      - "review_requested"
       - "reopened"
-    paths-ignore:
-      - ".github/**"
-      - "**/*.md"
-      - "docs/**"
-      - ".gitignore"
-      - ".editorconfig"
-      - "LICENSE"
-      - "**/Dockerfile*"
+    paths:
+      - "apps/web/**"
+      - "apps/admin/**"
+      - "apps/space/**"
+      - "apps/live/**"
+      - "apps/silo/**"
+      - "apps/flux/**"
+      - "packages/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "turbo.json"
+      - "tsconfig.json"
+      - "eslint.config.mjs"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -30,9 +35,7 @@ jobs:
     name: check:format
     runs-on: ubuntu-22.04-4core
     timeout-minutes: 10
-    if: |
-      github.event.pull_request.draft == false &&
-      github.event.pull_request.requested_reviewers != null
+    if: github.event.pull_request.draft == false
     env:
       TURBO_SCM_BASE: ${{ github.event.pull_request.base.sha }}
       TURBO_SCM_HEAD: ${{ github.sha }}
@@ -72,9 +75,7 @@ jobs:
     name: Build packages
     runs-on: ubuntu-22.04-4core
     timeout-minutes: 15
-    if: |
-      github.event.pull_request.draft == false &&
-      github.event.pull_request.requested_reviewers != null
+    if: github.event.pull_request.draft == false
     env:
       TURBO_SCM_BASE: ${{ github.event.pull_request.base.sha }}
       TURBO_SCM_HEAD: ${{ github.sha }}

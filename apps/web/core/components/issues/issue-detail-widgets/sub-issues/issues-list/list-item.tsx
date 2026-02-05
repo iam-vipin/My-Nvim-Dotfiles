@@ -200,7 +200,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
             </div>
 
             <div className="flex-shrink-0 text-13">
-              <CustomMenu placement="bottom-end" ellipsis>
+              <CustomMenu placement="top-end" ellipsis>
                 {canEdit && (
                   <CustomMenu.MenuItem
                     onClick={() => {

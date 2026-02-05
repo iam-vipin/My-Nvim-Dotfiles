@@ -52,7 +52,7 @@ const UpgradeLayout = observer(function UpgradeLayout() {
     }
   }, [isSelfManaged, navigate]);
 
-  if (!isSelfManaged) {
+  if (isSelfManaged) {
     return null;
   }
 

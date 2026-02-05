@@ -12,12 +12,11 @@
  */
 
 import type { NodeViewProps } from "@tiptap/react";
-import { NodeViewContent } from "@tiptap/react";
-import { useState } from "react";
-// plane imports
-import { cn } from "@plane/utils";
+import { NodeViewContent, useEditorState } from "@tiptap/react";
+import { useCallback, useState } from "react";
 // constants
 import { COLORS_LIST } from "@/constants/common";
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // version diff support
 import { YChangeNodeViewWrapper } from "@/components/editors/version-diff/extensions/ychange-node-view-wrapper";
 // local components
@@ -38,9 +37,31 @@ export type CustomCalloutNodeViewProps = NodeViewProps & {
 
 export function CustomCalloutBlock(props: CustomCalloutNodeViewProps) {
   const { decorations, editor, node, updateAttributes } = props;
+
+  const isEmojiPickerOpen = useEditorState({
+    editor,
+    selector: (ctx) => {
+      const calloutStorage = ctx.editor.storage[CORE_EXTENSIONS.CALLOUT];
+      const isOpen = calloutStorage?.openedLogoPickerId === node.attrs.id;
+      return isOpen;
+    },
+  });
+
   // states
-  const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+
+  // callbacks
+  const handleEmojiPickerOpen = useCallback(
+    (val: boolean) => {
+      const calloutStorage = editor.storage[CORE_EXTENSIONS.CALLOUT];
+      if (calloutStorage) {
+        calloutStorage.openedLogoPickerId = val ? node.attrs.id : null;
+        editor.view.dispatch(editor.state.tr);
+      }
+    },
+    [node.attrs.id]
+  );
+
   // derived values
   const activeBackgroundColor = COLORS_LIST.find((c) => node.attrs["data-background"] === c.key)?.backgroundColor;
 
@@ -51,11 +72,10 @@ export function CustomCalloutBlock(props: CustomCalloutNodeViewProps) {
       style={{ backgroundColor: activeBackgroundColor }}
     >
       <CalloutBlockLogoSelector
-        key={node.attrs["id"]}
         blockAttributes={node.attrs}
         disabled={!editor.isEditable}
         isOpen={isEmojiPickerOpen}
-        handleOpen={(val) => setIsEmojiPickerOpen(val)}
+        handleOpen={handleEmojiPickerOpen}
         updateAttributes={updateAttributes}
       />
       <CalloutBlockColorSelector

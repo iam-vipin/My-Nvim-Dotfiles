@@ -58,6 +58,7 @@ class PlaneOAuthService:
 
         self.redirect_uri = settings.plane_api.OAUTH_REDIRECT_URI
         self.base_url = settings.plane_api.HOST  # Use HOST which points to the Plane API
+        self.internal_base_url = settings.plane_api.INTERNAL_HOST
 
     def generate_authorization_url(self, user_id: UUID, workspace_id: Optional[UUID] = None, workspace_slug: Optional[str] = None) -> tuple[str, str]:
         """
@@ -162,7 +163,7 @@ class PlaneOAuthService:
         if app_installation_id:
             payload["app_installation_id"] = app_installation_id
 
-        token_url = f"{self.base_url}/auth/o/token/"
+        token_url = f"{self.internal_base_url}/auth/o/token/"
 
         async with httpx.AsyncClient() as client:
             response = await client.post(
@@ -290,7 +291,7 @@ class PlaneOAuthService:
             "client_secret": self.client_secret,
         }
 
-        token_url = f"{self.base_url}/auth/o/token/"
+        token_url = f"{self.internal_base_url}/auth/o/token/"
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 token_url,

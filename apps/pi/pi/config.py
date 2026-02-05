@@ -38,6 +38,7 @@ class PlaneAPI:
     """Configuration for Plane API endpoints and session."""
 
     HOST: str = os.getenv("PLANE_API_HOST", "https://api.plane.so")
+    INTERNAL_HOST: str = os.getenv("PLANE_INTERNAL_API_HOST", "") or HOST
     BASE_PATH: str = os.getenv("PI_BASE_PATH", "")
     SESSION_CHECK: str = f"{HOST}/api/users/session/"
     SESSION_COOKIE_NAME: str = os.getenv("SESSION_COOKIE_NAME", "session-id")

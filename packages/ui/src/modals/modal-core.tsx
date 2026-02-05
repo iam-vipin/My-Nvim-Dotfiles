@@ -64,7 +64,7 @@ export function ModalCore(props: Props) {
             >
               <Dialog.Panel
                 className={cn(
-                  "relative transform rounded-lg bg-surface-1 text-left shadow-raised-200 transition-all w-full",
+                  "relative transform rounded-lg bg-surface-1 text-left shadow-raised-200 transition-all w-full max-h-[80vh] overflow-y-auto",
                   width,
                   className
                 )}

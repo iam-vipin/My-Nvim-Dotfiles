@@ -13,7 +13,7 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { SquareUser } from "lucide-react";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
@@ -28,6 +28,7 @@ import {
   StartDatePropertyIcon,
   ChevronDownIcon,
   InfoIcon,
+  ChevronRightIcon,
 } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ILinkDetails, IModule, ModuleLink } from "@plane/types";
@@ -144,7 +145,8 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
   // router
   const { workspaceSlug, projectId } = useParams();
-
+  const searchParams = useSearchParams();
+  const peekModule = searchParams.get("peekModule");
   // store hooks
   const { t } = useTranslation();
   const { allowPermissions } = useUserPermissions();
@@ -268,6 +270,18 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
         updateLink={handleUpdateLink}
       />
       <>
+        {peekModule && (
+          <div className={`sticky z-10 top-0 flex items-center justify-between bg-surface-1 pb-5 pt-5`}>
+            <div>
+              <button
+                className="flex h-5 w-5 items-center justify-center rounded-full bg-layer-3"
+                onClick={() => handleClose()}
+              >
+                <ChevronRightIcon className="h-3 w-3 stroke-2 text-on-color" />
+              </button>
+            </div>
+          </div>
+        )}
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-5 pt-2">
             <Controller

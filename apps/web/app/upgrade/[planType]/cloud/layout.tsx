@@ -11,14 +11,19 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { route } from "@react-router/dev/routes";
-import type { RouteConfigEntry } from "@react-router/dev/routes";
-import { routes as appRoutes } from "./routes/index";
+// components
+import { Outlet } from "react-router";
+import { PageHead } from "@/components/core/page-title";
+// wrappers
+import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 
-/**
- * Main Routes Configuration
- * This file serves as the entry point for the route configuration.
- */
-const routes: RouteConfigEntry[] = [...appRoutes, route("*", "./not-found.tsx")];
-
-export default routes;
+export default function CloudUpgradeLayout() {
+  return (
+    <div className="h-full w-full overflow-hidden">
+      <PageHead title={`Cloud Upgrade - Plane`} />
+      <AuthenticationWrapper>
+        <Outlet />
+      </AuthenticationWrapper>
+    </div>
+  );
+}

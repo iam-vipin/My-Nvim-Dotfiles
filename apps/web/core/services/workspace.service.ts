@@ -43,6 +43,7 @@ import type {
   TExploredFeatures,
   TTips,
   TGettingStartedChecklistKeys,
+  TWorkspaceWithProductDetails,
 } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
@@ -519,6 +520,18 @@ export class WorkspaceService extends APIService {
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Get workspaces with plan details. This endpoint is only available and used for Plane cloud instance.
+   * @returns {Promise<TWorkspaceWithProductDetails[]>} - The workspaces with plan details.
+   */
+  async getWorkspacesWithPlanDetails(): Promise<TWorkspaceWithProductDetails[]> {
+    return this.get(`/api/payments/website/workspaces/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
       });
   }
 }

@@ -11,14 +11,14 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { route } from "@react-router/dev/routes";
-import type { RouteConfigEntry } from "@react-router/dev/routes";
-import { routes as appRoutes } from "./routes/index";
+import { redirect } from "react-router";
+// plane imports
+import { getDefaultUpgradePath } from "@plane/utils";
 
-/**
- * Main Routes Configuration
- * This file serves as the entry point for the route configuration.
- */
-const routes: RouteConfigEntry[] = [...appRoutes, route("*", "./not-found.tsx")];
+export const clientLoader = async () => {
+  throw redirect(getDefaultUpgradePath());
+};
 
-export default routes;
+export default function UpgradePage() {
+  return null;
+}

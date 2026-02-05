@@ -11,6 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { RouteConfigEntry } from "@react-router/dev/routes";
+import type { IWorkspaceProductSubscription } from "./payment-extended";
 
-export const cloudRoutes: RouteConfigEntry[] = [];
+export type TWorkspaceWithProductDetails = {
+  workspace_id: string;
+  slug: string;
+  name: string;
+  logo: string;
+} & Pick<IWorkspaceProductSubscription, "product" | "is_on_trial" | "has_added_payment_method">;

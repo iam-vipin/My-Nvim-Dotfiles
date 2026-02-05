@@ -64,6 +64,7 @@ export * from "./tab-indices";
 export * from "./teamspace";
 export * from "./templates";
 export * from "./themes";
+export * from "./upgrade";
 export * from "./user";
 export * from "./views";
 export * from "./work-item-properties";

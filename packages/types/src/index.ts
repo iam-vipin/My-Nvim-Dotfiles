@@ -89,3 +89,4 @@ export * from "./milestone";
 export * from "./sso";
 export * from "./tour";
 export * from "./agents";
+export * from "./upgrade";

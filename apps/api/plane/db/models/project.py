@@ -22,6 +22,8 @@ from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Q
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from plane.bgtasks.deletion_task import soft_delete_pages_on_project_deletion
 
@@ -503,3 +505,33 @@ class ProjectUserProperty(ProjectBaseModel):
     def __str__(self):
         """Return properties status of the project"""
         return str(self.user)
+
+
+def track_project_created_event(instance):
+    from plane.bgtasks.event_tracking_task import track_event
+    from plane.utils.analytics_events import PROJECT_CREATED
+
+    try:
+        workspace_slug = instance.workspace.slug
+        track_event.delay(
+            user_id=str(instance.created_by_id),
+            event_name=PROJECT_CREATED,
+            event_properties={
+                "user_id": str(instance.created_by_id),
+                "project_id": str(instance.id),
+                "project_name": instance.name,
+                "project_identifier": instance.identifier,
+                "workspace_id": str(instance.workspace_id),
+                "workspace_slug": workspace_slug,
+                "created_at": str(instance.created_at),
+            },
+            workspace_slug=workspace_slug,
+        )
+    except Exception:
+        return
+
+
+@receiver(post_save, sender=Project)
+def trigger_project_post_save_operations(sender, instance, created, **kwargs):
+    if created:
+        track_project_created_event(instance)

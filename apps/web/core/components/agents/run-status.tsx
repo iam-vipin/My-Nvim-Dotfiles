@@ -16,6 +16,9 @@ import { observer } from "mobx-react";
 import { EAgentRunStatus } from "@plane/types";
 import { cn } from "@plane/utils";
 
+const getStatusLabel = (status: EAgentRunStatus) => {
+  return status === EAgentRunStatus.AWAITING ? "Needs input" : status.split("_").join(" ");
+};
 export const AgentRunStatus = observer(function AgentRunStatus(props: { status: EAgentRunStatus }) {
   const { status } = props;
   const getStatusColor = (status: EAgentRunStatus) => {
@@ -23,7 +26,7 @@ export const AgentRunStatus = observer(function AgentRunStatus(props: { status: 
       case EAgentRunStatus.CREATED:
         return "text-label-indigo-text bg-label-indigo-bg";
       case EAgentRunStatus.AWAITING:
-        return "text-label-yellow-text bg-label-yellow-bg";
+        return "text-accent-primary bg-accent-subtle-hover";
       case EAgentRunStatus.IN_PROGRESS:
         return "text-label-yellow-text bg-label-yellow-bg";
       case EAgentRunStatus.STOPPING:
@@ -40,7 +43,7 @@ export const AgentRunStatus = observer(function AgentRunStatus(props: { status: 
   };
   return (
     <span className={cn("capitalize text-caption-sm-regular rounded-sm px-1 py-0.5", getStatusColor(status))}>
-      {status.split("_").join(" ")}
+      {getStatusLabel(status)}
     </span>
   );
 });

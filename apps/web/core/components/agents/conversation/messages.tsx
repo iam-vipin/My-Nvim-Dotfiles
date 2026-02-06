@@ -26,6 +26,7 @@ import { useAgent } from "@/plane-web/hooks/store";
 import { AgentWork } from "./agent-work";
 import { ConversationLoader } from "./loader";
 import { Prompt } from "./prompt";
+import { LiteTextEditor } from "@/components/editor/lite-text";
 
 type TGroupedActivity = { type: "individual" | "group"; activity: TAgentRunActivity | TAgentRunActivity[] };
 type TProps = {
@@ -34,7 +35,7 @@ type TProps = {
   projectId: string;
   activeRunStatus: EAgentRunStatus;
 };
-const nonGroupableActivityTypes = ["prompt", "elicitation", "response"];
+const nonGroupableActivityTypes = ["prompt", "elicitation", "response", "error"];
 export const Messages = observer((props: TProps) => {
   const { workspaceId, workspaceSlug, projectId, activeRunStatus } = props;
   // refs
@@ -119,20 +120,48 @@ export const Messages = observer((props: TProps) => {
               case "elicitation":
               case "response":
                 return (
-                  <div className="flex flex-col gap-1 mb-3" key={index}>
-                    <div className="text-body-xs-regular text-secondary">{activity.content.body}</div>
+                  <div className="flex flex-col gap-1" key={index}>
+                    <div className="text-body-xs-regular text-secondary">
+                      <LiteTextEditor
+                        editable={false}
+                        ref={readOnlyEditorRef}
+                        id={activity.id}
+                        initialValue={activity.content.body ?? ""}
+                        workspaceId={workspaceId ?? ""}
+                        workspaceSlug={workspaceSlug}
+                        containerClassName={cn("!py-1 transition-[border-color] duration-500 !px-0")}
+                        projectId={projectId?.toString()}
+                        displayConfig={{
+                          fontSize: "small-font",
+                        }}
+                        parentClassName="border-none"
+                      />
+                    </div>
+                  </div>
+                );
+              case "error":
+                return (
+                  <div className="flex flex-col gap-1" key={index}>
+                    <div className="text-body-xs-regular text-error">{activity.content.body}</div>
                   </div>
                 );
             }
           }
-          return <AgentWork key={index} activities={groupedActivity.activity as TAgentRunActivity[]} />;
+          return (
+            <AgentWork
+              key={index}
+              activities={groupedActivity.activity as TAgentRunActivity[]}
+              isThinking={activeRunStatus === EAgentRunStatus.IN_PROGRESS && !isLatestActivityResponse}
+            />
+          );
         })}
+
         {/* Thinking indicator */}
         {activeRunStatus === EAgentRunStatus.IN_PROGRESS && !isLatestActivityResponse && (
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-3 animate-vertical-scale bg-inverse shrink-0" />
             <div className={cn("flex gap-2 items-center text-body-xs-regular truncate")}>
-              <span className="shimmer">Thinking...</span>
+              <span className="shimmer">Working...</span>
             </div>
           </div>
         )}

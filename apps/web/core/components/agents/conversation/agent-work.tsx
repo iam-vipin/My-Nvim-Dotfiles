@@ -36,9 +36,10 @@ const CustomAccordion = (props: {
   title: React.ReactNode;
   buttonSize?: string;
   className?: string;
+  defaultOpen?: boolean;
 }) => {
-  const { children, title, className } = props;
-  const [isOpen, setIsOpen] = useState(false);
+  const { children, title, className, defaultOpen } = props;
+  const [isOpen, setIsOpen] = useState(defaultOpen ?? false);
   return (
     <div className={cn("flex flex-col")}>
       <button className={cn("flex items-center gap-2 group", className)} onClick={() => setIsOpen(!isOpen)}>
@@ -65,15 +66,24 @@ const CustomAccordion = (props: {
   );
 };
 
-export const AgentWork = (props: { activities: TAgentRunActivity[] }) => {
-  const { activities } = props;
+export const AgentWork = (props: { activities: TAgentRunActivity[]; isThinking: boolean }) => {
+  const { activities, isThinking } = props;
 
   return (
     <CustomAccordion
       className="mb-3"
-      title={<span className="text-body-xs-regular text-secondary hover:text-tertiary">Thought for a few seconds</span>}
+      defaultOpen={true}
+      title={
+        <span
+          className={cn("text-body-xs-regular text-secondary hover:text-tertiary", {
+            shimmer: isThinking,
+          })}
+        >
+          Worked for a few seconds
+        </span>
+      }
     >
-      {activities.map((activity: TAgentRunActivity) => {
+      {activities?.map((activity: TAgentRunActivity) => {
         switch (activity.content.type) {
           case "thought":
             return (
@@ -86,7 +96,7 @@ export const AgentWork = (props: { activities: TAgentRunActivity[] }) => {
               <div className="text-disabled relative flex flex-col gap-1" key={activity.id}>
                 <CustomAccordion
                   title={
-                    <div className="text-caption-md-regular rounded-md w-fit ">
+                    <div className="text-caption-md-regular rounded-md w-fit text-start">
                       {activity.content.action} &nbsp;
                       <span className="text-caption-md-regular text-placeholder">
                         {unwrapJsonString(JSON.stringify(activity.content.parameters?.input))}
@@ -100,6 +110,12 @@ export const AgentWork = (props: { activities: TAgentRunActivity[] }) => {
                     {unwrapJsonString(JSON.stringify(activity.content.parameters?.result))}
                   </div>
                 </CustomAccordion>
+              </div>
+            );
+          case "error":
+            return (
+              <div className="text-error relative flex flex-col gap-1" key={activity.id}>
+                <div className="text-caption-md-regular text-danger-secondary">{activity.content.body}</div>
               </div>
             );
         }

@@ -34,13 +34,13 @@ export const AgentCommentHeader = observer(function AgentCommentHeader(props: Pr
   const { comment, workspaceSlug } = props;
   //store hooks
   const { activeRunId, getRunStatusById, initRun } = useAgent();
-  const { openAgentSidecar } = useTheme();
+  const { activeSidecar, openAgentSidecar, closeSidecar } = useTheme();
   const { getUserDetails } = useMember();
   // derived values
   const agentUser = comment?.agent_run?.agent_user ?? "";
   const agentRunStatus = getRunStatusById(comment?.agent_run?.id ?? "") ?? comment?.agent_run?.status;
   const userDetails = agentUser && getUserDetails(agentUser)?.display_name;
-
+  const isAgentSidecarOpen = activeSidecar && activeSidecar === "agent";
   if (!comment.agent_run) return null;
   return (
     <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag={E_FEATURE_FLAGS.AGENT_SIDECAR} fallback={<></>}>
@@ -57,20 +57,24 @@ export const AgentCommentHeader = observer(function AgentCommentHeader(props: Pr
           size="sm"
           className="bg-layer-3"
           onClick={() => {
-            if (comment.agent_run && activeRunId !== comment.agent_run?.id) {
-              initRun({
-                issue: comment.issue,
-                comment: comment.id,
-                id: comment.agent_run.id,
-                agent_user: agentUser,
-                status: agentRunStatus || EAgentRunStatus.CREATED,
-              });
+            if (isAgentSidecarOpen && activeRunId === comment.agent_run?.id) {
+              closeSidecar();
+            } else {
+              if (comment.agent_run && activeRunId !== comment.agent_run?.id) {
+                initRun({
+                  issue: comment.issue,
+                  comment: comment.id,
+                  id: comment.agent_run.id,
+                  agent_user: agentUser,
+                  status: agentRunStatus || EAgentRunStatus.CREATED,
+                });
+              }
+              openAgentSidecar(comment.agent_run?.id ?? "");
             }
-            openAgentSidecar(comment.agent_run?.id ?? "");
           }}
         >
           <PanelRight width={14} height={14} className="text-secondary" aria-hidden="true" />
-          <span>Open sidecar</span>
+          <span>{isAgentSidecarOpen && activeRunId === comment.agent_run?.id ? "Close sidecar" : "Open sidecar"}</span>
         </Button>
       </div>
     </WithFeatureFlagHOC>

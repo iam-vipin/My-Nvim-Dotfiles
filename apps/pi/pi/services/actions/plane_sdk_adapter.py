@@ -2087,9 +2087,10 @@ class PlaneSDKAdapter:
         from plane.models.work_item_property_configurations import TextAttributeSettings  # type: ignore[attr-defined]
 
         try:
-            # Inject default settings if missing
-            if "settings" not in kwargs:
-                prop_type = kwargs.get("property_type")
+            # Inject default settings if missing or explicitly set to None
+            prop_type = kwargs.get("property_type")
+            settings = kwargs.get("settings")
+            if settings is None:
                 if prop_type == "DATETIME":
                     # Use a sensible default format
                     kwargs["settings"] = DateAttributeSettings(display_format="MMM dd, yyyy")
@@ -2967,7 +2968,9 @@ class PlaneSDKAdapter:
         """Add projects to teamspace (v0.2.1+)."""
         try:
             self.client.teamspaces.projects.add(workspace_slug=workspace_slug, teamspace_id=teamspace_id, project_ids=project_ids)
-            return {"success": True, "projects_added": len(project_ids)}
+            # Inject teamspace_id so URL construction can use it
+            result: Dict[str, Any] = {"success": True, "projects_added": len(project_ids), "id": teamspace_id}
+            return result
         except HttpError as e:
             log.error(f"Failed to add teamspace projects: {e} ({getattr(e, "status_code", None)})")
             raise

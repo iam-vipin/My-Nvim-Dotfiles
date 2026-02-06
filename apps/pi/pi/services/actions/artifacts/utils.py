@@ -602,7 +602,6 @@ async def resolve_project_id_to_object(data: dict) -> dict:
             }
             # Remove the old project_id if it exists
             resolved_data.pop("project_id", None)
-            log.debug(f"Resolved project_id {project_id} to project object")
             return resolved_data
         else:
             log.warning(f"Could not resolve project_id {project_id}")

@@ -917,7 +917,7 @@ def extract_entity_from_api_response(result: Any, entity_type: str) -> Optional[
         entity_data = {
             "id": data.get("id"),
             "name": data.get("name"),
-            "project": data.get("project"),
+            "project": data.get("project") or data.get("project_id"),
             "workspace": data.get("workspace"),
         }
 
@@ -945,6 +945,10 @@ def extract_entity_from_api_response(result: Any, entity_type: str) -> Optional[
             # Extract customer_id (it was injected by tool_generator from sdk adapter result)
             entity_data["customer"] = data.get("customer")
             entity_data["customer_id"] = data.get("customer_id")
+        elif entity_type == "teamspace":
+            # For teamspace operations where SDK doesn't return full object,
+            # id may have been injected (e.g., for add_projects)
+            pass  # id is already extracted in common fields
 
         # Validate required fields
         if not entity_data["id"]:
@@ -1133,9 +1137,21 @@ async def construct_action_entity_url(
             return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
 
         elif entity_type == "teamspace":
-            # For teamspaces: /workspace_slug/teamspaces/
-            url = f"{api_base_url}/{workspace_slug}/teamspaces/"
+            # For teamspaces: try specific ID first, fallback to list
+            if entity_id:
+                url = f"{api_base_url}/{workspace_slug}/teamspaces/{entity_id}/"
+            else:
+                url = f"{api_base_url}/{workspace_slug}/teamspaces/"
             return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
+
+        elif entity_type == "property":
+            # For properties: /workspace_slug/settings/projects/project_id/work-item-types/
+            project_id = entity_data.get("project")
+            if project_id:
+                url = f"{api_base_url}/{workspace_slug}/settings/projects/{project_id}/work-item-types/"
+                return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
+            else:
+                return None
 
         elif entity_type == "customer":
             # For customers: /workspace_slug/customers/{customer_id}/

@@ -63,7 +63,9 @@ export const useAttachmentOperations = (
           });
 
           await attachmentUploadPromise;
-        } catch (error) {}
+        } catch (error) {
+          console.error(error);
+        }
       },
       remove: async (attachmentId) => {
         try {
@@ -75,6 +77,7 @@ export const useAttachmentOperations = (
             title: t("customers.requests.toasts.attachment.remove.success.title"),
           });
         } catch (error) {
+          console.error(error);
           setToast({
             message: t("customers.requests.toasts.attachment.remove.error.message"),
             type: TOAST_TYPE.ERROR,
@@ -83,7 +86,7 @@ export const useAttachmentOperations = (
         }
       },
     }),
-    [workspaceSlug, requestId, createAttachment, removeAttachment]
+    [workspaceSlug, customerId, requestId, createAttachment, removeAttachment]
   );
   const attachmentsUploadStatus = getAttachmentsUploadStatusByRequestId(requestId);
 

@@ -173,14 +173,14 @@ export function CustomerForm(props: TCustomerForms) {
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)} className="rounded-lg">
-        <div className="space-y-2 pl-5 pt-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="rounded-lg flex flex-col flex-1 min-h-0">
+        <div className="space-y-2 pl-5 pt-5 flex flex-col flex-1 min-h-0">
           <h3 className="text-18 font-medium text-secondary">
             {data?.id ? t("customers.update.label") : t("customers.create.label")}
           </h3>
           {/* Default Properties */}
           <div
-            className="max-h-[72vh] overflow-x-hidden overflow-y-auto py-2 vertical-scrollbar scrollbar-sm space-y-2 pr-5"
+            className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto py-2 vertical-scrollbar scrollbar-sm space-y-2 pr-5"
             ref={formContainerRef}
           >
             <DefaultProperties
@@ -194,7 +194,7 @@ export function CustomerForm(props: TCustomerForms) {
         </div>
         <div
           className={cn(
-            "px-5 py-3 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle",
+            "shrink-0 px-5 py-3 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle",
             isFormOverFlowing && "shadow-raised-100"
           )}
         >

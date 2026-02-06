@@ -11,8 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
 // plane ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
@@ -39,7 +37,12 @@ export const CreateUpdateCustomerModal = observer(function CreateUpdateCustomerM
   return (
     isOpen && (
       <CustomerModalProvider>
-        <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXXL}>
+        <ModalCore
+          isOpen={isOpen}
+          position={EModalPosition.TOP}
+          width={EModalWidth.XXXL}
+          className="flex flex-col min-h-0"
+        >
           <CustomerForm data={customerDetails} handleModalClose={onClose} />
         </ModalCore>
       </CustomerModalProvider>

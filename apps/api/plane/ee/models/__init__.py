@@ -54,7 +54,14 @@ from .workspace import (
     WorkspaceEntityConnection,
 )
 
-from .intake import IntakeSetting, IntakeForm, IntakeFormField, IntakeResponsibility, IntakeResponsibilityTypeChoices
+from .intake import (
+    IntakeSetting,
+    IntakeForm,
+    IntakeFormField,
+    IntakeResponsibility,
+    IntakeResponsibilityTypeChoices,
+    IntakeEmail,
+)
 
 from .initiative import (
     Initiative,

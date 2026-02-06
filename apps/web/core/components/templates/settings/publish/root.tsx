@@ -27,7 +27,7 @@ import {
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import type { IBaseTemplateInstance } from "@/plane-web/store/templates";
+import type { IBaseTemplateInstance } from "@/store/templates";
 // local imports
 import { PublishTemplateFormRoot, PublishTemplateLoader } from "./form";
 

@@ -22,7 +22,7 @@ import type {
   TEditorMentionsResponse,
   TEditorMentionType,
 } from "@plane/types";
-import type { TTeamspacePagesSummary } from "@/plane-web/store/teamspace/pages/teamspace-page.store";
+import type { TTeamspacePagesSummary } from "@/store/teamspace/pages/teamspace-page.store";
 // helpers;
 import { APIService } from "@/services/api.service";
 

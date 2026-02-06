@@ -18,7 +18,7 @@ import { observer } from "mobx-react";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
-import type { IAutomationInstance } from "@/plane-web/store/automations/automation";
+import type { IAutomationInstance } from "@/store/automations/automation";
 // local imports
 import { NoAutomationsEmptyState } from "../no-automations";
 import { AutomationsTableLoader } from "./table/loader";

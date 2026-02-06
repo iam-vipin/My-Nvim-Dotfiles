@@ -47,8 +47,8 @@ import { COMMON_BUTTON_CLASS_NAME } from "@/components/templates/settings/common
 import { TemplateDetails } from "@/components/templates/settings/common/form/template-details";
 import { WorkItemBlueprintListRoot } from "@/components/templates/settings/work-item/blueprint/list/root";
 import { useProjectTemplates, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
-import { IssuePropertyOption } from "@/plane-web/store/issue-types/issue-property-option";
-import { IssueType } from "@/plane-web/store/issue-types/issue-type";
+import { IssuePropertyOption } from "@/store/issue-types/issue-property-option";
+import { IssueType } from "@/store/issue-types/issue-type";
 // local imports
 import { DiscardModal } from "../../discard-modal";
 import { ProjectAttributes } from "./attributes";

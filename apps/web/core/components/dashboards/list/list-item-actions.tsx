@@ -24,7 +24,7 @@ import { getFileURL, renderFormattedDate } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane web store
-import type { IDashboardInstance } from "@/plane-web/store/dashboards/dashboard";
+import type { IDashboardInstance } from "@/store/dashboards/dashboard";
 import { DashboardQuickActions } from "../quick-actions";
 
 type Props = {

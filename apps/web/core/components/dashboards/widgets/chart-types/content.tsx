@@ -14,7 +14,7 @@
 // plane imports
 import type { EWidgetGridBreakpoints } from "@plane/constants";
 // plane web stores
-import type { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
+import type { DashboardWidgetInstance } from "@/store/dashboards/widget";
 // local imports
 import { DashboardWidgetEmptyState } from "../empty-states/empty-state";
 import { DashboardWidgetUpgradeRequiredState } from "../empty-states/upgrade-required-state";

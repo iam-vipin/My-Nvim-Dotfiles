@@ -19,7 +19,7 @@ import { FilterInstance } from "@plane/shared-state";
 import type { TAutomationConditionFilterExpression, TAutomationConditionFilterProperty } from "@plane/types";
 // plane web imports
 import { useAutomationConfig } from "@/plane-web/hooks/automations/use-automation-condition-config";
-import { automationConditionFilterAdapter } from "@/plane-web/store/automations/node/condition/adapter";
+import { automationConditionFilterAdapter } from "@/store/automations/node/condition/adapter";
 
 type TAutomationConditionFilterHOCProps = {
   children:

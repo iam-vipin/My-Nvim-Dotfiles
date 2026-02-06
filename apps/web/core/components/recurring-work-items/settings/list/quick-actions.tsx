@@ -25,7 +25,7 @@ import { cn, getCreateUpdateRecurringWorkItemSettingsPath } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import type { IRecurringWorkItemInstance } from "@/plane-web/store/recurring-work-items/instance";
+import type { IRecurringWorkItemInstance } from "@/store/recurring-work-items/instance";
 
 type TRecurringWorkItemQuickActionsProps = {
   deleteRecurringWorkItem: (id: string) => Promise<void>;

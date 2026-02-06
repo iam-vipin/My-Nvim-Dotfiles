@@ -16,6 +16,7 @@ import { enableStaticRendering } from "mobx-react";
 import { FALLBACK_LANGUAGE, LANGUAGE_STORAGE_KEY } from "@plane/i18n";
 import type { IWorkItemFilterStore } from "@plane/shared-state";
 import { WorkItemFilterStore } from "@plane/shared-state";
+import type { IIssueTypesStore } from "@plane/types";
 // plane web store
 import type { IAnalyticsStore } from "@/plane-web/store/analytics.store";
 import { AnalyticsStore } from "@/plane-web/store/analytics.store";
@@ -73,6 +74,104 @@ import type { IUserStore } from "./user";
 import { UserStore } from "./user";
 import type { IWorkspaceRootStore } from "./workspace";
 import { WorkspaceRootStore } from "./workspace";
+// dashboards
+import type { IBaseDashboardsStore } from "./dashboards/base-dashboards.store";
+import { BaseDashboardsStore } from "./dashboards/base-dashboards.store";
+// automations
+import type { IAutomationsRootStore } from "./automations/root.store";
+import { AutomationsRootStore } from "./automations/root.store";
+// marketplace
+import type { IApplicationStore } from "./marketplace/application.store";
+import { ApplicationStore } from "./marketplace/application.store";
+// Plane AI
+import type { IPiChatStore } from "./pi-chat/pi-chat";
+import { PiChatStore } from "./pi-chat/pi-chat";
+// teamspaces
+import type { ITeamspaceRootStore } from "./teamspace";
+import { TeamspaceRootStore } from "./teamspace";
+// customers
+import type { ICustomerPropertiesStore, ICustomersStore } from "./customers";
+import { CustomerProperties, CustomerStore } from "./customers";
+// importers
+import type {
+  IClickUpStore,
+  ICSVImporterStore,
+  IJiraStore,
+  IJiraServerStore,
+  ILinearStore,
+  IFlatfileStore,
+  IAsanaStore,
+  IZipImporterStore,
+} from "./importers";
+import {
+  ClickUpStore,
+  CSVImporterStore,
+  JiraStore,
+  JiraServerStore,
+  LinearStore,
+  AsanaStore,
+  FlatfileStore,
+  ZipImporterStore,
+} from "./importers";
+import { EZipDriverType } from "@/types/importers/zip-importer";
+// feature flag
+import type { IFeatureFlagsStore } from "@/store/feature-flags/feature-flags.store";
+import { FeatureFlagsStore } from "@/store/feature-flags/feature-flags.store";
+// milestones
+import { MilestoneStore } from "./milestones/milestone.store";
+import type { IMilestoneStore } from "./milestones/milestone.store";
+// templates
+import type { ITemplatesRootStore } from "./templates/store/root.store";
+import { TemplatesRootStore } from "./templates/store/root.store";
+// worklog
+import type { IWorklogStore, IWorklogDownloadStore } from "./worklog";
+import { WorklogStore, WorklogDownloadStore } from "./worklog";
+// initiatives
+import type { IInitiativeFilterStore } from "./initiatives/initiatives-filter.store";
+import { InitiativeFilterStore } from "./initiatives/initiatives-filter.store";
+import type { IInitiativeStore } from "./initiatives/initiatives.store";
+import { InitiativeStore } from "./initiatives/initiatives.store";
+// recurring work items
+import type { IRecurringWorkItemsRootStore } from "./recurring-work-items/root.store";
+import { RecurringWorkItemsRootStore } from "./recurring-work-items/root.store";
+// integrations
+import type {
+  ISlackStore,
+  IGithubStore,
+  IGitlabStore,
+  IConnectionStore,
+  ISentryStore,
+  IGithubEnterpriseStore,
+  IGitlabEnterpriseStore,
+} from "./integrations";
+import {
+  SlackStore,
+  GithubStore,
+  GitlabStore,
+  ConnectionStore,
+  SentryStore,
+  GithubEnterpriseStore,
+  GitlabEnterpriseStore,
+} from "./integrations";
+// workspace features
+import type { IWorkspaceFeatureStore } from "@/store/workspace-feature.store";
+import { WorkspaceFeatureStore } from "@/store/workspace-feature.store";
+// member activity
+import type { IWorkspaceMembersActivityStore } from "@/store/workspace-members-activity.store";
+import { WorkspaceMembersActivityStore } from "@/store/workspace-members-activity.store";
+import type { IProjectMembersActivityStore } from "@/store/project-members-activity.store";
+import { ProjectMembersActivityStore } from "@/store/project-members-activity.store";
+// agents
+import type { IAgentStore } from "./agent";
+import { AgentStore } from "./agent";
+// work item types
+import { IssueTypes } from "./issue-types";
+// intake type forms
+import type { IIntakeTypeFormStore } from "./intake-type-form.store";
+import { IntakeTypeFormStore } from "./intake-type-form.store";
+// intake responsibility
+import type { IIntakeResponsibilityStore } from "./intake-responsibility.store";
+import { IntakeResponsibilityStore } from "./intake-responsibility.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -105,6 +204,46 @@ export class CoreRootStore {
   editorAssetStore: IEditorAssetStore;
   workItemFilters: IWorkItemFilterStore;
   powerK: IPowerKStore;
+  baseDashboards: IBaseDashboardsStore;
+  automationsRoot: IAutomationsRootStore;
+  applicationStore: IApplicationStore;
+  piChat: IPiChatStore;
+  teamspaceRoot: ITeamspaceRootStore;
+  customersStore: ICustomersStore;
+  customerPropertiesStore: ICustomerPropertiesStore;
+  // importers
+  jiraImporter: IJiraStore;
+  csvImporter: ICSVImporterStore;
+  jiraServerImporter: IJiraServerStore;
+  linearImporter: ILinearStore;
+  asanaImporter: IAsanaStore;
+  flatfileImporter: IFlatfileStore;
+  clickupImporter: IClickUpStore;
+  notionImporter: IZipImporterStore;
+  confluenceImporter: IZipImporterStore;
+  featureFlags: IFeatureFlagsStore;
+  milestone: IMilestoneStore;
+  templatesRoot: ITemplatesRootStore;
+  workspaceWorklogs: IWorklogStore;
+  workspaceWorklogDownloads: IWorklogDownloadStore;
+  initiativeFilterStore: IInitiativeFilterStore;
+  initiativeStore: IInitiativeStore;
+  recurringWorkItemsRoot: IRecurringWorkItemsRootStore;
+  // integrations
+  connections: IConnectionStore;
+  slackIntegration: ISlackStore;
+  githubIntegration: IGithubStore;
+  githubEnterpriseIntegration: IGithubEnterpriseStore;
+  gitlabIntegration: IGitlabStore;
+  gitlabEnterpriseIntegration: IGitlabEnterpriseStore;
+  sentryIntegration: ISentryStore;
+  workspaceFeatures: IWorkspaceFeatureStore;
+  workspaceMembersActivityStore: IWorkspaceMembersActivityStore;
+  projectMembersActivityStore: IProjectMembersActivityStore;
+  agent: IAgentStore;
+  issueTypes: IIssueTypesStore;
+  intakeTypeForms: IIntakeTypeFormStore;
+  intakeResponsibility: IIntakeResponsibilityStore;
 
   constructor() {
     this.router = new RouterStore();
@@ -135,6 +274,46 @@ export class CoreRootStore {
     this.analytics = new AnalyticsStore();
     this.workItemFilters = new WorkItemFilterStore();
     this.powerK = new PowerKStore();
+    this.baseDashboards = new BaseDashboardsStore(this as unknown as RootStore);
+    this.automationsRoot = new AutomationsRootStore(this as unknown as RootStore);
+    this.applicationStore = new ApplicationStore(this as unknown as RootStore);
+    this.piChat = new PiChatStore(this as unknown as RootStore);
+    this.teamspaceRoot = new TeamspaceRootStore(this as unknown as RootStore);
+    this.customersStore = new CustomerStore(this as unknown as RootStore);
+    this.customerPropertiesStore = new CustomerProperties(this as unknown as RootStore);
+    // importers
+    this.jiraImporter = new JiraStore(this as unknown as RootStore);
+    this.csvImporter = new CSVImporterStore(this as unknown as RootStore);
+    this.jiraServerImporter = new JiraServerStore(this as unknown as RootStore);
+    this.linearImporter = new LinearStore(this as unknown as RootStore);
+    this.asanaImporter = new AsanaStore(this as unknown as RootStore);
+    this.flatfileImporter = new FlatfileStore(this as unknown as RootStore);
+    this.clickupImporter = new ClickUpStore(this as unknown as RootStore);
+    this.notionImporter = new ZipImporterStore(this as unknown as RootStore, EZipDriverType.NOTION);
+    this.confluenceImporter = new ZipImporterStore(this as unknown as RootStore, EZipDriverType.CONFLUENCE);
+    this.featureFlags = new FeatureFlagsStore(this);
+    this.milestone = new MilestoneStore(this as unknown as RootStore);
+    this.templatesRoot = new TemplatesRootStore(this as unknown as RootStore);
+    this.workspaceWorklogs = new WorklogStore(this as unknown as RootStore);
+    this.workspaceWorklogDownloads = new WorklogDownloadStore(this as unknown as RootStore);
+    this.initiativeFilterStore = new InitiativeFilterStore(this as unknown as RootStore);
+    this.initiativeStore = new InitiativeStore(this as unknown as RootStore, this.initiativeFilterStore);
+    this.recurringWorkItemsRoot = new RecurringWorkItemsRootStore(this as unknown as RootStore);
+    // integrations
+    this.connections = new ConnectionStore(this as unknown as RootStore);
+    this.slackIntegration = new SlackStore(this as unknown as RootStore);
+    this.githubIntegration = new GithubStore(this as unknown as RootStore);
+    this.githubEnterpriseIntegration = new GithubEnterpriseStore(this as unknown as RootStore);
+    this.gitlabIntegration = new GitlabStore(this as unknown as RootStore);
+    this.gitlabEnterpriseIntegration = new GitlabEnterpriseStore(this as unknown as RootStore);
+    this.sentryIntegration = new SentryStore(this as unknown as RootStore);
+    this.workspaceFeatures = new WorkspaceFeatureStore(this as unknown as RootStore);
+    this.workspaceMembersActivityStore = new WorkspaceMembersActivityStore(this as unknown as RootStore);
+    this.projectMembersActivityStore = new ProjectMembersActivityStore(this as unknown as RootStore);
+    this.agent = new AgentStore(this as unknown as RootStore);
+    this.issueTypes = new IssueTypes(this as unknown as RootStore);
+    this.intakeTypeForms = new IntakeTypeFormStore(this as unknown as RootStore);
+    this.intakeResponsibility = new IntakeResponsibilityStore(this as unknown as RootStore);
   }
 
   resetOnSignOut() {
@@ -167,5 +346,46 @@ export class CoreRootStore {
     this.editorAssetStore = new EditorAssetStore();
     this.workItemFilters = new WorkItemFilterStore();
     this.powerK = new PowerKStore();
+    this.baseDashboards = new BaseDashboardsStore(this as unknown as RootStore);
+    this.automationsRoot = new AutomationsRootStore(this as unknown as RootStore);
+    this.applicationStore = new ApplicationStore(this as unknown as RootStore);
+    this.piChat = new PiChatStore(this as unknown as RootStore);
+    this.teamspaceRoot = new TeamspaceRootStore(this as unknown as RootStore);
+    this.customersStore = new CustomerStore(this as unknown as RootStore);
+    this.customerPropertiesStore = new CustomerProperties(this as unknown as RootStore);
+    // importers
+    this.jiraImporter = new JiraStore(this as unknown as RootStore);
+    this.csvImporter = new CSVImporterStore(this as unknown as RootStore);
+    this.jiraServerImporter = new JiraServerStore(this as unknown as RootStore);
+    this.linearImporter = new LinearStore(this as unknown as RootStore);
+    this.asanaImporter = new AsanaStore(this as unknown as RootStore);
+    this.flatfileImporter = new FlatfileStore(this as unknown as RootStore);
+    this.clickupImporter = new ClickUpStore(this as unknown as RootStore);
+    this.notionImporter = new ZipImporterStore(this as unknown as RootStore, EZipDriverType.NOTION);
+    this.confluenceImporter = new ZipImporterStore(this as unknown as RootStore, EZipDriverType.CONFLUENCE);
+    this.confluenceImporter = new ZipImporterStore(this as unknown as RootStore, EZipDriverType.CONFLUENCE);
+    this.featureFlags = new FeatureFlagsStore(this);
+    this.milestone = new MilestoneStore(this as unknown as RootStore);
+    this.templatesRoot = new TemplatesRootStore(this as unknown as RootStore);
+    this.workspaceWorklogs = new WorklogStore(this as unknown as RootStore);
+    this.workspaceWorklogDownloads = new WorklogDownloadStore(this as unknown as RootStore);
+    this.initiativeFilterStore = new InitiativeFilterStore(this as unknown as RootStore);
+    this.initiativeStore = new InitiativeStore(this as unknown as RootStore, this.initiativeFilterStore);
+    this.recurringWorkItemsRoot = new RecurringWorkItemsRootStore(this as unknown as RootStore);
+    // integrations
+    this.connections = new ConnectionStore(this as unknown as RootStore);
+    this.slackIntegration = new SlackStore(this as unknown as RootStore);
+    this.githubIntegration = new GithubStore(this as unknown as RootStore);
+    this.githubEnterpriseIntegration = new GithubEnterpriseStore(this as unknown as RootStore);
+    this.gitlabIntegration = new GitlabStore(this as unknown as RootStore);
+    this.gitlabEnterpriseIntegration = new GitlabEnterpriseStore(this as unknown as RootStore);
+    this.sentryIntegration = new SentryStore(this as unknown as RootStore);
+    this.workspaceFeatures = new WorkspaceFeatureStore(this as unknown as RootStore);
+    this.workspaceMembersActivityStore = new WorkspaceMembersActivityStore(this as unknown as RootStore);
+    this.projectMembersActivityStore = new ProjectMembersActivityStore(this as unknown as RootStore);
+    this.agent = new AgentStore(this as unknown as RootStore);
+    this.issueTypes = new IssueTypes(this as unknown as RootStore);
+    this.intakeTypeForms = new IntakeTypeFormStore(this as unknown as RootStore);
+    this.intakeResponsibility = new IntakeResponsibilityStore(this as unknown as RootStore);
   }
 }

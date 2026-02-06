@@ -26,7 +26,7 @@ import type {
 import { EActionNodeHandlerName, EAutomationNodeType } from "@plane/types";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
-import type { IAutomationActionNodeInstance } from "@/plane-web/store/automations/node/action";
+import type { IAutomationActionNodeInstance } from "@/store/automations/node/action";
 // local imports
 import { DeleteAutomationNodeConfirmationModal } from "../delete-confirmation-modal";
 import type { TAutomationActionFormData } from "./form/root";

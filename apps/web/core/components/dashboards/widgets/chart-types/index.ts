@@ -28,7 +28,7 @@ import {
   renderFormattedDateWithoutYear,
 } from "@plane/utils";
 // plane web store
-import type { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
+import type { DashboardWidgetInstance } from "@/store/dashboards/widget";
 
 export type TWidgetComponentProps = {
   parsedData: TDashboardWidgetData;

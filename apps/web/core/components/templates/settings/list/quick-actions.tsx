@@ -32,7 +32,7 @@ import {
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import type { IBaseTemplateStore } from "@/plane-web/store/templates";
+import type { IBaseTemplateStore } from "@/store/templates";
 
 type TTemplateQuickActionsProps<T extends TBaseTemplateWithData> = {
   templateId: string;

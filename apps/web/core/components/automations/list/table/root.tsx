@@ -21,7 +21,7 @@ import { getFileURL, renderFormattedDate, formatDuration, cn } from "@plane/util
 // store hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane web imports
-import type { IAutomationInstance } from "@/plane-web/store/automations/automation";
+import type { IAutomationInstance } from "@/store/automations/automation";
 // local imports
 import { TableEmptyState } from "./empty-state";
 import { SuccessFailureIndicator } from "./indicator";

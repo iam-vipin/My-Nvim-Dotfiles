@@ -23,7 +23,7 @@ import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-ro
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web stores
-import type { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
+import type { DashboardWidgetInstance } from "@/store/dashboards/widget";
 import { CHART_ASSET_MAP } from "./helper";
 
 type Props = {

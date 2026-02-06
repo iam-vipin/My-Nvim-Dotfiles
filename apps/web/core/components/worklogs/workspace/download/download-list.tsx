@@ -23,7 +23,7 @@ import {
 import { EWorklogDownloadLoader } from "@/constants/workspace-worklog";
 // plane web hooks
 import { useWorkspaceWorklogDownloads } from "@/plane-web/hooks/store";
-import type { IWorklogDownload } from "@/plane-web/store/worklog";
+import type { IWorklogDownload } from "@/store/worklog";
 import { useExportColumns } from "./column";
 
 type TWorkspaceWorklogDownloadList = {

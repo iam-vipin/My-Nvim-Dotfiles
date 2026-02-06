@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -30,8 +29,8 @@ import {
 // plane web imports
 import { rootStore } from "@/lib/store-context";
 import { CreateOrUpdateIssueTypeForm } from "@/components/work-item-types/create-update/form";
-import { IssuePropertyOption } from "@/plane-web/store/issue-types/issue-property-option";
-import { IssueType } from "@/plane-web/store/issue-types/issue-type";
+import { IssuePropertyOption } from "@/store/issue-types/issue-property-option";
+import { IssueType } from "@/store/issue-types/issue-type";
 
 type Props = {
   workspaceSlug: string;

@@ -28,7 +28,7 @@ import { IssueActivityStore as IssueActivityStoreCe } from "@/ce/store/issue/iss
 import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import { IssueActivityService } from "@/services/issue";
-import { IssuePropertiesActivityStore } from "../../issue-types";
+import { IssuePropertiesActivityStore } from "@/store/issue-types";
 
 export type TActivityLoader = "fetch" | "mutate" | undefined;
 

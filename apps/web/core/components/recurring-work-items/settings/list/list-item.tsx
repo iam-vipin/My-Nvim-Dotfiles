@@ -18,7 +18,7 @@ import type { IIssueType } from "@plane/types";
 import { getRecurringWorkItemIntervalTypeLabel } from "@plane/utils";
 // plane web imports
 import { IssueTypeLogo } from "@/components/work-item-types/common/issue-type-logo";
-import type { IRecurringWorkItemInstance } from "@/plane-web/store/recurring-work-items/instance";
+import type { IRecurringWorkItemInstance } from "@/store/recurring-work-items/instance";
 // local imports
 import { RecurringWorkItemQuickActions } from "./quick-actions";
 

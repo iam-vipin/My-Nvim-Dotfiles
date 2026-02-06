@@ -23,7 +23,7 @@ import { cn } from "@plane/utils";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 // plane web store
-import type { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
+import type { DashboardWidgetInstance } from "@/store/dashboards/widget";
 // local imports
 import { WIDGET_HEADER_HEIGHT, WIDGET_Y_SPACING } from ".";
 

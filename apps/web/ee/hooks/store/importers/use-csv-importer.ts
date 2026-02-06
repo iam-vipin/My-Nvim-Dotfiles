@@ -15,7 +15,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // types
-import type { ICSVImporterStore } from "@/plane-web/store/importers/csv";
+import type { ICSVImporterStore } from "@/store/importers/csv";
 
 export const useCSVImporter = (): ICSVImporterStore => {
   const context = useContext(StoreContext);

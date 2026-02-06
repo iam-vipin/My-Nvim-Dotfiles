@@ -22,7 +22,7 @@ import type { TBaseTemplateWithData, TPublishTemplateFormWithData } from "@plane
 import { cn } from "@plane/utils";
 // plane web imports
 import { COMMON_BUTTON_CLASS_NAME } from "@/components/templates/settings/common";
-import type { IBaseTemplateInstance } from "@/plane-web/store/templates";
+import type { IBaseTemplateInstance } from "@/store/templates";
 // local imports
 import { TemplateAdditionalDetails } from "./additional-details";
 import { TemplateBasicDetails } from "./basic-details";

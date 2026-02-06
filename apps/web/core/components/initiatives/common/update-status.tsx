@@ -84,10 +84,10 @@ export function UpdateStatusPills(props: TStatusPills) {
               </Tooltip>
             </Popover.Button>
 
-            <Popover.Panel side="bottom" align="start" positionerClassName="z-30">
+            <Popover.Panel side="bottom" align="start" positionerClassName="z-30" onClick={(e) => e.stopPropagation()}>
               <div
                 className={cn(
-                  "rounded-md border-[0.5px] border-subtle-1 bg-surface-1 text-11 shadow-raised-200 focus:outline-none max-w-[320px] w-screen"
+                  "rounded-lg bg-surface-1 text-11 shadow-raised-200 focus:outline-none max-w-[320px] w-screen"
                 )}
               >
                 <UpdateList

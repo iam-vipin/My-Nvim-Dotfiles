@@ -1268,12 +1268,15 @@ Use retrieval tools to gather information, then plan the modifying actions based
 - **MULTI-ACTION REQUESTS**: When handling requests with multiple actions, if ANY action requires a feature check, you MUST call `projects_retrieve` FIRST before planning any of the actions.
 - **EXCEPTION (NEW PROJECT IN CURRENT PLAN)**: If the target project is being CREATED in this same plan and does not yet have a real UUID:
     - Do NOT call `projects_retrieve` during planning (the project doesn't exist yet to retrieve)
-    - Instead, you MUST enable the required feature flag during `projects_create` itself
-    - **Example**: If planning to create a project AND a cycle in the same plan:
+    - Instead, you MUST enable the required feature flag during `projects_create` itself (for features that support it) OR plan a `projects_update_features` call immediately after project creation (for features like epics)
+    - **Example 1**: If planning to create a project AND a cycle in the same plan:
         1. Call `projects_create` with `cycle_view=True` (to enable cycles feature)
         2. Call `cycles_create` with `project_id="<id of project: project-name>"`
+    - **Example 2 (EPICS - CRITICAL)**: If planning to create a project AND epics in the same plan:
+        1. Call `projects_create` to create the project
+        2. Call `projects_update_features` with `project_id="<id of project: project-name>"` and `epics=True` (epics CANNOT be enabled via projects_create - this step is MANDATORY)
+        3. Call `create_epic` with `project_id="<id of project: project-name>"`
     - **Available feature flags for projects_create**:
-        - `epics` (boolean): Enable epics feature
         - `cycle_view` (boolean): Enable cycles feature
         - `module_view` (boolean): Enable modules feature
         - `page_view` (boolean): Enable pages feature
@@ -1281,6 +1284,8 @@ Use retrieval tools to gather information, then plan the modifying actions based
         - `is_issue_type_enabled` (boolean): Enable workitem types feature
         - `is_time_tracking_enabled` (boolean): Enable time-tracking (worklogs) feature
         - `issue_views_view` (boolean): Enable workitem views feature
+    - **Features requiring `projects_update_features` call after project creation**:
+        - `epics` (boolean): Enable epics feature - MUST use `projects_update_features`, NOT available in `projects_create`
 - Available tools:
     - `projects_retrieve` tool to get details of the project features (MUST call before creating project-scoped entities for EXISTING projects)
     - `projects_update` tool to update the project features (MUST include in plan if feature needs to be enabled for EXISTING projects)
@@ -1574,34 +1579,44 @@ You MUST provide clear reasoning in your response content BEFORE and AFTER each 
             pass
         # Reasoning guidance is added globally below so it applies to all build-mode planning.
 
-    # Add answer delimiter instruction (same as ask mode)
+    # Ensure build-mode planning uses the same "reasoning around tool_calls" guidance as ask-mode.
+    method_prompt += f"\n\n{TOOL_CALL_REASONING_REINFORCEMENT}"
+
+    # Add answer delimiter instruction LAST (after TOOL_CALL_REASONING_REINFORCEMENT) to ensure it's the final instruction the model sees
+    # This is critical because we want the delimiter to be applied unconditionally to ALL responses
     method_prompt += """
 
+## MANDATORY OUTPUT FORMAT (APPLIES TO ALL RESPONSES - NO EXCEPTIONS)
+
 **CRITICAL - ANSWER DELIMITER FORMAT:**
-When providing your final response (after planning actions or when no actions are needed), you MUST structure your response as follows:
-1. First, write any reasoning/thinking/context as normal (this will be shown in the "Thought" panel)
+You MUST ALWAYS structure your response with the delimiter, regardless of whether you called tools, planned actions, or are answering a general question.
+
+Format:
+1. First, write any reasoning/thinking/context (this will be shown in the "Thought" panel)
 2. Then output the EXACT delimiter: ππANSWERππ on its own line
 3. Then write your actual response to the user (this will be shown as the main response)
 
-Example format:
+Example 1 (with planned actions):
 ```
-I've analyzed the request and will create two work items with the specified details. Both will be assigned to the current user.
+I've analyzed the request and will create two work items.
 
 ππANSWERππ
 
 I've planned the following actions for your approval:
-- Create work item "Fix login bug" with high priority
-- Create work item "Update dashboard" with medium priority
-
-Click **Confirm** to execute these actions.
+- Create work item "Fix login bug"
 ```
 
-The delimiter ππANSWERππ is REQUIRED whenever you provide a final response. Everything BEFORE it goes to the reasoning panel. Everything AFTER it goes to the user as the main response.
-If you have no reasoning to show, you can start directly with ππANSWERππ.
-"""  # noqa: E501
+Example 2 (answering a question without tools):
+```
+The user is asking a general question that I can answer directly.
 
-    # Ensure build-mode planning uses the same "reasoning around tool_calls" guidance as ask-mode.
-    method_prompt += f"\n\n{TOOL_CALL_REASONING_REINFORCEMENT}"
+ππANSWERππ
+
+Here's the answer to your question...
+```
+
+**ABSOLUTE REQUIREMENT:** The delimiter ππANSWERππ MUST appear in EVERY response you generate. This is non-negotiable. If you forget the delimiter, the user interface will break and the user won't see your answer.
+"""  # noqa: E501
     return method_prompt
 
 

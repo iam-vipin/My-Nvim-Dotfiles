@@ -338,8 +338,11 @@ def build_planning_tools(
 
             if cat in project_scoped_cats:
                 tools_for_project = chatbot_instance._build_planning_method_tools("projects", method_executor, context)
-                # remove all tools except projects_retrieve and projects_update
-                tools_for_project = [t for t in tools_for_project if getattr(t, "name", "") in ["projects_retrieve", "projects_update"]]
+                # Include projects_retrieve, projects_update, and projects_update_features for project-scoped work
+                # projects_update_features is needed to enable features like epics before creating them
+                tools_for_project = [
+                    t for t in tools_for_project if getattr(t, "name", "") in ["projects_retrieve", "projects_update", "projects_update_features"]
+                ]
                 all_method_tools.extend(tools_for_project)
 
             if cat in workspace_scoped_cats:

@@ -761,28 +761,36 @@ class PlaneChatBot(ChatKit):
                     string_chunks = [chunk for chunk in final_response_chunks if isinstance(chunk, str)]
                     final_response = "".join(string_chunks)
 
-                # Save assistant message with reasoning blocks
-                if final_response:
-                    assistant_message_result = await upsert_message(
-                        message_id=response_id,
-                        chat_id=chat_id,
-                        content=final_response,
-                        user_type=UserTypeChoices.ASSISTANT.value,
-                        parent_id=query_id,
-                        llm_model=switch_llm,
-                        reasoning=reasoning,
-                        source=getattr(data, "source", None) or None,
-                        db=db,
+                # Ensure we always have content to persist (prevent placeholder on refresh)
+                if not final_response or not final_response.strip():
+                    final_response = "I wasn't able to generate a complete response. Please try again."
+                    log.warning(
+                        f"ChatID: {chat_id} - Empty final_response detected. "
+                        f"Chunks collected: {len(final_response_chunks)}, "
+                        f"Using fallback message to prevent placeholder on refresh."
                     )
 
-                    # Assistant message search index upserted via Celery background task
+                # Save assistant message with reasoning blocks (always persist to avoid placeholder)
+                assistant_message_result = await upsert_message(
+                    message_id=response_id,
+                    chat_id=chat_id,
+                    content=final_response,
+                    user_type=UserTypeChoices.ASSISTANT.value,
+                    parent_id=query_id,
+                    llm_model=switch_llm,
+                    reasoning=reasoning,
+                    source=getattr(data, "source", None) or None,
+                    db=db,
+                )
 
-                    if assistant_message_result["message"] != "success":
-                        final_response = "An unexpected error occurred. Please try again"  # Set final_response for title generation
-                        yield final_response
-                        return
+                # Assistant message search index upserted via Celery background task
 
-                    log.info(f"ChatID: {chat_id} - Final Response: {final_response}")
+                if assistant_message_result["message"] != "success":
+                    final_response = "An unexpected error occurred. Please try again"  # Set final_response for title generation
+                    yield final_response
+                    return
+
+                log.info(f"ChatID: {chat_id} - Final Response: {final_response}")
 
             if final_response:
                 query_flow_store["answer"] = final_response

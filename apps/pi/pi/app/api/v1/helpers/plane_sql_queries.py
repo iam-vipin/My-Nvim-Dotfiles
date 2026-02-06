@@ -30,6 +30,15 @@ _oauth_credentials_cache: Optional[Tuple[Optional[str], Optional[str]]] = None
 _oauth_cache_initialized: bool = False
 
 
+def is_placeholder_id(entity_id: str) -> bool:
+    """Check if an entity ID is a placeholder (not yet resolved from execution).
+
+    Placeholders have the format: <id of entity_type: entity_name>
+    Returns True if the ID is a placeholder, False otherwise.
+    """
+    return bool(entity_id and isinstance(entity_id, str) and entity_id.startswith("<id of"))
+
+
 async def get_issue_details(issue_id: str) -> Optional[Dict[str, Any]]:
     query = """
     SELECT id, name, description_html
@@ -1396,6 +1405,11 @@ async def get_workitem_details_for_artifact(workitem_id: str) -> Optional[Dict[s
     """
 
     try:
+        # Skip database query if workitem_id is a placeholder (not yet resolved)
+        if is_placeholder_id(workitem_id):
+            log.debug(f"Skipping database query for placeholder workitem_id: {workitem_id}")
+            return None
+
         result = await PlaneDBPool.fetchrow(query, (workitem_id,))
         return dict(result) if result else None
     except Exception as e:
@@ -1447,6 +1461,11 @@ async def get_project_details_for_artifact(project_id: str) -> Optional[Dict[str
     """
 
     try:
+        # Skip database query if project_id is a placeholder (not yet resolved)
+        if is_placeholder_id(project_id):
+            log.debug(f"Skipping database query for placeholder project_id: {project_id}")
+            return None
+
         result = await PlaneDBPool.fetchrow(query, (project_id,))
         return dict(result) if result else None
     except Exception as e:
@@ -1482,6 +1501,11 @@ async def get_cycle_details_for_artifact(cycle_id: str) -> Optional[Dict[str, An
     """
 
     try:
+        # Skip database query if cycle_id is a placeholder (not yet resolved)
+        if is_placeholder_id(cycle_id):
+            log.debug(f"Skipping database query for placeholder cycle_id: {cycle_id}")
+            return None
+
         result = await PlaneDBPool.fetchrow(query, (cycle_id,))
         return dict(result) if result else None
     except Exception as e:
@@ -2116,6 +2140,11 @@ async def get_module_details_for_artifact(module_id: str) -> Optional[Dict[str, 
     """
 
     try:
+        # Skip database query if module_id is a placeholder (not yet resolved)
+        if is_placeholder_id(module_id):
+            log.debug(f"Skipping database query for placeholder module_id: {module_id}")
+            return None
+
         result = await PlaneDBPool.fetchrow(query, (module_id,))
         return dict(result) if result else None
     except Exception as e:
@@ -2238,6 +2267,11 @@ async def get_comment_details_for_artifact(comment_id: str) -> Optional[Dict[str
     """
 
     try:
+        # Skip database query if comment_id is a placeholder (not yet resolved)
+        if is_placeholder_id(comment_id):
+            log.debug(f"Skipping database query for placeholder comment_id: {comment_id}")
+            return None
+
         result = await PlaneDBPool.fetchrow(query, (comment_id,))
         return dict(result) if result else None
     except Exception as e:
@@ -2299,6 +2333,11 @@ async def get_page_details_for_artifact(page_id: str) -> Optional[Dict[str, Any]
     """
 
     try:
+        # Skip database query if page_id is a placeholder (not yet resolved)
+        if is_placeholder_id(page_id):
+            log.debug(f"Skipping database query for placeholder page_id: {page_id}")
+            return None
+
         result = await PlaneDBPool.fetchrow(query, (page_id,))
         return dict(result) if result else None
     except Exception as e:
@@ -2332,6 +2371,11 @@ async def get_state_details_for_artifact(state_id: str) -> Optional[Dict[str, An
     WHERE s.id = $1 AND s.deleted_at IS NULL
     """
     try:
+        # Skip database query if state_id is a placeholder (not yet resolved)
+        if is_placeholder_id(state_id):
+            log.debug(f"Skipping database query for placeholder state_id: {state_id}")
+            return None
+
         result = await PlaneDBPool.fetchrow(query, (state_id,))
         return dict(result) if result else None
     except Exception as e:
@@ -2363,6 +2407,11 @@ async def get_label_details_for_artifact(label_id: str) -> Optional[Dict[str, An
     WHERE l.id = $1 AND l.deleted_at IS NULL
     """
     try:
+        # Skip database query if label_id is a placeholder (not yet resolved)
+        if is_placeholder_id(label_id):
+            log.debug(f"Skipping database query for placeholder label_id: {label_id}")
+            return None
+
         result = await PlaneDBPool.fetchrow(query, (label_id,))
         return dict(result) if result else None
     except Exception as e:

@@ -503,6 +503,35 @@ async def execute_tools_for_build_mode(
                 elif event_type == "complete":
                     result_holder["response"] = event.get("accumulated_message")
                     result_holder["streamed_reasoning_chunks"] = event.get("streamed_reasoning", False) or streamed_reasoning_chunks
+
+                    # FALLBACK: If we streamed reasoning but never got a final_answer_chunk,
+                    # the LLM didn't output the delimiter. Emit the final_response marker
+                    # to close the reasoning panel, and re-emit the content as the answer.
+                    # IMPORTANT: Only apply fallback for TRUE final responses (no tool_calls).
+                    # Intermediate responses (with tool_calls) should NOT trigger this fallback.
+                    accumulated_msg = event.get("accumulated_message")
+                    has_tool_calls = accumulated_msg and hasattr(accumulated_msg, "tool_calls") and bool(getattr(accumulated_msg, "tool_calls", None))
+
+                    if (
+                        streamed_reasoning_chunks
+                        and not answer_streaming_started
+                        and stream_final_answer
+                        and not has_tool_calls  # Only for final responses without tool calls
+                    ):
+                        log.warning(f"ChatID: {chat_id} - LLM did not output delimiter; falling back to treat reasoning as answer")
+                        # Emit final_response stage marker to close reasoning panel
+                        if not final_response_marker_emitted:
+                            final_response_marker_emitted = True
+                            yield {"chunk_type": "reasoning", "header": "", "content": "", "stage": "final_response"}
+
+                        # Extract content from the accumulated message and emit as answer
+                        if accumulated_msg and hasattr(accumulated_msg, "content") and accumulated_msg.content:
+                            content_str = str(accumulated_msg.content).strip()
+                            if content_str:
+                                answer_streaming_started = True
+                                final_answer_streamed = True
+                                yield content_str  # type: ignore[misc]
+
                     return
 
         # Continue iterative tool calling with method tools (streaming)
@@ -1114,6 +1143,59 @@ async def execute_tools_for_build_mode(
                                 db=_subdb,
                             )
                 # Do not include free-form content; end stream
+                yield f"__FINAL_RESPONSE__{msg}"
+                return
+            else:
+                # Max iterations reached WITH planned actions - partial completion
+                log.warning(
+                    f"ChatID: {chat_id} - Max iterations reached with {len(planned_actions)} planned action(s). "
+                    f"Proceeding with partial completion."
+                )
+
+                # Build user-facing message explaining the situation
+                action_count = len(planned_actions)
+                msg = (
+                    f"I've planned {action_count} action{"s" if action_count != 1 else ""} for your request. "
+                    f"Due to planning complexity, I've reached the iteration limit. "
+                    f"Please review and execute the planned actions below."
+                )
+
+                # Emit final_response reasoning stage to close the frontend reasoning panel
+                try:
+                    stage = "final_response"
+                    reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content="")
+                    if reasoning_container is not None:
+                        reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+                    yield reasoning_chunk_dict
+                except Exception as e:
+                    log.warning(f"ChatID: {chat_id} - Failed to emit final_response reasoning stage: {e}")
+
+                # Persist flow steps with summary
+                try:
+                    step, next_step_ps = build_planner_summary_step(
+                        current_step=current_step,
+                        iteration_count=iteration_count,
+                        planned_actions_count=len(planned_actions),
+                        loop_warning_detected=loop_warning_detected,
+                        tool_calls_count=len(tool_call_history),
+                    )
+                    tool_flow_steps.append(step)
+                    current_step = next_step_ps
+                except Exception:
+                    pass
+
+                if tool_flow_steps:
+                    with contextlib.suppress(Exception):
+                        async with get_streaming_db_session() as _subdb:
+                            await _upsert_message_flow_steps(
+                                message_id=query_id,
+                                chat_id=chat_id,
+                                flow_steps=tool_flow_steps,
+                                db=_subdb,
+                            )
+
+                # Yield the message and completion marker
+                yield msg
                 yield f"__FINAL_RESPONSE__{msg}"
                 return
         elif len(planned_actions) == 0:

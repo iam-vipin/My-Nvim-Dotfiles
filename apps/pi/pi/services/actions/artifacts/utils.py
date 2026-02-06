@@ -585,6 +585,11 @@ async def resolve_project_id_to_object(data: dict) -> dict:
         if not project_id:
             return data
 
+        # Skip resolution if project_id is a placeholder (not yet resolved from execution)
+        if project_id.startswith("<id of"):
+            log.debug(f"Skipping resolution for placeholder project_id: {project_id}")
+            return data
+
         project_details = await get_project_details_for_artifact(project_id)
         if project_details:
             # Create a copy to avoid modifying the original

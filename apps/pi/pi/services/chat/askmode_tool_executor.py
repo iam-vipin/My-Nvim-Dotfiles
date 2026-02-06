@@ -335,6 +335,38 @@ async def execute_tools_for_ask_mode(
                 elif event_type == "complete":
                     ai_message = event.get("accumulated_message")
 
+                    # FALLBACK: If we streamed reasoning but never got a final_answer_chunk,
+                    # the LLM didn't output the delimiter. Emit the final_response marker
+                    # to close the reasoning panel, and re-emit the content as the answer.
+                    # IMPORTANT: Only apply fallback for TRUE final responses (no tool_calls).
+                    # Intermediate responses (with tool_calls) should NOT trigger this fallback.
+                    has_tool_calls = ai_message and hasattr(ai_message, "tool_calls") and bool(getattr(ai_message, "tool_calls", None))
+
+                    if (
+                        streamed_reasoning_chunks
+                        and not answer_streaming_started
+                        and stream_final_answer
+                        and not has_tool_calls  # Only for final responses without tool calls
+                    ):
+                        log.warning(f"ChatID: {chat_id} - LLM did not output delimiter; falling back to treat reasoning as answer")
+                        # Emit final_response stage marker to close reasoning panel
+                        if not final_response_marker_emitted:
+                            final_response_marker_emitted = True
+                            yield {
+                                "chunk_type": "reasoning",
+                                "header": "",
+                                "content": "",
+                                "stage": "final_response",
+                            }
+
+                        # Extract content from the accumulated message and emit as answer
+                        if ai_message and hasattr(ai_message, "content") and ai_message.content:
+                            content = str(ai_message.content).strip()
+                            if content:
+                                answer_streaming_started = True
+                                final_answer_streamed = True
+                                yield content
+
             # Flush any remaining buffer
             if final_answer_buffer:
                 yield final_answer_buffer
@@ -483,7 +515,14 @@ async def execute_tools_for_ask_mode(
         messages.append(cast(BaseMessage, ai_message))
 
         # Process tool calls iteratively; persist steps via decorators
-        while ai_message.tool_calls:
+        # Add safety limit to prevent infinite loops
+        MAX_TOOL_ITERATIONS = 15  # Lower than build mode (25) since ask mode is simpler
+        iteration_count = 0
+
+        while ai_message.tool_calls and iteration_count < MAX_TOOL_ITERATIONS:
+            iteration_count += 1
+            log.debug(f"ChatID: {chat_id} - Ask mode tool iteration {iteration_count}/{MAX_TOOL_ITERATIONS}")
+
             # Execute all tool calls
             tool_messages: List[ToolMessage] = []
             for tool_call in ai_message.tool_calls:
@@ -723,6 +762,37 @@ async def execute_tools_for_ask_mode(
             messages.append(cast(BaseMessage, ai_message))
 
             # Follow-up selection persisted by decorator above
+
+        # Check if we exited due to max iterations
+        if iteration_count >= MAX_TOOL_ITERATIONS and ai_message.tool_calls:
+            log.warning(
+                f"ChatID: {chat_id} - Ask mode reached max tool iterations ({MAX_TOOL_ITERATIONS}) "
+                f"with pending tool calls. Proceeding with partial results."
+            )
+            # Emit final response stage to close reasoning panel
+            stage = "final_response"
+            reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content="")
+            if reasoning_container is not None:
+                reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+            yield reasoning_chunk_dict
+
+            # Inform user about partial results
+            yield "I've gathered information from multiple sources but reached the query complexity limit. Here's what I found:\n\n"
+
+            # Try to extract any partial content from the last message
+            if ai_message.content:
+                final_content = extract_text_from_content(ai_message.content)
+                ANSWER_DELIMITER = "ππANSWERππ"
+                if ANSWER_DELIMITER in final_content:
+                    final_content = final_content.split(ANSWER_DELIMITER, 1)[-1].strip()
+                if final_content:
+                    async for chunk in stream_content_in_chunks(final_content):
+                        yield chunk
+                else:
+                    yield "Please try refining your question or breaking it into smaller parts."
+            else:
+                yield "Please try refining your question or breaking it into smaller parts."
+            return
 
         # Final response from LLM (no more tool calls)
         log.info(f"ChatID: {chat_id} - Tool orchestration complete, generating final response")

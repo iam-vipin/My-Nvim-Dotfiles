@@ -11,13 +11,12 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { usePopper } from "react-popper";
-import { Popover } from "@headlessui/react";
 // plane imports
 import { EpicIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
+import { Popover } from "@plane/propel/popover";
 import type { TUpdate } from "@plane/types";
 import { EUpdateEntityType, EUpdateStatus } from "@plane/types";
 import { capitalizeFirstLetter, cn } from "@plane/utils";
@@ -58,8 +57,6 @@ interface IInitiativeUpdate extends TUpdate {
 
 export function UpdateStatusPills(props: TStatusPills) {
   const { handleUpdateOperations, workspaceSlug, initiativeId, analytics, defaultTab = "project", showTabs } = props;
-  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [selectedTab, setSelectedTab] = useState<"project" | "epic">(defaultTab);
 
   const statusCounts = {
@@ -69,30 +66,14 @@ export function UpdateStatusPills(props: TStatusPills) {
   };
 
   const getStatusText = (status: string): string => capitalizeFirstLetter(status.replaceAll("-", " ").toLowerCase());
-  // react-popper derived values
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "bottom",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 10,
-        },
-      },
-    ],
-  });
 
   return (
     <div className="flex gap-2 flex-shrink-0">
       {Object.entries(statusCounts)
         .filter(([_, count]) => count > 0)
         .map(([status, count]) => (
-          <Popover className={cn("relative flex h-full items-center justify-center")} key={status}>
-            <Popover.Button
-              ref={setReferenceElement}
-              className={cn("my-auto outline-none text-tertiary")}
-              onClick={(e) => e.stopPropagation()}
-            >
+          <Popover key={status}>
+            <Popover.Button className={cn("my-auto outline-none text-tertiary")} onClick={(e) => e.stopPropagation()}>
               <Tooltip tooltipContent={status && capitalizeFirstLetter(status.replaceAll("-", " ").toLowerCase())}>
                 <button className="flex items-center gap-1 border border-subtle-1 rounded-md px-1 py-1 bg-surface-1">
                   <UpdateStatusIcons size="xs" statusType={status as EUpdateStatus} showBackground={false} />
@@ -103,52 +84,51 @@ export function UpdateStatusPills(props: TStatusPills) {
               </Tooltip>
             </Popover.Button>
 
-            <Popover.Panel
-              className={cn(
-                "absolute left-0 top-full z-20 w-screen mt-2 rounded-md border-[0.5px] border-subtle-1 bg-surface-1 text-11 shadow-raised-200 focus:outline-none max-w-[320px]"
-              )}
-              ref={setPopperElement}
-              style={styles.popper}
-              {...attributes.popper}
-            >
-              <UpdateList
-                handleTabChange={setSelectedTab}
-                count={count}
-                workspaceSlug={workspaceSlug}
-                entityId={initiativeId}
-                showTabs={showTabs}
-                getUpdates={handleUpdateOperations.fetchUpdates}
-                entityType={selectedTab === "project" ? EUpdateEntityType.PROJECT : EUpdateEntityType.EPIC}
-                status={status as EUpdateStatus}
-                customTitle={(updateData) => {
-                  const initiativeUpdate = updateData as IInitiativeUpdate;
-                  const route = initiativeUpdate.epic_id
-                    ? `/${workspaceSlug}/projects/${initiativeUpdate.project_id}/epics/${initiativeUpdate.epic_id}`
-                    : `/${workspaceSlug}/projects/${initiativeUpdate.project_id}/issues`;
-                  return (
-                    <Link href={route} className={cn(`font-medium capitalize flex gap-2`)} target="_blank">
-                      {initiativeUpdate.epic_id && (
-                        <div className="flex gap-2 text-tertiary items-center">
-                          <EpicIcon className="size-4 my-auto flex-shrink-0" />
-                          <div className="text-11 flex flex-shrink-0 gap-1">
-                            <span>{initiativeUpdate.project__identifier}</span>
-                            <span>{initiativeUpdate.epic__sequence_id}</span>
+            <Popover.Panel side="bottom" align="start" positionerClassName="z-30">
+              <div
+                className={cn(
+                  "rounded-md border-[0.5px] border-subtle-1 bg-surface-1 text-11 shadow-raised-200 focus:outline-none max-w-[320px] w-screen"
+                )}
+              >
+                <UpdateList
+                  handleTabChange={setSelectedTab}
+                  count={count}
+                  workspaceSlug={workspaceSlug}
+                  entityId={initiativeId}
+                  showTabs={showTabs}
+                  getUpdates={handleUpdateOperations.fetchUpdates}
+                  entityType={selectedTab === "project" ? EUpdateEntityType.PROJECT : EUpdateEntityType.EPIC}
+                  status={status as EUpdateStatus}
+                  customTitle={(updateData) => {
+                    const initiativeUpdate = updateData as IInitiativeUpdate;
+                    const route = initiativeUpdate.epic_id
+                      ? `/${workspaceSlug}/projects/${initiativeUpdate.project_id}/epics/${initiativeUpdate.epic_id}`
+                      : `/${workspaceSlug}/projects/${initiativeUpdate.project_id}/issues`;
+                    return (
+                      <Link href={route} className={cn(`font-medium capitalize flex gap-2`)} target="_blank">
+                        {initiativeUpdate.epic_id && (
+                          <div className="flex gap-2 text-tertiary items-center">
+                            <EpicIcon className="size-4 my-auto flex-shrink-0" />
+                            <div className="text-11 flex flex-shrink-0 gap-1">
+                              <span>{initiativeUpdate.project__identifier}</span>
+                              <span>{initiativeUpdate.epic__sequence_id}</span>
+                            </div>
                           </div>
-                        </div>
-                      )}
-                      <span className="truncate font-semibold min-w-[0] text-13 text-tertiary my-auto flex-1">
-                        {initiativeUpdate.epic__name || initiativeUpdate.project__name}
-                      </span>
-                      <UpdateStatusIcons
-                        statusType={initiativeUpdate.status}
-                        size="sm"
-                        showText
-                        className="justify-end"
-                      />
-                    </Link>
-                  );
-                }}
-              />
+                        )}
+                        <span className="truncate font-semibold min-w-[0] text-13 text-tertiary my-auto flex-1">
+                          {initiativeUpdate.epic__name || initiativeUpdate.project__name}
+                        </span>
+                        <UpdateStatusIcons
+                          statusType={initiativeUpdate.status}
+                          size="sm"
+                          showText
+                          className="justify-end"
+                        />
+                      </Link>
+                    );
+                  }}
+                />
+              </div>
             </Popover.Panel>
           </Popover>
         ))}

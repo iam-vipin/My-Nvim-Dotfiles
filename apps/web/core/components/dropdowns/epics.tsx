@@ -207,7 +207,7 @@ export const EpicsDropdown = observer(function EpicsDropdown(props: Props) {
             <p className="text-placeholder italic py-1 px-1.5">{t("loading")}</p>
           </div>
         ) : (
-          <Combobox.Options className="fixed z-10" static>
+          <Combobox.Options className="fixed z-30" static>
             <div
               className="my-1 w-48 rounded-sm border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
               ref={setPopperElement}

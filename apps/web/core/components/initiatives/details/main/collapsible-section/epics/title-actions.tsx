@@ -25,7 +25,7 @@ import {
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // components
 import { SubIssueDisplayFilters } from "@/components/issues/issue-detail-widgets/sub-issues";
-import { SubIssueFilters } from "@/components/issues/issue-detail-widgets/sub-issues/filters";
+import { SubIssueFilters } from "@/components/issues/issue-detail-widgets/sub-issues/filters/root";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";

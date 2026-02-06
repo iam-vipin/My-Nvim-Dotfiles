@@ -15,7 +15,7 @@ import type { IWorkspaceCommentEnhancedSearchResult } from "@plane/constants";
 import { Avatar } from "@plane/ui";
 import { getFileURL, sanitizeHTML } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 
 export function CommentItem({ comment }: { comment: IWorkspaceCommentEnhancedSearchResult }) {
   const { getUserDetails } = useMember();

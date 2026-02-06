@@ -19,7 +19,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EModalPosition, EModalWidth, Input, ModalCore } from "@plane/ui";
 import useDebounce from "@/hooks/use-debounce";
-import { IssueTypeIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueTypeIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
 type Props = {

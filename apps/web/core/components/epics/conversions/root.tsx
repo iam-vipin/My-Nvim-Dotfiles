@@ -18,7 +18,7 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { EIssueServiceType, EIssuesStoreType, EWorkItemConversionType } from "@plane/types";
 import { AlertModalCore, EModalPosition, EModalWidth } from "@plane/ui";
 // components
-import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/root";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUserPermissions } from "@/hooks/store/user";

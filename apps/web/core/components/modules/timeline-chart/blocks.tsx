@@ -20,7 +20,7 @@ import { ModuleStatusIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 // components
 import { SIDEBAR_WIDTH } from "@/components/timeline/constants";
-import { getBlockViewDetails } from "@/components/issues/issue-layouts/utils";
+import { getBlockViewDetails } from "@/helpers/work-item-layout";
 // constants
 // hooks
 import { useModule } from "@/hooks/store/use-module";

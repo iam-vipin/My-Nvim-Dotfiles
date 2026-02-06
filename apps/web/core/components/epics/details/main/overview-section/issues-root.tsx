@@ -24,7 +24,7 @@ import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
 import { useSubIssueOperations } from "@/components/issues/issue-detail-widgets/sub-issues/helper";
 import { SubIssuesListRoot } from "@/components/issues/issue-detail-widgets/sub-issues/issues-list/root";
-import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/root";
 // helpers
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";

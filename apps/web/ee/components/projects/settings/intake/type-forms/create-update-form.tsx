@@ -25,7 +25,7 @@ import type { TIntakeTypeForm } from "@plane/types";
 import { Input } from "@plane/ui";
 import type { TContextMenuItem } from "@plane/ui";
 import { getChangedFields } from "@plane/utils";
-import { IssueTypeIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueTypeIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 import { useIssueType } from "@/plane-web/hooks/store";
 import { useIntakeTypeForms } from "@/plane-web/hooks/store/use-intake-type-forms";
 import { IntakeFormPreviewModal } from "./form-preview-modal";

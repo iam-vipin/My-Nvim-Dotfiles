@@ -12,17 +12,12 @@
  */
 
 import { useEffect, useMemo } from "react";
-
 import { LockIcon } from "@plane/propel/icons";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { LayoutSelection } from "@/components/issues/issue-layouts/filters";
-import type { TWorkspaceLayoutProps } from "@/components/views/helper";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useFlag } from "@/plane-web/hooks/store";
-import { WorkspaceTimelineRoot } from "../issues/issue-layouts/timeline/root";
-import { WorkspaceViewBoardLayout } from "../issues/issue-layouts/board/workspace-view-root";
-import { WorkspaceCalendarLayout } from "@/components/issues/issue-layouts/calendar/roots/workspace-view-root";
 
 export type TLayoutSelectionProps = {
   onChange: (layout: EIssueLayoutTypes) => void;
@@ -79,19 +74,6 @@ export function GlobalViewLayoutSelection({ onChange, selectedLayout, workspaceS
   if (enabledLayouts.length <= 1) return null;
 
   return <LayoutSelection layouts={enabledLayouts} onChange={onChange} selectedLayout={selectedLayout} />;
-}
-
-export function WorkspaceAdditionalLayouts(props: TWorkspaceLayoutProps) {
-  switch (props.activeLayout) {
-    case EIssueLayoutTypes.GANTT:
-      return <WorkspaceTimelineRoot {...props} />;
-    case EIssueLayoutTypes.KANBAN:
-      return <WorkspaceViewBoardLayout {...props} />;
-    case EIssueLayoutTypes.CALENDAR:
-      return <WorkspaceCalendarLayout {...props} />;
-    default:
-      return null;
-  }
 }
 
 export function AdditionalHeaderItems({ isLocked }: { isLocked: boolean }) {

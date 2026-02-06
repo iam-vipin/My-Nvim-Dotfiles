@@ -23,7 +23,7 @@ import type { TPage } from "@plane/types";
 import { EFileAssetType, EIssuesStoreType, ETemplateType } from "@plane/types";
 import { extractPageFormData } from "@plane/utils";
 // components
-import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/root";
 import { CreateProjectModal } from "@/components/project/create-project-modal";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";

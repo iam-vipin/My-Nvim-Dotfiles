@@ -24,7 +24,7 @@ import { cn, getFileURL } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
 type TWorkItemBlueprintListItemWithAdditionalPropsData = {

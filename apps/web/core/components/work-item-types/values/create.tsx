@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { IIssueType, TIssuePropertyValues } from "@plane/types";
@@ -19,9 +19,9 @@ import { getPropertiesDefaultValues } from "@plane/utils";
 // store hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 // local imports
-import { IssueAdditionalPropertyValues } from "./root";
+import { WorkItemCustomPropertyValues } from "./root";
 
-type TIssueAdditionalPropertyValuesCreateProps = {
+type TWorkItemCustomPropertyValuesCreateProps = {
   arePropertyValuesInitializing: boolean;
   getWorkItemTypeById: (issueTypeId: string) => IIssueType | undefined;
   issuePropertyValues: TIssuePropertyValues;
@@ -30,8 +30,8 @@ type TIssueAdditionalPropertyValuesCreateProps = {
   shouldLoadDefaultValues: boolean;
 };
 
-export const IssueAdditionalPropertyValuesCreate = observer(function IssueAdditionalPropertyValuesCreate(
-  props: TIssueAdditionalPropertyValuesCreateProps
+export const WorkItemCustomPropertyValuesCreate = observer(function WorkItemCustomPropertyValuesCreate(
+  props: TWorkItemCustomPropertyValuesCreateProps
 ) {
   const {
     arePropertyValuesInitializing,
@@ -74,7 +74,7 @@ export const IssueAdditionalPropertyValuesCreate = observer(function IssueAdditi
 
   return (
     <div className="pt-2">
-      <IssueAdditionalPropertyValues
+      <WorkItemCustomPropertyValues
         getWorkItemTypeById={getWorkItemTypeById}
         handlePropertyValueChange={handlePropertyValueChange}
         arePropertyValuesInitializing={arePropertyValuesInitializing}

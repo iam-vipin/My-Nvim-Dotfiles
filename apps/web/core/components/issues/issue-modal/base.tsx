@@ -37,10 +37,10 @@ import { FileService } from "@/services/file.service";
 const fileService = new FileService();
 // local imports
 import { CreateIssueToastActionItems } from "../create-issue-toast-action-items";
-import { DraftIssueLayout } from "./draft-issue-layout";
-import { IssueFormRoot } from "./form";
-import type { IssueFormProps } from "./form";
-import type { IssuesModalProps } from "./modal";
+import { WithDraftWrapperWorkItemForm } from "./form/with-draft-wrapper";
+import { WorkItemFormRoot } from "./form/root";
+import type { WorkItemFormProps } from "./form/root";
+import type { IssuesModalProps } from "./root";
 
 export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueModalBase(props: IssuesModalProps) {
   const {
@@ -434,7 +434,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
   // don't open the modal if there are no projects
   if (!allowedProjectIds || allowedProjectIds.length === 0 || !activeProjectId) return null;
 
-  const commonIssueModalProps: IssueFormProps = {
+  const commonIssueModalProps: WorkItemFormProps = {
     issueTitleRef: issueTitleRef,
     data: {
       description_html: description,
@@ -467,9 +467,13 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
       className="!bg-transparent rounded-lg shadow-none transition-[width] ease-linear"
     >
       {withDraftIssueWrapper ? (
-        <DraftIssueLayout {...commonIssueModalProps} changesMade={changesMade} onChange={handleFormChange} />
+        <WithDraftWrapperWorkItemForm
+          {...commonIssueModalProps}
+          changesMade={changesMade}
+          onChange={handleFormChange}
+        />
       ) : (
-        <IssueFormRoot {...commonIssueModalProps} />
+        <WorkItemFormRoot {...commonIssueModalProps} />
       )}
     </ModalCore>
   );

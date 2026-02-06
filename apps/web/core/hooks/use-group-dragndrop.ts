@@ -14,8 +14,8 @@
 import { useParams } from "next/navigation";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { EIssuesStoreType, TIssue, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types";
-import type { GroupDropLocation } from "@/components/issues/issue-layouts/utils";
-import { handleGroupDragDrop } from "@/components/issues/issue-layouts/utils";
+import type { GroupDropLocation } from "@/helpers/work-item-layout";
+import { handleGroupDragDrop } from "@/helpers/work-item-layout";
 import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/base-issues.store";
 import { useIssueDetail } from "./store/use-issue-detail";
 import { useIssues } from "./store/use-issues";

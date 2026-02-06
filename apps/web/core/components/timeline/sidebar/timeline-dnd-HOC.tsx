@@ -19,7 +19,7 @@ import { observer } from "mobx-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { DropIndicator } from "@plane/ui";
-import { HIGHLIGHT_WITH_LINE, highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
+import { HIGHLIGHT_WITH_LINE, highlightOnDrop } from "@/helpers/common";
 
 type TimelineDnDHOCProps = {
   id: string;
@@ -97,7 +97,7 @@ export const TimelineDnDHOC = observer(function TimelineDnDHOC(props: TimelineDn
           const destinationId = self?.data?.id as string | undefined;
 
           onDrop(sourceId, destinationId, currentInstruction === "DRAG_BELOW");
-          highlightIssueOnDrop(source?.element?.id, false, true);
+          highlightOnDrop(source?.element?.id, false, true);
         },
       })
     );

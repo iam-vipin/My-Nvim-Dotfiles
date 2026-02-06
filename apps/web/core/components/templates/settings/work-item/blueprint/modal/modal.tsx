@@ -21,7 +21,7 @@ import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // plane web imports
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useProjectState } from "@/hooks/store/use-project-state";
-import { IssueModalProvider } from "@/plane-web/components/issues/issue-modal/provider";
+import { IssueModalProvider } from "@/components/issues/issue-modal/context/provider";
 // local imports
 import { useIssueTypes } from "@/plane-web/hooks/store";
 import type { TCreateUpdateWorkItemBlueprintFormProps } from "./form";

@@ -14,13 +14,14 @@
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { InfoIcon } from "@plane/propel/icons";
+import { Avatar } from "@plane/propel/avatar";
+import { CloseIcon, InfoIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IStateTransition } from "@plane/types";
-// components
-import { AppliedMembersFilters } from "@/components/issues/issue-layouts/filters";
+import { getFileURL } from "@plane/utils";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useMember } from "@/hooks/store/use-member";
 
 type Props = {
   stateTransition: IStateTransition;
@@ -34,9 +35,15 @@ export const StateTransitionApprovers = observer(function StateTransitionApprove
   const { t } = useTranslation();
   // store hooks
   const { getStateById } = useProjectState();
-
+  const {
+    workspace: { getWorkspaceMemberDetails },
+  } = useMember();
+  // derived values
   const parentState = getStateById(parentStateId);
   const transitionState = getStateById(stateTransition.transition_state_id);
+  const approverDetails = stateTransition?.approvers
+    ?.map((memberId) => getWorkspaceMemberDetails(memberId)?.member)
+    .filter((member) => member !== undefined);
 
   if (!parentState || !transitionState) return <></>;
 
@@ -53,13 +60,28 @@ export const StateTransitionApprovers = observer(function StateTransitionApprove
           </Tooltip>
         </span>
         <div className="flex p-3 my-1 rounded-md border border-subtle w-full gap-2 items-center">
-          <AppliedMembersFilters
-            editable
-            handleRemove={(value) =>
-              handleApproversUpdate((stateTransition?.approvers ?? []).filter((id) => id !== value))
-            }
-            values={stateTransition?.approvers ?? []}
-          />
+          {approverDetails.map((member) => {
+            return (
+              <div key={member.id} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
+                <Avatar
+                  name={member.display_name}
+                  src={getFileURL(member.avatar_url)}
+                  showTooltip={false}
+                  size={"sm"}
+                />
+                <span className="normal-case">{member.display_name}</span>
+                <button
+                  type="button"
+                  className="grid place-items-center text-tertiary hover:text-secondary"
+                  onClick={() =>
+                    void handleApproversUpdate((stateTransition?.approvers ?? []).filter((id) => id !== member.id))
+                  }
+                >
+                  <CloseIcon height={10} width={10} strokeWidth={2} />
+                </button>
+              </div>
+            );
+          })}
         </div>
       </div>
     </>

@@ -16,7 +16,7 @@ import { ArrowUpRight, Hash, Timer } from "lucide-react";
 import { CycleIcon, ModuleIcon, LayersIcon, PageIcon, ProjectIcon, ViewsIcon, EpicIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import type { TArtifact } from "@/types";
-import { IssueTypeIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueTypeIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 
 export const getIcon = (type: string, color?: string, defaultRender: "text" | "icon" = "icon", className?: string) => {
   switch (type) {

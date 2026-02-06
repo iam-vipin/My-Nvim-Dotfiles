@@ -15,8 +15,8 @@ import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import type { TIssue } from "@plane/types";
 import { Card, cn } from "@plane/ui";
-import { IssueModalProvider } from "@/ce/components/issues/issue-modal";
-import { IssueFormRoot } from "@/components/issues/issue-modal/form";
+import { IssueModalProvider } from "@/components/issues/issue-modal/context/provider";
+import { WorkItemFormRoot } from "@/components/issues/issue-modal/form/root";
 import type { TArtifact, TUpdatedArtifact } from "@/types";
 import { useWorkItemData } from "../useArtifactData";
 import { PiChatArtifactsFooter } from "./footer";
@@ -89,7 +89,7 @@ export const WorkItemDetail = observer(function WorkItemDetail(props: TWorkItemD
         <div className="overflow-scroll h-full m-auto flex flex-col justify-center items-center mb-[100px]">
           <Card className="relative max-w-[700px] rounded-xl shadow-overlay-200 p-0 space-y-0 border border-subtle overflow-scroll">
             <IssueModalProvider>
-              <IssueFormRoot {...commonIssueModalProps} key={data.artifact_id} />
+              <WorkItemFormRoot {...commonIssueModalProps} key={data.artifact_id} />
             </IssueModalProvider>
             <div
               className={cn("absolute top-0 right-0 w-full h-full bg-surface-1 rounded-xl opacity-50", {

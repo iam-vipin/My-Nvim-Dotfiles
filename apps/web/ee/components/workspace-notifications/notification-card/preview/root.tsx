@@ -15,7 +15,7 @@ import type { FC } from "react";
 import { orderBy } from "lodash-es";
 import type { TNotification, TNotificationIssueLite } from "@plane/types";
 import { convertToEpoch } from "@plane/utils";
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 import { NotificationPreviewActivity } from "./preview-activity";
 
 export type TNotificationCardPreview = {

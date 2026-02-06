@@ -11,6 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { lazy, Suspense } from "react";
+import type { ComponentType, LazyExoticComponent } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -23,29 +25,66 @@ import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/f
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
-// local imports
-import { IssuePeekOverview } from "../../peek-overview";
-import { ModuleCalendarLayout } from "../calendar/roots/module-root";
-import { BaseTimelineRoot } from "../timeline";
-import { ModuleKanBanLayout } from "../kanban/roots/module-root";
-import { ModuleListLayout } from "../list/roots/module-root";
-import { ModuleSpreadsheetLayout } from "../spreadsheet/roots/module-root";
+
+// Lazy load peek overview
+const WorkItemPeekOverview = lazy(() =>
+  import("@/components/issues/peek-overview/root").then((module) => ({ default: module.IssuePeekOverview }))
+);
+
+// Lazy load layout components
+const ModuleListLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/list/roots/module-root").then((module) => ({
+    default: module.ModuleListLayout,
+  }))
+);
+const ModuleKanBanLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/board/roots/module-root").then((module) => ({
+    default: module.ModuleKanBanLayout,
+  }))
+);
+const ModuleCalendarLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/calendar/roots/module-root").then((module) => ({
+    default: module.ModuleCalendarLayout,
+  }))
+);
+const BaseTimelineRoot = lazy(() =>
+  import("@/components/issues/issue-layouts/timeline/base-timeline-root").then((module) => ({
+    default: module.BaseTimelineRoot,
+  }))
+);
+const ModuleSpreadsheetLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/table/roots/module-root").then((module) => ({
+    default: module.ModuleSpreadsheetLayout,
+  }))
+);
+
+// Layout components map
+const MODULE_WORK_ITEM_LAYOUTS: Partial<Record<EIssueLayoutTypes, LazyExoticComponent<ComponentType<any>>>> = {
+  [EIssueLayoutTypes.LIST]: ModuleListLayout,
+  [EIssueLayoutTypes.KANBAN]: ModuleKanBanLayout,
+  [EIssueLayoutTypes.CALENDAR]: ModuleCalendarLayout,
+  [EIssueLayoutTypes.SPREADSHEET]: ModuleSpreadsheetLayout,
+};
 
 function ModuleIssueLayout(props: { activeLayout: EIssueLayoutTypes | undefined; moduleId: string }) {
-  switch (props.activeLayout) {
-    case EIssueLayoutTypes.LIST:
-      return <ModuleListLayout />;
-    case EIssueLayoutTypes.KANBAN:
-      return <ModuleKanBanLayout />;
-    case EIssueLayoutTypes.CALENDAR:
-      return <ModuleCalendarLayout />;
-    case EIssueLayoutTypes.GANTT:
-      return <BaseTimelineRoot viewId={props.moduleId} />;
-    case EIssueLayoutTypes.SPREADSHEET:
-      return <ModuleSpreadsheetLayout />;
-    default:
-      return null;
+  if (!props.activeLayout) return null;
+
+  // Handle GANTT layout separately since it needs props
+  if (props.activeLayout === EIssueLayoutTypes.GANTT) {
+    return (
+      <Suspense>
+        <BaseTimelineRoot viewId={props.moduleId} />
+      </Suspense>
+    );
   }
+
+  const ModuleIssueLayoutComponent = MODULE_WORK_ITEM_LAYOUTS[props.activeLayout];
+  if (!ModuleIssueLayoutComponent) return null;
+  return (
+    <Suspense>
+      <ModuleIssueLayoutComponent />
+    </Suspense>
+  );
 }
 
 export const ModuleLayoutRoot = observer(function ModuleLayoutRoot() {
@@ -92,7 +131,9 @@ export const ModuleLayoutRoot = observer(function ModuleLayoutRoot() {
               <ModuleIssueLayout activeLayout={activeLayout} moduleId={moduleId} />
             </Row>
             {/* peek overview */}
-            <IssuePeekOverview />
+            <Suspense>
+              <WorkItemPeekOverview />
+            </Suspense>
           </div>
         )}
       </ProjectLevelWorkItemFiltersHOC>

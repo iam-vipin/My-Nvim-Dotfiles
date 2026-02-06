@@ -17,7 +17,7 @@ import type { TDeDupeIssue } from "@plane/types";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 
 type DuplicateIssueReadOnlyHeaderRoot = {
   issue: TDeDupeIssue;

@@ -11,6 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { lazy, Suspense } from "react";
+import type { ComponentType, LazyExoticComponent } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -24,29 +26,57 @@ import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
-// local imports
-import { IssuePeekOverview } from "../../peek-overview";
-import { CalendarLayout } from "../calendar/roots/project-root";
-import { BaseTimelineRoot } from "../timeline";
-import { KanBanLayout } from "../kanban/roots/project-root";
-import { ListLayout } from "../list/roots/project-root";
-import { ProjectSpreadsheetLayout } from "../spreadsheet/roots/project-root";
 
-function ProjectIssueLayout(props: { activeLayout: EIssueLayoutTypes | undefined }) {
-  switch (props.activeLayout) {
-    case EIssueLayoutTypes.LIST:
-      return <ListLayout />;
-    case EIssueLayoutTypes.KANBAN:
-      return <KanBanLayout />;
-    case EIssueLayoutTypes.CALENDAR:
-      return <CalendarLayout />;
-    case EIssueLayoutTypes.GANTT:
-      return <BaseTimelineRoot />;
-    case EIssueLayoutTypes.SPREADSHEET:
-      return <ProjectSpreadsheetLayout />;
-    default:
-      return null;
-  }
+// Lazy load peek overview
+const WorkItemPeekOverview = lazy(() =>
+  import("@/components/issues/peek-overview/root").then((module) => ({ default: module.IssuePeekOverview }))
+);
+
+// Lazy load layout components
+const ProjectListLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/list/roots/project-root").then((module) => ({
+    default: module.ListLayout,
+  }))
+);
+const ProjectKanBanLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/board/roots/project-root").then((module) => ({
+    default: module.KanBanLayout,
+  }))
+);
+const ProjectCalendarLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/calendar/roots/project-root").then((module) => ({
+    default: module.CalendarLayout,
+  }))
+);
+const ProjectTimelineLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/timeline/base-timeline-root").then((module) => ({
+    default: module.BaseTimelineRoot,
+  }))
+);
+const ProjectSpreadsheetLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/table/roots/project-root").then((module) => ({
+    default: module.ProjectSpreadsheetLayout,
+  }))
+);
+
+// Layout components map
+const PROJECT_WORK_ITEM_LAYOUTS: Partial<Record<EIssueLayoutTypes, LazyExoticComponent<ComponentType>>> = {
+  [EIssueLayoutTypes.LIST]: ProjectListLayout,
+  [EIssueLayoutTypes.KANBAN]: ProjectKanBanLayout,
+  [EIssueLayoutTypes.CALENDAR]: ProjectCalendarLayout,
+  [EIssueLayoutTypes.GANTT]: ProjectTimelineLayout,
+  [EIssueLayoutTypes.SPREADSHEET]: ProjectSpreadsheetLayout,
+};
+
+function ProjectWorkItemLayout({ activeLayout }: { activeLayout: EIssueLayoutTypes | undefined }) {
+  if (!activeLayout) return null;
+  const ProjectWorkItemLayoutComponent = PROJECT_WORK_ITEM_LAYOUTS[activeLayout];
+  if (!ProjectWorkItemLayoutComponent) return null;
+  return (
+    <Suspense>
+      <ProjectWorkItemLayoutComponent />
+    </Suspense>
+  );
 }
 
 export const ProjectLayoutRoot = observer(function ProjectLayoutRoot() {
@@ -93,10 +123,12 @@ export const ProjectLayoutRoot = observer(function ProjectLayoutRoot() {
                   <Spinner className="w-4 h-4" />
                 </div>
               )}
-              <ProjectIssueLayout activeLayout={activeLayout} />
+              <ProjectWorkItemLayout activeLayout={activeLayout} />
             </div>
             {/* peek overview */}
-            <IssuePeekOverview />
+            <Suspense>
+              <WorkItemPeekOverview />
+            </Suspense>
           </div>
         )}
       </ProjectLevelWorkItemFiltersHOC>

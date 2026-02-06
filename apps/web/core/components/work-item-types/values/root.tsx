@@ -18,7 +18,7 @@ import type { IIssueType, TIssuePropertyValueErrors, TIssuePropertyValues, TProp
 // local imports
 import { PropertyValueSelect } from "./value-select";
 
-type TIssueAdditionalPropertyValuesProps = {
+type TWorkItemCustomPropertyValuesProps = {
   getWorkItemTypeById: (issueTypeId: string) => IIssueType | undefined;
   handlePropertyValueChange: (propertyId: string, value: string[]) => void;
   isDisabled?: boolean;
@@ -30,8 +30,8 @@ type TIssueAdditionalPropertyValuesProps = {
   variant: TPropertyValueVariant;
 };
 
-export const IssueAdditionalPropertyValues = observer(function IssueAdditionalPropertyValues(
-  props: TIssueAdditionalPropertyValuesProps
+export const WorkItemCustomPropertyValues = observer(function WorkItemCustomPropertyValues(
+  props: TWorkItemCustomPropertyValuesProps
 ) {
   const {
     getWorkItemTypeById,

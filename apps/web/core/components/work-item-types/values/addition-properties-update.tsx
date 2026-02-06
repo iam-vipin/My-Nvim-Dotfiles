@@ -21,15 +21,15 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 import { IssuePropertyValuesService } from "@/services/issue-types";
 // local imports
-import type { TIssueAdditionalPropertyValuesUpdateProps } from "./addition-properties-update-base";
-import { IssueAdditionalPropertyValuesUpdateBase } from "./addition-properties-update-base";
+import type { TWorkItemCustomPropertyValuesUpdateProps } from "./addition-properties-update-base";
+import { WorkItemCustomPropertyValuesUpdateBase } from "./addition-properties-update-base";
 
 /**
  * Store-connected wrapper for issue additional properties update.
  * Handles work item type store integration and data fetching.
  */
-export const IssueAdditionalPropertyValuesUpdate = observer(function IssueAdditionalPropertyValuesUpdate(
-  props: TIssueAdditionalPropertyValuesUpdateProps
+export const WorkItemCustomPropertyValuesUpdate = observer(function WorkItemCustomPropertyValuesUpdate(
+  props: TWorkItemCustomPropertyValuesUpdateProps
 ) {
   const {
     issueId,
@@ -95,7 +95,7 @@ export const IssueAdditionalPropertyValuesUpdate = observer(function IssueAdditi
   };
 
   return (
-    <IssueAdditionalPropertyValuesUpdateBase
+    <WorkItemCustomPropertyValuesUpdateBase
       {...props}
       getWorkItemTypeById={getIssueTypeById}
       areCustomPropertiesInitializing={propertiesLoader === "init-loader"}

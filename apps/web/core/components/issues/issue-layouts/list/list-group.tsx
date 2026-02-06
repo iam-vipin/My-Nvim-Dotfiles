@@ -44,13 +44,14 @@ import { useWorkFlowFDragNDrop } from "@/plane-web/components/workflow";
 //
 import { GroupDragOverlay } from "../group-drag-overlay";
 import { ListQuickAddIssueButton, QuickAddIssueRoot } from "../quick-add";
-import type { GroupDropLocation } from "../utils";
+// helpers
+import { highlightOnDrop } from "@/helpers/common";
+import type { GroupDropLocation } from "@/helpers/work-item-layout";
 import {
   getDestinationFromDropPayload,
-  getIssueBlockId,
+  getWorkItemBlockId,
   getSourceFromDropPayload,
-  highlightIssueOnDrop,
-} from "../utils";
+} from "@/helpers/work-item-layout";
 import { IssueBlocksList } from "./blocks-list";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import type { TRenderQuickActions } from "./list-view-types";
@@ -235,7 +236,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
 
           handleOnDrop(source, destination);
 
-          highlightIssueOnDrop(getIssueBlockId(source.id, destination?.groupId), orderBy !== "sort_order");
+          highlightOnDrop(getWorkItemBlockId(source.id, destination?.groupId), orderBy !== "sort_order");
 
           if (!isExpanded) {
             handleCollapsedGroups(group.id);

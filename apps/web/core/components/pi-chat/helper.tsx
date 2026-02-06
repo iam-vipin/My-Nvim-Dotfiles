@@ -13,7 +13,7 @@
 
 import smoothScrollIntoView from "smooth-scroll-into-view-if-needed";
 import { CycleIcon, ModuleIcon, LayersIcon, PageIcon, ViewsIcon } from "@plane/propel/icons";
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 import type { TSearchResults, TWorkspaceSearchResultItem } from "@plane/types";
 
 export const parseDataStream = (dataStream: string) =>

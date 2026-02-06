@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 import { WorkItemsIcon } from "@plane/propel/icons";
 import type { TIntakeIssueExtended, TIssue } from "@plane/types";
 import { useIssueType } from "@/plane-web/hooks/store";
-import { IssueTypeIdentifier } from "../issues/issue-details/issue-identifier";
+import { IssueTypeIdentifier } from "../../../core/components/issues/issue-detail/issue-identifier";
 import { IntakePropertyValues } from "./property-values";
 
 type TIntakeAdditionalInformationProps = {

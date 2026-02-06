@@ -27,7 +27,7 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 //components
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 import { useIssueType } from "@/plane-web/hooks/store";
 // local imports
 import { NotificationOption } from "./options";

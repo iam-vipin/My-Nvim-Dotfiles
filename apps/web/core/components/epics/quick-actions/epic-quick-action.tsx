@@ -33,7 +33,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane-web
 import { CreateUpdateEpicModal } from "@/components/epics/epic-modal";
-import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns/duplicate-modal";
+import { DuplicateWorkItemModal } from "@/components/issues/duplicate-modal";
 // helper
 import { useEpicMenuItems } from "./helper";
 import { IconButton } from "@plane/propel/icon-button";

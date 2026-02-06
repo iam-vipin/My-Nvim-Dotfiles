@@ -49,8 +49,8 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { useNavigationItems } from "@/plane-web/components/navigations";
 import { ProjectNavigationRoot } from "@/plane-web/components/sidebar";
-// local imports
-import { HIGHLIGHT_CLASS, highlightIssueOnDrop } from "../../issues/issue-layouts/utils";
+// helpers
+import { HIGHLIGHT_CLASS, highlightOnDrop } from "@/helpers/common";
 
 type Props = {
   projectId: string;
@@ -227,7 +227,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
 
           handleOnProjectDrop?.(sourceId, destinationId, currentInstruction === "DRAG_BELOW");
 
-          highlightIssueOnDrop(`sidebar-${sourceId}-${projectListType}`);
+          highlightOnDrop(`sidebar-${sourceId}-${projectListType}`);
         },
       })
     );

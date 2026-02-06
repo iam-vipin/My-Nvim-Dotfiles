@@ -26,7 +26,7 @@ import { EInboxIssueStatus } from "@plane/types";
 import { ControlLink, CustomMenu, Row } from "@plane/ui";
 import { copyUrlToClipboard, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
 // components
-import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/root";
 import { NameDescriptionUpdateStatus } from "@/components/issues/issue-update-status";
 // hooks
 import { useProject } from "@/hooks/store/use-project";

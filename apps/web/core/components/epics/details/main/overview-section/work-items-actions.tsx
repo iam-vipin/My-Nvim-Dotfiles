@@ -30,7 +30,7 @@ import type {
 import { EIssueServiceType } from "@plane/types";
 // components
 import { SubIssuesActionButton, SubIssueDisplayFilters } from "@/components/issues/issue-detail-widgets/sub-issues";
-import { SubIssueFilters } from "@/components/issues/issue-detail-widgets/sub-issues/filters";
+import { SubIssueFilters } from "@/components/issues/issue-detail-widgets/sub-issues/filters/root";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectState } from "@/hooks/store/use-project-state";

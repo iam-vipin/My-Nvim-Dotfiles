@@ -34,12 +34,12 @@ import { MultipleSelectGroup } from "@/components/core/multiple-select";
 // hooks
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // plane web components
-import { IssueBulkOperationsRoot } from "@/plane-web/components/issues/bulk-operations";
+import { IssueBulkOperationsRoot } from "@/components/issues/bulk-operations";
 // plane web hooks
 import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 // utils
-import type { GroupDropLocation } from "../utils";
-import { getGroupByColumns, isWorkspaceLevel, isSubGrouped } from "../utils";
+import type { GroupDropLocation } from "@/helpers/work-item-layout";
+import { getGroupByColumns, isWorkspaceLevel, isSubGrouped } from "@/helpers/work-item-layout";
 import { ListGroup } from "./list-group";
 import type { TRenderQuickActions } from "./list-view-types";
 

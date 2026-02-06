@@ -21,7 +21,7 @@ import { EFileAssetType, EIssueServiceType } from "@plane/types";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
 import { InfoSection } from "@/components/common/layout/main/sections/info-root";
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // local components
 import { useEpicOperations } from "../helper";
 import { EpicInfoActionItems } from "./info-section/action-items";

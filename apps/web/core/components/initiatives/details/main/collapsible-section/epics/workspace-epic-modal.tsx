@@ -30,7 +30,7 @@ import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { getSelectedEpicDetails } from "@/components/initiatives/utils";
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 import { WorkspaceService } from "@/services/workspace.service";
 // core imports
 import { IdentifierText } from "@/components/issues/issue-detail/identifier-text";

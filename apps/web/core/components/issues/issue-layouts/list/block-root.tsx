@@ -30,8 +30,10 @@ import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-lo
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// helpers
+import { HIGHLIGHT_CLASS } from "@/helpers/common";
+import { getWorkItemBlockId, isWorkItemNew } from "@/helpers/work-item-layout";
 // types
-import { HIGHLIGHT_CLASS, getIssueBlockId, isIssueNew } from "../utils";
 import { IssueBlock } from "./block";
 import type { TRenderQuickActions } from "./list-view-types";
 
@@ -138,14 +140,14 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
 
   const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
   return (
-    <div className="relative" ref={issueBlockRef} id={getIssueBlockId(issueId, groupId)}>
+    <div className="relative" ref={issueBlockRef} id={getWorkItemBlockId(issueId, groupId)}>
       <DropIndicator classNames={"absolute top-0 z-[2]"} isVisible={instruction === "DRAG_OVER"} />
       <RenderIfVisible
         key={`${issueId}`}
         root={containerRef}
         classNames={`relative ${isLastChild && !isExpanded ? "" : "border-b border-b-subtle"}`}
         verticalOffset={100}
-        defaultValue={shouldRenderByDefault || isIssueNew(issuesMap[issueId])}
+        defaultValue={shouldRenderByDefault || isWorkItemNew(issuesMap[issueId])}
         placeholderChildren={<ListLoaderItemRow shouldAnimate={false} renderForPlaceHolder defaultPropertyCount={4} />}
         shouldRecordHeights={isMobile}
       >

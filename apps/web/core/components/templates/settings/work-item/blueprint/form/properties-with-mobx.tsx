@@ -19,7 +19,7 @@ import { EWorkItemTypeEntity } from "@plane/types";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 // plane web imports
-import { IssueAdditionalProperties } from "@/plane-web/components/issues/issue-modal/additional-properties";
+import { WorkItemCustomProperties } from "@/components/issues/issue-modal/properties/custom/root";
 import { DefaultWorkItemBlueprintProperties } from "@/components/templates/settings/work-item/blueprint/form/default-properties";
 import { SelectionDropdown } from "@/components/templates/settings/work-item/blueprint/form/selection-dropdown";
 import { WorkItemBlueprintDetails } from "@/components/templates/settings/work-item/blueprint/form/work-item-details";
@@ -50,7 +50,7 @@ export const WorkItemBlueprintPropertiesWithMobx = observer(function WorkItemBlu
       {/* Additional Properties */}
       {projectId && (
         <div className="space-y-3">
-          <IssueAdditionalProperties
+          <WorkItemCustomProperties
             {...props}
             entityType={EWorkItemTypeEntity.WORK_ITEM}
             issueId={undefined}

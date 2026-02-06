@@ -27,7 +27,7 @@ import type {
   TPropertyValuesValidationProps,
 } from "@/components/issues/issue-modal/context";
 import { IssueModalContext } from "@/components/issues/issue-modal/context";
-import { ConversionToastActionItems } from "@/plane-web/components/issues/conversion-toast-action-items";
+import { WorkItemConversionToastActionItem } from "@/components/common/toast-actions/work-item-conversion";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUser } from "@/hooks/store/user/user-user";
@@ -175,7 +175,7 @@ export const EpicModalProvider = observer(function EpicModalProvider(props: TEpi
             type: TOAST_TYPE.SUCCESS,
             title: t("success"),
             message: "Work item converted to epic successfully",
-            actionItems: <ConversionToastActionItems workspaceSlug={workspaceSlug} workItemId={data?.id} />,
+            actionItems: <WorkItemConversionToastActionItem workspaceSlug={workspaceSlug} workItemId={data?.id} />,
           });
         })
         .catch((error) => {

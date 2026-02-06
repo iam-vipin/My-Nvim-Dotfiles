@@ -35,7 +35,7 @@ import {
 } from "@plane/propel/icons";
 // plane web components
 import { generateWorkItemLink } from "@plane/utils";
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // core imports
 import { IdentifierText } from "@/components/issues/issue-detail/identifier-text";
 // local components

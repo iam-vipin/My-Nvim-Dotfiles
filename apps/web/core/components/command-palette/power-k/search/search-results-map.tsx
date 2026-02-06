@@ -25,7 +25,7 @@ import { generateWorkItemLink } from "@plane/utils";
 // components
 import type { TPowerKSearchResultGroupDetails } from "@/components/power-k/ui/modal/search-results-map";
 // plane web imports
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // local imports
 import type { TPowerKSearchResultsKeysExtended } from "../types";
 

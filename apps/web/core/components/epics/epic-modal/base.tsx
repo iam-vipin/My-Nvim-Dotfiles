@@ -21,7 +21,7 @@ import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { CreateIssueToastActionItems } from "@/components/issues/create-issue-toast-action-items";
-import type { IssuesModalProps } from "@/components/issues/issue-modal/modal";
+import type { IssuesModalProps } from "@/components/issues/issue-modal/root";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";

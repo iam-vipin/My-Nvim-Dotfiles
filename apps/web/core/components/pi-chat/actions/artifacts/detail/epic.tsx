@@ -15,7 +15,7 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import type { TIssue } from "@plane/types";
 import { Card } from "@plane/ui";
-import { IssueModalProvider } from "@/ce/components/issues/issue-modal";
+import { IssueModalProvider } from "@/components/issues/issue-modal/context/provider";
 import { EpicFormRoot } from "@/components/epics/epic-modal/form";
 import type { TArtifact, TUpdatedArtifact } from "@/types";
 import { useWorkItemData } from "../useArtifactData";

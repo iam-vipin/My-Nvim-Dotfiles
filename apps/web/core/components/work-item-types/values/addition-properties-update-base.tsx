@@ -19,9 +19,9 @@ import type { IIssueType, TIssuePropertyValues, TIssueServiceType } from "@plane
 import { EWorkItemTypeEntity } from "@plane/types";
 import { Loader } from "@plane/ui";
 // plane web imports
-import { IssueAdditionalPropertyValues } from "@/components/work-item-types/values/root";
+import { WorkItemCustomPropertyValues } from "@/components/work-item-types/values/root";
 
-export type TIssueAdditionalPropertyValuesUpdateProps = {
+export type TWorkItemCustomPropertyValuesUpdateProps = {
   entityType?: EWorkItemTypeEntity;
   isDisabled: boolean;
   issueId: string;
@@ -31,7 +31,7 @@ export type TIssueAdditionalPropertyValuesUpdateProps = {
   workspaceSlug: string;
 };
 
-type TIssueAdditionalPropertyValuesUpdateBaseProps = TIssueAdditionalPropertyValuesUpdateProps & {
+type TWorkItemCustomPropertyValuesUpdateBaseProps = TWorkItemCustomPropertyValuesUpdateProps & {
   getWorkItemTypeById: (issueTypeId: string) => IIssueType | undefined;
   areCustomPropertiesInitializing: boolean;
   arePropertyValuesInitializing: boolean;
@@ -49,8 +49,8 @@ type TIssueAdditionalPropertyValuesUpdateBaseProps = TIssueAdditionalPropertyVal
  * Receives all data and methods as props to enable reusability across different contexts.
  * Use the wrapper component for automatic store integration.
  */
-export const IssueAdditionalPropertyValuesUpdateBase = observer(function IssueAdditionalPropertyValuesUpdateBase(
-  props: TIssueAdditionalPropertyValuesUpdateBaseProps
+export const WorkItemCustomPropertyValuesUpdateBase = observer(function WorkItemCustomPropertyValuesUpdateBase(
+  props: TWorkItemCustomPropertyValuesUpdateBaseProps
 ) {
   const {
     entityType = EWorkItemTypeEntity.WORK_ITEM,
@@ -115,7 +115,7 @@ export const IssueAdditionalPropertyValuesUpdateBase = observer(function IssueAd
   if (!issueTypeDetails || !activeProperties?.length) return null;
 
   return (
-    <IssueAdditionalPropertyValues
+    <WorkItemCustomPropertyValues
       getWorkItemTypeById={getWorkItemTypeById}
       issueTypeId={issueTypeId}
       projectId={projectId}

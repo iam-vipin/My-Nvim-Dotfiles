@@ -36,21 +36,18 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { IssueLabel } from "@/components/issues/issue-detail/label";
-// helpers
+import { WorkItemSidebarCustomers } from "@/components/issues/issue-detail/customers/root";
+import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
+import { SidebarContentWrapper } from "@/components/common/layout/sidebar/content-wrapper";
+import { InitiativeMultiSelectModal } from "@/components/initiatives/common/multi-select-modal";
+import { WorkItemCustomPropertyValuesUpdate } from "@/components/work-item-types/values/addition-properties-update";
+import { DateAlert } from "@/components/issues/issue-detail/date-alert";
+import { WorkItemSideBarMilestoneItem } from "@/components/issues/issue-detail/milestones/root";
+// hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectState } from "@/hooks/store/use-project-state";
-// plane web components
-import { SidebarContentWrapper } from "@/components/common/layout/sidebar/content-wrapper";
-import { InitiativeMultiSelectModal } from "@/components/initiatives/common/multi-select-modal";
-import { IssueAdditionalPropertyValuesUpdate } from "@/components/work-item-types/values/addition-properties-update";
-// common components
-import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
-// helpers
-import { WorkItemSidebarCustomers } from "@/plane-web/components/issues/issue-details/sidebar/customer-list-root";
-import { DateAlert } from "@/plane-web/components/issues/issue-details/sidebar/date-alert";
-import { WorkItemSideBarMilestoneItem } from "@/plane-web/components/issues/issue-details/sidebar/milestones/root";
 import { useCustomers } from "@/plane-web/hooks/store/customers";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
@@ -269,7 +266,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
         )}
 
         {epicDetails.type_id && (
-          <IssueAdditionalPropertyValuesUpdate
+          <WorkItemCustomPropertyValuesUpdate
             issueId={epicId}
             issueTypeId={epicDetails.type_id}
             projectId={projectId}

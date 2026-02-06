@@ -30,7 +30,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane-web imports
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 
 type TDeDupeIssueBlockHeaderProps = {
   workspaceSlug: string;

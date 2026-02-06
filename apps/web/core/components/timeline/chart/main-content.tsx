@@ -29,7 +29,7 @@ import { MultipleSelectGroup } from "@/components/core/multiple-select";
 import { TimelineChartSidebar, MonthChartView, QuarterChartView, WeekChartView } from "@/components/timeline";
 import { TimelineChartRowList } from "@/components/timeline/blocks/block-row-list";
 import { TimelineChartBlocksList } from "@/components/timeline/blocks/blocks-list";
-import { IssueBulkOperationsRoot } from "@/plane-web/components/issues/bulk-operations";
+import { IssueBulkOperationsRoot } from "@/components/issues/bulk-operations";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";

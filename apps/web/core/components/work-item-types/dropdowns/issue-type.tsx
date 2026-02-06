@@ -17,8 +17,8 @@ import { LayersIcon } from "@plane/propel/icons";
 import type { IIssueType } from "@plane/types";
 import { CustomSearchSelect, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
-// ce imports
-import type { TIssueTypeDropdownVariant } from "@/ce/components/issues/issue-modal";
+// components
+import type { TIssueTypeDropdownVariant } from "@/components/issues/issue-modal/properties/issue-type-select";
 // plane web types
 import { IssueTypeLogo } from "@/components/work-item-types/common/issue-type-logo";
 

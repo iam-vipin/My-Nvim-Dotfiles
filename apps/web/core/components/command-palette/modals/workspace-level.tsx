@@ -24,7 +24,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 // lazy imports
 const CreateUpdateWorkItemModal = lazy(() =>
-  import("@/components/issues/issue-modal/modal").then((module) => ({ default: module.CreateUpdateIssueModal }))
+  import("@/components/issues/issue-modal/root").then((module) => ({ default: module.CreateUpdateIssueModal }))
 );
 const CreateProjectModal = lazy(() =>
   import("@/components/project/create-project-modal").then((module) => ({ default: module.CreateProjectModal }))

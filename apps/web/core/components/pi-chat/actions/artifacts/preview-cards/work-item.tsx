@@ -25,7 +25,7 @@ import { ReadonlyPriority } from "@/components/readonly/priority";
 import { ReadonlyState } from "@/components/readonly/state";
 import { useWorkItemData } from "../useArtifactData";
 import { WithPreviewHOC } from "./with-preview-hoc";
-import { IssueTypeIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueTypeIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 type TProps = {
   artifactId: string;
   isEpic?: boolean;

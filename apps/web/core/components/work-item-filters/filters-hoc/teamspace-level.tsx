@@ -19,7 +19,8 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TTeamspaceView, TWorkItemFilterExpression } from "@plane/types";
 import { EUserProjectRoles, EViewAccess } from "@plane/types";
-import { removeNillKeys } from "@/components/issues/issue-layouts/utils";
+// helpers
+import { removeNillKeys } from "@/helpers/common";
 import { WorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/base";
 import type {
   TEnableSaveViewProps,

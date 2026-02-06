@@ -11,7 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
+import type { ComponentType, LazyExoticComponent } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -28,33 +29,70 @@ import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
-// local imports
-import { IssuePeekOverview } from "../../peek-overview";
-import { CycleCalendarLayout } from "../calendar/roots/cycle-root";
-import { BaseTimelineRoot } from "../timeline";
-import { CycleKanBanLayout } from "../kanban/roots/cycle-root";
-import { CycleListLayout } from "../list/roots/cycle-root";
-import { CycleSpreadsheetLayout } from "../spreadsheet/roots/cycle-root";
+
+// Lazy load peek overview
+const WorkItemPeekOverview = lazy(() =>
+  import("@/components/issues/peek-overview/root").then((module) => ({ default: module.IssuePeekOverview }))
+);
+
+// Lazy load layout components
+const CycleListLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/list/roots/cycle-root").then((module) => ({
+    default: module.CycleListLayout,
+  }))
+);
+const CycleKanBanLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/board/roots/cycle-root").then((module) => ({
+    default: module.CycleKanBanLayout,
+  }))
+);
+const CycleCalendarLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/calendar/roots/cycle-root").then((module) => ({
+    default: module.CycleCalendarLayout,
+  }))
+);
+const BaseTimelineRoot = lazy(() =>
+  import("@/components/issues/issue-layouts/timeline/base-timeline-root").then((module) => ({
+    default: module.BaseTimelineRoot,
+  }))
+);
+const CycleSpreadsheetLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/table/roots/cycle-root").then((module) => ({
+    default: module.CycleSpreadsheetLayout,
+  }))
+);
+
+// Layout components map
+const CYCLE_WORK_ITEM_LAYOUTS: Partial<Record<EIssueLayoutTypes, LazyExoticComponent<ComponentType>>> = {
+  [EIssueLayoutTypes.LIST]: CycleListLayout,
+  [EIssueLayoutTypes.KANBAN]: CycleKanBanLayout,
+  [EIssueLayoutTypes.CALENDAR]: CycleCalendarLayout,
+  [EIssueLayoutTypes.SPREADSHEET]: CycleSpreadsheetLayout,
+};
 
 function CycleIssueLayout(props: {
   activeLayout: EIssueLayoutTypes | undefined;
   cycleId: string;
   isCompletedCycle: boolean;
 }) {
-  switch (props.activeLayout) {
-    case EIssueLayoutTypes.LIST:
-      return <CycleListLayout />;
-    case EIssueLayoutTypes.KANBAN:
-      return <CycleKanBanLayout />;
-    case EIssueLayoutTypes.CALENDAR:
-      return <CycleCalendarLayout />;
-    case EIssueLayoutTypes.GANTT:
-      return <BaseTimelineRoot viewId={props.cycleId} isCompletedCycle={props.isCompletedCycle} />;
-    case EIssueLayoutTypes.SPREADSHEET:
-      return <CycleSpreadsheetLayout />;
-    default:
-      return null;
+  if (!props.activeLayout) return null;
+
+  // Handle GANTT layout separately since it needs props
+  if (props.activeLayout === EIssueLayoutTypes.GANTT) {
+    return (
+      <Suspense>
+        <BaseTimelineRoot viewId={props.cycleId} isCompletedCycle={props.isCompletedCycle} />
+      </Suspense>
+    );
   }
+
+  const CycleIssueLayoutComponent = CYCLE_WORK_ITEM_LAYOUTS[props.activeLayout];
+  if (!CycleIssueLayoutComponent) return null;
+  return (
+    <Suspense>
+      <CycleIssueLayoutComponent />
+    </Suspense>
+  );
 }
 
 export const CycleLayoutRoot = observer(function CycleLayoutRoot() {
@@ -123,7 +161,9 @@ export const CycleLayoutRoot = observer(function CycleLayoutRoot() {
                 <CycleIssueLayout activeLayout={activeLayout} cycleId={cycleId} isCompletedCycle={isCompletedCycle} />
               </div>
               {/* peek overview */}
-              <IssuePeekOverview />
+              <Suspense>
+                <WorkItemPeekOverview />
+              </Suspense>
             </div>
           </>
         )}

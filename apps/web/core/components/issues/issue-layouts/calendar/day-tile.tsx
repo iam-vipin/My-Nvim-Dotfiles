@@ -21,8 +21,9 @@ import { MONTHS_LIST } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TGroupedIssues, TIssue, TIssueMap, TPaginationData, ICalendarDate } from "@plane/types";
 import { cn, renderFormattedPayloadDate } from "@plane/utils";
+// helpers
+import { highlightOnDrop } from "@/helpers/common";
 // components
-import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 // store
 import type { ICycleIssuesFilter } from "@/store/issue/cycle";
 import type { IModuleIssuesFilter } from "@/store/issue/module";
@@ -135,7 +136,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
             sourceData?.date,
             destinationData?.date
           );
-          highlightIssueOnDrop(source?.element?.id, false);
+          highlightOnDrop(source?.element?.id, false);
         },
       })
     );

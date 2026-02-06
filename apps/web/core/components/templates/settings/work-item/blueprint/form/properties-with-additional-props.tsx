@@ -19,7 +19,7 @@ import { EWorkItemTypeEntity } from "@plane/types";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 // plane web imports
-import { IssueAdditionalPropertiesBase } from "@/plane-web/components/issues/issue-modal/additional-properties-base";
+import { WorkItemCustomPropertiesBase } from "@/components/issues/issue-modal/properties/custom/base";
 import { DefaultWorkItemBlueprintProperties } from "@/components/templates/settings/work-item/blueprint/form/default-properties";
 import { SelectionDropdown } from "@/components/templates/settings/work-item/blueprint/form/selection-dropdown";
 import { WorkItemBlueprintDetails } from "@/components/templates/settings/work-item/blueprint/form/work-item-details";
@@ -65,7 +65,7 @@ export const WorkItemBlueprintPropertiesWithAdditionalProps = observer(
         {/* Additional Properties */}
         {projectId && (
           <div className="space-y-3">
-            <IssueAdditionalPropertiesBase
+            <WorkItemCustomPropertiesBase
               entityType={EWorkItemTypeEntity.WORK_ITEM}
               {...props}
               areCustomPropertiesInitializing={areCustomPropertiesInitializing ?? false}

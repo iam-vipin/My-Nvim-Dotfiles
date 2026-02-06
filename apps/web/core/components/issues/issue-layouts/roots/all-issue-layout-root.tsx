@@ -11,18 +11,16 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useEffect, useMemo } from "react";
+import { lazy, Suspense, useMemo } from "react";
+import type { ComponentType, LazyExoticComponent } from "react";
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import type { EIssueLayoutTypes } from "@plane/types";
-import { EIssuesStoreType, STATIC_VIEW_TYPES } from "@plane/types";
+import { EIssueLayoutTypes, EIssuesStoreType, STATIC_VIEW_TYPES } from "@plane/types";
 // components
-import { IssuePeekOverview } from "@/components/issues/peek-overview";
-import { WorkspaceActiveLayout } from "@/components/views/helper";
 import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 // hooks
@@ -31,6 +29,66 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
+
+// Lazy load peek overview
+const WorkItemPeekOverview = lazy(() =>
+  import("@/components/issues/peek-overview/root").then((module) => ({ default: module.IssuePeekOverview }))
+);
+
+// Lazy load workspace spreadsheet root
+const WorkspaceSpreadsheetRoot = lazy(() =>
+  import("@/components/issues/issue-layouts/table/roots/workspace-root").then((module) => ({
+    default: module.WorkspaceSpreadsheetRoot,
+  }))
+);
+const WorkspaceTimelineRoot = lazy(() =>
+  import("@/components/issues/issue-layouts/timeline/workspace-timeline/root").then((module) => ({
+    default: module.WorkspaceTimelineRoot,
+  }))
+);
+const WorkspaceViewBoardLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/board/roots/workspace-view-root").then((module) => ({
+    default: module.WorkspaceViewBoardLayout,
+  }))
+);
+const WorkspaceCalendarLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/calendar/roots/workspace-view-root").then((module) => ({
+    default: module.WorkspaceCalendarLayout,
+  }))
+);
+
+type TWorkspaceLayoutProps = {
+  activeLayout: EIssueLayoutTypes | undefined;
+  isDefaultView: boolean;
+  workspaceSlug: string;
+  globalViewId: string;
+  routeFilters: {
+    [key: string]: string;
+  };
+  globalViewsLoading: boolean;
+  filtersLoading: boolean;
+};
+
+// Layout components map
+const WORKSPACE_WORK_ITEM_LAYOUTS: Partial<
+  Record<EIssueLayoutTypes, LazyExoticComponent<ComponentType<TWorkspaceLayoutProps>>>
+> = {
+  [EIssueLayoutTypes.GANTT]: WorkspaceTimelineRoot,
+  [EIssueLayoutTypes.KANBAN]: WorkspaceViewBoardLayout,
+  [EIssueLayoutTypes.CALENDAR]: WorkspaceCalendarLayout,
+  [EIssueLayoutTypes.SPREADSHEET]: WorkspaceSpreadsheetRoot,
+};
+
+function WorkspaceActiveLayout(props: TWorkspaceLayoutProps) {
+  const { activeLayout = EIssueLayoutTypes.SPREADSHEET } = props;
+  const WorkspaceActiveLayoutComponent = WORKSPACE_WORK_ITEM_LAYOUTS[activeLayout];
+  if (!WorkspaceActiveLayoutComponent) return null;
+  return (
+    <Suspense>
+      <WorkspaceActiveLayoutComponent {...props} />
+    </Suspense>
+  );
+}
 
 type Props = {
   isDefaultView: boolean;
@@ -152,7 +210,9 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
               />
             </div>
             {/* peek overview */}
-            <IssuePeekOverview />
+            <Suspense>
+              <WorkItemPeekOverview />
+            </Suspense>
           </div>
         )}
       </WorkspaceLevelWorkItemFiltersHOC>

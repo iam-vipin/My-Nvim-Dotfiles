@@ -22,7 +22,7 @@ import { EpicIcon } from "@plane/propel/icons";
 import type { GroupByColumnTypes } from "@plane/types";
 // helpers
 import { cn } from "@plane/utils";
-import { getGroupByColumns } from "@/components/issues/issue-layouts/utils";
+import { getGroupByColumns } from "@/helpers/work-item-layout";
 // plane-web
 import { SectionEmptyState } from "@/components/common/layout/main/common/empty-state";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";

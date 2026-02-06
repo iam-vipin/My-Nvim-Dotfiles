@@ -30,8 +30,8 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 // plane web imports
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
-import { WorkItemPropertiesLite } from "@/plane-web/components/issues/issue-details/properties";
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
+import { WorkItemPropertiesLite } from "@/components/issues/issue-detail/properties";
 import { useCustomerWorkItemOperations } from "./helper";
 
 type TProps = {

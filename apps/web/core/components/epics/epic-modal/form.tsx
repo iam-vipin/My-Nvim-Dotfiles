@@ -29,7 +29,7 @@ import {
   IssueDescriptionEditor,
   IssueProjectSelect,
   IssueTitleInput,
-} from "@/components/issues/issue-modal/components";
+} from "@/components/issues/issue-modal/properties";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -37,7 +37,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
-import { IssueAdditionalProperties } from "@/plane-web/components/issues/issue-modal/additional-properties";
+import { WorkItemCustomProperties } from "@/components/issues/issue-modal/properties/custom/root";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 // local imports
 import { EpicDefaultProperties } from "./components/default-properties";
@@ -343,7 +343,7 @@ export const EpicFormRoot = observer(function EpicFormRoot(props: EpicFormProps)
                 )}
               >
                 {projectId && epicDetails?.id && (
-                  <IssueAdditionalProperties
+                  <WorkItemCustomProperties
                     issueId={data?.id ?? data?.sourceIssueId}
                     issueTypeId={epicDetails?.id}
                     projectId={projectId}

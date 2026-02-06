@@ -15,7 +15,7 @@ import { MoreHorizontal } from "lucide-react";
 import { cn, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard } from "@plane/utils";
 import { IconButton } from "@plane/propel/icon-button";
-import { useIntakeHeaderMenuItems } from "@/components/common/quick-actions-helper";
+import { useIntakeHeaderMenuItems } from "@/components/common/quick-actions/helper";
 
 type Props = {
   workspaceSlug: string;

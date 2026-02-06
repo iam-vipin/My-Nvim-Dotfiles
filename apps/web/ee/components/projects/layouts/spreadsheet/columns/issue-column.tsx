@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // helpers
 import { cn } from "@plane/utils";
-import type { SpreadsheetStoreType } from "@/components/issues/issue-layouts/spreadsheet/base-spreadsheet-root";
+import type { SpreadsheetStoreType } from "@/components/issues/issue-layouts/table/base-spreadsheet-root";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";

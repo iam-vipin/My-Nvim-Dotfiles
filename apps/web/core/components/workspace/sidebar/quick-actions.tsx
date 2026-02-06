@@ -20,7 +20,7 @@ import { useTranslation } from "@plane/i18n";
 import { AddWorkItemIcon } from "@plane/propel/icons";
 import type { TIssue } from "@plane/types";
 // components
-import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/root";
 import { SidebarAddButton } from "@/components/sidebar/add-button";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";

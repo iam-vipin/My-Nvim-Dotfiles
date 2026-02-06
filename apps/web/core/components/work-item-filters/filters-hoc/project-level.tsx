@@ -19,8 +19,9 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IProjectView, TWorkItemFilterExpression } from "@plane/types";
 import { EIssuesStoreType, EUserProjectRoles, EViewAccess } from "@plane/types";
+// helpers
+import { removeNillKeys } from "@/helpers/common";
 // components
-import { removeNillKeys } from "@/components/issues/issue-layouts/utils";
 import { CreateUpdateProjectViewModal } from "@/components/views/modal";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";

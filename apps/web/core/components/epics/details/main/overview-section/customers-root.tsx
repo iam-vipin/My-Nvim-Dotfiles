@@ -11,14 +11,14 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
-// plane imports
 import useSWR from "swr";
-// plane web
+// plane imports
 import { Loader } from "@plane/ui";
+// plane web
 import { CustomerRequestEmptyState } from "@/components/customers";
-import { WorkItemRequestCollapsibleContent } from "@/plane-web/components/issues/issue-detail-widgets";
+import { WorkItemRequestCollapsibleContent } from "@/components/issues/issue-detail-widgets/customer-requests/content";
+// hooks
 import { useCustomers } from "@/plane-web/hooks/store";
 
 type TProps = {

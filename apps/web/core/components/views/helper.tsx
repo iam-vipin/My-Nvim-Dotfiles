@@ -14,9 +14,8 @@
 import { useEffect, useMemo } from "react";
 import { LockIcon } from "@plane/propel/icons";
 import { E_FEATURE_FLAGS } from "@plane/constants";
-import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
+import { EIssueLayoutTypes } from "@plane/types";
 import { LayoutSelection } from "@/components/issues/issue-layouts/filters";
-import { useIssues } from "@/hooks/store/use-issues";
 import { useFlag } from "@/plane-web/hooks/store";
 
 export type TLayoutSelectionProps = {

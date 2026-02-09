@@ -28,7 +28,7 @@ import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { CreateUpdateTeamspaceViewModal } from "@/components/teamspaces/views/modals/create-update";
 import { DeleteTeamspaceViewModal } from "@/components/teamspaces/views/modals/delete";
 import { PublishTeamspaceViewModal } from "@/components/teamspaces/views/modals/publish";
-import { useViewPublish } from "@/plane-web/components/views/publish";
+import { useViewPublish } from "@/components/views/publish";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;

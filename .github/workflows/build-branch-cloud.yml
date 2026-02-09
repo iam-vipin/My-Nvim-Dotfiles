@@ -145,6 +145,9 @@ jobs:
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+          build-args: |
+            VITE_APP_VERSION=${{ needs.branch_build_setup.outputs.release_version }}
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
 
   branch_build_push_space:
     name: Build-Push Space Docker Image
@@ -167,6 +170,9 @@ jobs:
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+          build-args: |
+            VITE_APP_VERSION=${{ needs.branch_build_setup.outputs.release_version }}
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
 
   branch_build_push_live:
     name: Build-Push Live Collaboration Docker Image

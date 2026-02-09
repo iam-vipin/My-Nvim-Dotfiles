@@ -67,6 +67,29 @@ export class LiveService extends APIService {
   }
 
   /**
+   * Exports a page to PDF via the live server
+   * @param params - PDF export parameters
+   * @returns Blob of the generated PDF
+   */
+  async exportToPdf(params: {
+    pageId: string;
+    workspaceSlug: string;
+    projectId?: string;
+    teamspaceId?: string;
+    title?: string;
+    pageSize?: "A4" | "A3" | "A2" | "LETTER" | "LEGAL" | "TABLOID";
+    pageOrientation?: "portrait" | "landscape";
+    fileName?: string;
+    noAssets?: boolean;
+  }): Promise<Blob> {
+    const response = await this.post(`/pdf-export`, params, {
+      withCredentials: true,
+      responseType: "blob",
+    });
+    return response.data;
+  }
+
+  /**
    * Fetches precomputed version diff from live server
    * Returns diff data ready for rendering + editors list
    */

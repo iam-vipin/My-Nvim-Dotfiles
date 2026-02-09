@@ -12,8 +12,6 @@
  */
 
 import { useState } from "react";
-import type { PageProps } from "@react-pdf/renderer";
-import { pdf } from "@react-pdf/renderer";
 import { Controller, useForm } from "react-hook-form";
 import { useParams } from "react-router";
 // plane editor
@@ -22,8 +20,8 @@ import type { EditorRefApi } from "@plane/editor";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { CustomSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-// components
-import { PDFDocument } from "@/components/editor/pdf";
+// services
+import { liveService } from "@/services/live.service";
 // hooks
 import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 
@@ -32,10 +30,12 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   pageTitle: string;
+  pageId: string;
+  teamspaceId?: string;
 };
 
 type TExportFormats = "pdf" | "markdown";
-type TPageFormats = Exclude<PageProps["size"], undefined>;
+type TPageFormats = "A4" | "A3" | "A2" | "LETTER" | "LEGAL" | "TABLOID";
 type TContentVariety = "everything" | "no-assets";
 
 type TFormValues = {
@@ -109,7 +109,7 @@ const defaultValues: TFormValues = {
 };
 
 export function ExportPageModal(props: Props) {
-  const { editorRef, isOpen, onClose, pageTitle } = props;
+  const { editorRef, isOpen, onClose, pageTitle, pageId, teamspaceId } = props;
   // states
   const [isExporting, setIsExporting] = useState(false);
   // params
@@ -118,8 +118,8 @@ export function ExportPageModal(props: Props) {
   const { control, reset, watch } = useForm<TFormValues>({
     defaultValues,
   });
-  // parse editor content
-  const { replaceCustomComponentsFromHTMLContent, replaceCustomComponentsFromMarkdownContent } = useParseEditorContent({
+  // parse editor content (used for markdown export)
+  const { replaceCustomComponentsFromMarkdownContent } = useParseEditorContent({
     projectId,
     workspaceSlug: workspaceSlug ?? "",
   });
@@ -151,20 +151,22 @@ export function ExportPageModal(props: Props) {
     }, 1000);
   };
 
-  // handle export as a PDF
+  // handle export as a PDF via live server
   const handleExportAsPDF = async () => {
-    try {
-      const pageContent = `<h1 class="page-title">${pageTitle}</h1>${editorRef?.getDocument().html ?? "<p></p>"}`;
-      const parsedPageContent = await replaceCustomComponentsFromHTMLContent({
-        htmlContent: pageContent,
-        noAssets: selectedContentVariety === "no-assets",
-      });
+    if (!workspaceSlug) throw new Error("Workspace slug is required");
 
-      const blob = await pdf(<PDFDocument content={parsedPageContent} pageFormat={selectedPageFormat} />).toBlob();
-      initiateDownload(blob, `${fileName}-${selectedPageFormat.toString().toLowerCase()}.pdf`);
-    } catch (error) {
-      throw new Error(`Error in exporting as a PDF: ${error}`);
-    }
+    const blob = await liveService.exportToPdf({
+      pageId,
+      workspaceSlug: workspaceSlug.toString(),
+      projectId: projectId?.toString(),
+      teamspaceId,
+      title: pageTitle,
+      pageSize: selectedPageFormat,
+      fileName: `${fileName}-${selectedPageFormat.toString().toLowerCase()}.pdf`,
+      noAssets: selectedContentVariety === "no-assets",
+    });
+
+    initiateDownload(blob, `${fileName}-${selectedPageFormat.toString().toLowerCase()}.pdf`);
   };
   // handle export as markdown
   const handleExportAsMarkdown = async () => {

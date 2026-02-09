@@ -8,5 +8,6 @@ export default defineConfig({
   clean: true,
   sourcemap: false,
   exports: true,
-  platform: "neutral",
+  platform: "node",
+  copy: "assets",
 });

@@ -37,6 +37,7 @@ export * from "@/helpers/parser";
 
 export { CORE_EXTENSIONS } from "@/constants/extension";
 export { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
+export { EDrawioMode } from "./ee/extensions/drawio/types";
 
 // types
 export * from "@/types";

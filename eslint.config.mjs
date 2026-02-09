@@ -187,7 +187,7 @@ export default defineConfig([
     extends: [tseslint.configs.disableTypeChecked],
   },
   {
-    files: ["**/*.cjs"],
+    files: ["**/*.{mjs,cjs}"],
     languageOptions: {
       globals: {
         ...globals.node,

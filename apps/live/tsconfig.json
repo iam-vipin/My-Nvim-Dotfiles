@@ -12,6 +12,7 @@
     "noImplicitOverride": false,
     "noImplicitReturns": false,
     "noUnusedLocals": false,
+    "jsx": "react-jsx",
     "paths": {
       "@/*": ["./src/*"],
       "@/plane-live/*": ["./src/ee/*"]
@@ -41,6 +42,6 @@
       }
     ]
   },
-  "include": ["src"],
+  "include": ["src", "tests"],
   "exclude": ["node_modules", "dist"]
 }

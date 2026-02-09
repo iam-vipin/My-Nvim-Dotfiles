@@ -139,6 +139,8 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}
         pageTitle={name ?? ""}
+        pageId={page.id ?? ""}
+        teamspaceId={page.team ?? undefined}
       />
       <PageActions
         extraOptions={EXTRA_MENU_OPTIONS}

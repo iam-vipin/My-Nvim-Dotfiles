@@ -15,11 +15,6 @@ on:
         description: "Release Version"
         type: string
         default: v0.0.0-cloud
-      useVaultSecrets:
-        description: "Use Vault Secrets"
-        type: boolean
-        default: false
-        required: true
       isPrerelease:
         description: "Is Pre-release"
         type: boolean
@@ -28,7 +23,6 @@ on:
 
 env:
   TARGET_BRANCH: ${{ github.ref_name }}
-  VAULT_KP_PREFIX: plane-ee-cloud-builds
   BUILD_TYPE: ${{ github.event.inputs.build_type }}
   RELEASE_VERSION: ${{ github.event.inputs.releaseVersion }}
   IS_PRERELEASE: ${{ github.event.inputs.isPrerelease }}
@@ -58,8 +52,6 @@ jobs:
       build_release: ${{ steps.set_env_variables.outputs.BUILD_RELEASE }}
       build_prerelease: ${{ steps.set_env_variables.outputs.BUILD_PRERELEASE }}
       release_version: ${{ steps.set_env_variables.outputs.RELEASE_VERSION }}
-      vault_secrets: ${{ steps.get_vault_secrets.outputs.VAULT_SECRETS }}
-      build_args: ${{ steps.prepare_build_args.outputs.BUILD_ARGS }}
     steps:
       - id: set_env_variables
         name: Set Environment Variables
@@ -110,68 +102,6 @@ jobs:
           echo "BUILD_PRERELEASE=${BUILD_PRERELEASE}" >> $GITHUB_OUTPUT
           echo "RELEASE_VERSION=${RELVERSION}" >> $GITHUB_OUTPUT
 
-      - name: Tailscale
-        uses: tailscale/github-action@v2
-        if: ${{github.event.inputs.useVaultSecrets == 'true'}}
-        with:
-          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
-          oauth-secret: ${{ secrets.TAILSCALE_OAUTH_CLIENT_SECRET }}
-          tags: tag:ci
-
-      - name: Get the ENV values from Vault
-        id: get_vault_secrets
-        if: ${{github.event.inputs.useVaultSecrets == 'true'}}
-        run: |
-          if [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
-            ENV_NAME="prod"
-          else
-            ENV_NAME="stage"
-          fi
-
-          curl -fsSL \
-            --header "X-Vault-Token: ${{ secrets.VAULT_TOKEN }}" \
-            --request GET \
-            ${{ vars.VAULT_HOST }}/v1/kv/git-builds/data/${{ env.VAULT_KP_PREFIX }}-${ENV_NAME} | jq .data.data > vault_secrets.json
-
-          if [ $? != 0 ]; then
-            echo "Failed to get the ENV values from Vault"
-            exit 1
-          fi
-
-          VAULT_SECRETS=$(cat vault_secrets.json | base64 -w 0)
-          echo "VAULT_SECRETS=${VAULT_SECRETS}" >> $GITHUB_OUTPUT
-
-      - name: Prepare Docker Build Args
-        id: prepare_build_args
-        if: ${{github.event.inputs.useVaultSecrets == 'true'}}
-        run: |
-          BUILD_ARGS=""
-          add_build_arg() {
-            if [ -n "$2" ]; then
-              BUILD_ARGS="$BUILD_ARGS $1=$2"
-            fi
-          }
-          add_build_arg "VITE_API_BASE_URL" "${{ env.VITE_API_BASE_URL }}"
-          add_build_arg "VITE_API_BASE_PATH" "${{ env.VITE_API_BASE_PATH }}"
-
-          add_build_arg "VITE_ADMIN_BASE_URL" "${{ env.VITE_ADMIN_BASE_URL }}"
-          add_build_arg "VITE_ADMIN_BASE_PATH" "${{ env.VITE_ADMIN_BASE_PATH }}"
-
-          add_build_arg "VITE_SPACE_BASE_URL" "${{ env.VITE_SPACE_BASE_URL }}"
-          add_build_arg "VITE_SPACE_BASE_PATH" "${{ env.VITE_SPACE_BASE_PATH }}"
-
-          add_build_arg "VITE_LIVE_BASE_URL" "${{ env.VITE_LIVE_BASE_URL }}"
-          add_build_arg "VITE_LIVE_BASE_PATH" "${{ env.VITE_LIVE_BASE_PATH }}"
-
-          add_build_arg "VITE_SILO_BASE_URL" "${{ env.VITE_SILO_BASE_URL }}"
-          add_build_arg "VITE_SILO_BASE_PATH" "${{ env.VITE_SILO_BASE_PATH }}"
-
-          add_build_arg "VITE_WEB_BASE_URL" "${{ env.VITE_WEB_BASE_URL }}"
-
-          add_build_arg "SENTRY_AUTH_TOKEN" "${{ secrets.SENTRY_AUTH_TOKEN }}"
-
-          echo "BUILD_ARGS=$BUILD_ARGS" >> $GITHUB_OUTPUT
-
   branch_build_push_admin:
     name: Build-Push Admin Docker Image
     runs-on: ubuntu-22.04-4core
@@ -193,18 +123,12 @@ jobs:
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
-          build-args: ${{ needs.branch_build_setup.outputs.build_args }}
 
   branch_build_push_web:
     name: Build-Push Web Docker Image
     runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
-      - name: Load Vault Secrets
-        run: |
-          echo ${{ needs.branch_build_setup.outputs.vault_secrets }} | base64 -d > vault_secrets.json
-          jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' vault_secrets.json >> $GITHUB_ENV
-
       - name: Web Build and Push
         uses: makeplane/actions/build-push@v1.0.0
         with:
@@ -221,18 +145,12 @@ jobs:
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
-          build-args: ${{ needs.branch_build_setup.outputs.build_args }}
 
   branch_build_push_space:
     name: Build-Push Space Docker Image
     runs-on: ubuntu-22.04-4core
     needs: [branch_build_setup]
     steps:
-      - name: Load Vault Secrets
-        run: |
-          echo ${{ needs.branch_build_setup.outputs.vault_secrets }} | base64 -d > vault_secrets.json
-          jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' vault_secrets.json >> $GITHUB_ENV
-
       - name: Space Build and Push
         uses: makeplane/actions/build-push@v1.0.0
         with:
@@ -249,7 +167,6 @@ jobs:
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
-          build-args: ${{ needs.branch_build_setup.outputs.build_args }}
 
   branch_build_push_live:
     name: Build-Push Live Collaboration Docker Image

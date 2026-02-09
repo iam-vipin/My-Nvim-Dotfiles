@@ -9,6 +9,9 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
-from .base import WorkspaceMutation
-from .invite import WorkspaceInviteMutation
-from .public_invite import PublicWorkspaceInviteMutation, PublicWorkspaceInviteV2Mutation
+"""
+Public workspace invite queries
+"""
+
+from .base import PublicWorkspaceInviteQuery
+from .base_v2 import PublicWorkspaceInviteV2Query

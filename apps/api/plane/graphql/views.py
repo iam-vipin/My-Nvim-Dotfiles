@@ -108,6 +108,8 @@ class CustomGraphQLView(AsyncGraphQLView):
             "InstanceQuery",
             "PublicWorkspaceInviteMutation",
             "PublicWorkspaceInviteQuery",
+            "PublicWorkspaceInviteV2Mutation",
+            "PublicWorkspaceInviteV2Query",
         ]
 
         if query_name in auth_neglect_list:

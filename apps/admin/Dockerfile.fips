@@ -13,12 +13,12 @@ RUN corepack enable pnpm
 
 FROM base AS builder
 
-RUN pnpm add -g turbo@2.7.4
+RUN pnpm add -g turbo@2.6.3
 
 COPY . .
 
-# Create a pruned workspace for just the space app
-RUN turbo prune --scope=space --docker
+# Create a pruned workspace for just the admin app
+RUN turbo prune --scope=admin --docker
 
 # =========================================================================== #
 
@@ -55,7 +55,6 @@ ENV VITE_WEB_BASE_PATH=$VITE_WEB_BASE_PATH
 
 ARG VITE_WEBSITE_URL="https://plane.so"
 ENV VITE_WEBSITE_URL=$VITE_WEBSITE_URL
-
 ARG VITE_SUPPORT_EMAIL="support@plane.so"
 ENV VITE_SUPPORT_EMAIL=$VITE_SUPPORT_EMAIL
 
@@ -71,27 +70,19 @@ COPY turbo.json turbo.json
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm fetch --store-dir=/pnpm/store
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store CI=true pnpm install --offline --frozen-lockfile --store-dir=/pnpm/store --prod=false
 
-# Build only the space package
-RUN pnpm turbo run build --filter=space
+# Build only the admin package
+RUN pnpm turbo run build --filter=admin
 
 # =========================================================================== #
 
-FROM base AS runner
+FROM registry.access.redhat.com/ubi10/nginx-126 AS production
 
-COPY --from=installer /app/apps/space/build ./apps/space/build
-COPY --from=installer /app/apps/space/node_modules ./apps/space/node_modules
-COPY --from=installer /app/node_modules ./node_modules
-
-
-WORKDIR /app/apps/space
-
-COPY LICENSE.txt .
-RUN mkdir -p /usr/share/licenses/plane/
-COPY LICENSE.txt /usr/share/licenses/plane/LICENSE.txt
+COPY apps/admin/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY --from=installer /app/apps/admin/build/client /usr/share/nginx/html/god-mode
 
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD curl -fsS http://127.0.0.1:3000/spaces/ >/dev/null || exit 1
+  CMD curl -fsS http://127.0.0.1:3000/ >/dev/null || exit 1
 
-CMD ["npx", "react-router-serve", "./build/server/index.js"]
+CMD ["nginx", "-g", "daemon off;"]

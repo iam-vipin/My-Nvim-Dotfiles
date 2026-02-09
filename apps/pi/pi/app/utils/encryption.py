@@ -13,7 +13,7 @@ import base64
 import hashlib
 from typing import Dict
 
-from Crypto.Cipher import AES
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 from pi import settings
 
@@ -45,7 +45,7 @@ def derive_key() -> bytes:
 
 def decrypt(encrypted_data: Dict[str, str]) -> str:
     """
-    Decrypt data encrypted with AES-256-GCM.
+    Decrypt data encrypted with AES-256-GCM (FIPS-compliant).
 
     Args:
         encrypted_data: Dictionary with 'iv', 'ciphertext', and 'tag' keys
@@ -58,12 +58,13 @@ def decrypt(encrypted_data: Dict[str, str]) -> str:
     """
     try:
         key = derive_key()
-        iv = base64.b64decode(encrypted_data["iv"])
+        aesgcm = AESGCM(key)
+        nonce = base64.b64decode(encrypted_data["iv"])
         ciphertext = base64.b64decode(encrypted_data["ciphertext"])
         tag = base64.b64decode(encrypted_data["tag"])
-
-        cipher = AES.new(key, AES.MODE_GCM, nonce=iv)
-        return cipher.decrypt_and_verify(ciphertext, tag).decode()
+        # Reconstruct: ciphertext + tag for AESGCM.decrypt()
+        encrypted = ciphertext + tag
+        return aesgcm.decrypt(nonce, encrypted, None).decode()
     except Exception as e:
         raise ValueError(f"Failed to decrypt data: {e}")
 

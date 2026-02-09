@@ -13,13 +13,12 @@
 
 import { useEffect } from "react";
 import { observer } from "mobx-react";
+// components
+import { WorkspaceProjectsRoot } from "@/components/projects/list/with-grouping/projects-root";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-// plane web components
-import { WorkspaceProjectsRoot } from "@/plane-web/components/projects";
-// plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store";
-// plane web types
+// types
 import { EProjectFilters, EProjectLayouts, EProjectScope } from "@/types/workspace-project-filters";
 
 export type TTeamspaceProjectsWithGroupingRootProps = {

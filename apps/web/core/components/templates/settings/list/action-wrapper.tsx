@@ -24,7 +24,7 @@ import { EFileAssetType, EIssuesStoreType, ETemplateType } from "@plane/types";
 import { extractPageFormData } from "@plane/utils";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/root";
-import { CreateProjectModal } from "@/components/project/create-project-modal";
+import { CreateProjectModal } from "@/components/projects/modals/create-project-modal";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports

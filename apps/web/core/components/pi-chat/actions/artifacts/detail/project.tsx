@@ -15,7 +15,7 @@ import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import type { TProject } from "@plane/types";
 import { Card, cn } from "@plane/ui";
-import { CreateProjectForm } from "@/plane-web/components/projects/create/root";
+import { CreateProjectForm } from "@/components/projects/create/root";
 import type { TArtifact, TUpdatedArtifact } from "@/types";
 import { useProjectData } from "../useArtifactData";
 import { PiChatArtifactsFooter } from "./footer";

@@ -25,7 +25,7 @@ import { cn } from "@plane/utils";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { CountChip } from "@/components/common/count-chip";
 import { PageHead } from "@/components/core/page-title";
-import { MemberListFiltersDropdown } from "@/components/project/dropdowns/filters/member-list";
+import { MemberListFiltersDropdown } from "@/components/projects/dropdowns/filters/member-list";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { WorkspaceMembersList } from "@/components/workspace/settings/members-list";
 // hooks

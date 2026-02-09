@@ -24,12 +24,12 @@ import { cn, getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
-import { ProjectNetworkIcon } from "@/components/project/project-network-icon";
+import { ProjectNetworkIcon } from "@/components/projects/common/project-network-icon";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
-import { MembersDropdown } from "@/plane-web/components/projects/dropdowns/members-dropdown";
-import { StateDropdown } from "@/plane-web/components/projects/dropdowns/state-dropdown";
+import { MembersDropdown } from "@/components/projects/dropdowns/members";
+import { StateDropdown } from "@/components/projects/dropdowns/state";
 import { COMMON_BUTTON_CLASS_NAME, COMMON_ERROR_CLASS_NAME } from "@/components/templates/settings/common";
 import { useFlag, useWorkspaceFeatures, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";

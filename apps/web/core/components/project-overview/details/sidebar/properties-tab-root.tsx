@@ -42,9 +42,9 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web
 import { SidebarContentWrapper } from "@/components/common/layout/sidebar/content-wrapper";
 import { InitiativeMultiSelectModal } from "@/components/initiatives/common/multi-select-modal";
-import { MembersDropdown } from "@/plane-web/components/projects/dropdowns/members-dropdown";
-import { PriorityDropdown } from "@/plane-web/components/projects/dropdowns/priority-dropdown";
-import { StateDropdown } from "@/plane-web/components/projects/dropdowns/state-dropdown";
+import { MembersDropdown } from "@/components/projects/dropdowns/members";
+import { PriorityDropdown } from "@/components/projects/dropdowns/priority";
+import { StateDropdown } from "@/components/projects/dropdowns/state";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import type { TProject } from "@/types";

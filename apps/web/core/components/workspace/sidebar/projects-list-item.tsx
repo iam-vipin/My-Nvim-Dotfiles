@@ -37,8 +37,8 @@ import { cn } from "@plane/utils";
 import { ProjectActionsMenu } from "@/components/navigation/project-actions-menu";
 import { DEFAULT_TAB_KEY, getTabUrl } from "@/components/navigation/tab-navigation-utils";
 import { useTabPreferences } from "@/components/navigation/use-tab-preferences";
-import { LeaveProjectModal } from "@/components/project/leave-project-modal";
-import { PublishProjectModal } from "@/components/project/publish-project/modal";
+import { LeaveProjectModal } from "@/components/projects/modals/leave-project-modal";
+import { PublishProjectModal } from "@/components/projects/modals/publish-modal";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";

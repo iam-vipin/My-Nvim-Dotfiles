@@ -16,23 +16,24 @@ import { CalendarDays, Signal, Paperclip } from "lucide-react";
 // plane imports
 import { LayersIcon, LinkIcon, DoubleCircleIcon } from "@plane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
-// plane web imports
-import { SpreadsheetIssueColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/issue-column";
-import { SpreadsheetLeadColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/lead-column";
-import { SpreadsheetMembersColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/members-column";
-import { SpreadsheetPriorityColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/priority-column";
-import { SpreadsheetStateColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/state-column";
-import { SpreadsheetUpdatedOnColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/updated-on-column";
+// components
+import { SpreadsheetLeadColumn } from "@/components/projects/list/with-grouping/layouts/spreadsheet/columns/lead-column";
+import { SpreadsheetMembersColumn } from "@/components/projects/list/with-grouping/layouts/spreadsheet/columns/members-column";
+import { SpreadsheetPriorityColumn } from "@/components/projects/list/with-grouping/layouts/spreadsheet/columns/priority-column";
+import { SpreadsheetStateColumn } from "@/components/projects/list/with-grouping/layouts/spreadsheet/columns/state-column";
+import { SpreadsheetUpdatedOnColumn } from "@/components/projects/list/with-grouping/layouts/spreadsheet/columns/updated-on-column";
+import { SpreadsheetIssueColumn } from "@/components/projects/list/with-grouping/layouts/spreadsheet/columns/issue-column";
+// types
 import type { TProject } from "@/types/projects";
 
-export interface IProjectDisplayProperties {
+export type IProjectDisplayProperties = {
   priority?: boolean;
   state?: boolean;
   duration: string;
   lead: string;
   members_count: number;
   issue_count: number;
-}
+};
 
 export const SPREADSHEET_PROPERTY_DETAILS: {
   [key: string]: {

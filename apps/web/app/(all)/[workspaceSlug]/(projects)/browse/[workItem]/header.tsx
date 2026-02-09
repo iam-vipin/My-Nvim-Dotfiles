@@ -21,12 +21,11 @@ import { cn } from "@plane/utils";
 import { AppHeader } from "@/components/core/app-header";
 import { TabNavigationRoot } from "@/components/navigation";
 import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
+import { ProjectInboxHeader } from "@/components/projects/settings/intake/header/root";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
-// plane web imports
-import { ProjectInboxHeader } from "@/plane-web/components/projects/settings/intake/header";
 // local components
 import { ProjectArchivedIssueDetailsHeader } from "../../projects/(detail)/[projectId]/archives/issues/(detail)/header";
 import { EpicItemDetailsHeader } from "./epic-header";

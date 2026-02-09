@@ -48,6 +48,8 @@ jobs:
 
       - name: Set up Node.js
         uses: actions/setup-node@v6
+        with:
+          node-version: "22.18.0"
 
       - name: Enable Corepack and pnpm
         run: corepack enable pnpm
@@ -79,7 +81,7 @@ jobs:
     env:
       TURBO_SCM_BASE: ${{ github.event.pull_request.base.sha }}
       TURBO_SCM_HEAD: ${{ github.sha }}
-      NODE_OPTIONS: "--max-old-space-size=4096"
+      NODE_OPTIONS: "--max-old-space-size=6144"
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -89,6 +91,8 @@ jobs:
 
       - name: Set up Node.js
         uses: actions/setup-node@v6
+        with:
+          node-version: "22.18.0"
 
       - name: Enable Corepack and pnpm
         run: corepack enable pnpm
@@ -149,6 +153,8 @@ jobs:
 
       - name: Set up Node.js
         uses: actions/setup-node@v6
+        with:
+          node-version: "22.18.0"
 
       - name: Enable Corepack and pnpm
         run: corepack enable pnpm

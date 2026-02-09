@@ -3,6 +3,7 @@ import * as dotenv from "@dotenvx/dotenvx";
 import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
@@ -14,14 +15,32 @@ const viteEnv = Object.keys(process.env)
     return a;
   }, {});
 
-export default defineConfig(() => ({
+const plugins = [reactRouter(), tsconfigPaths({ projects: [path.resolve(__dirname, "tsconfig.json")] })];
+
+if (process.env.SENTRY_AUTH_TOKEN) {
+  const release = process.env.VITE_APP_VERSION ?? "v26.01.01";
+  plugins.push(
+    sentryVitePlugin({
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      org: "plane-hq",
+      project: "plane-web",
+      release: { name: release },
+      sourcemaps: {
+        filesToDeleteAfterUpload: ["build/client/**/*.map", "build/server/**/*.map"],
+      },
+    })
+  );
+}
+
+export default defineConfig({
   define: {
     "process.env": JSON.stringify(viteEnv),
   },
   build: {
+    sourcemap: "hidden",
     assetsInlineLimit: 0,
   },
-  plugins: [reactRouter(), tsconfigPaths({ projects: [path.resolve(__dirname, "tsconfig.json")] })],
+  plugins,
   resolve: {
     alias: {
       // Next.js compatibility shims used within web
@@ -64,4 +83,4 @@ export default defineConfig(() => ({
     ],
   },
   // No SSR-specific overrides needed; alias resolves to ESM build
-}));
+});

@@ -14,7 +14,7 @@
 import { fileURLToPath } from "url";
 import path from "path";
 import { Document, Font, Page, pdf, Text } from "@react-pdf/renderer";
-import { createKeyGenerator, renderNode } from "./node-renderers";
+import { createKeyGenerator, getFontStyle, renderNode } from "./node-renderers";
 import { pdfStyles } from "./styles";
 import type { PDFExportOptions, TipTapDocument } from "./types";
 
@@ -41,40 +41,37 @@ const getFontsDir = (): string => {
 const fontsDir = getFontsDir();
 
 Font.register({
-  family: "Inter",
+  family: "Noto Sans CJK",
   fonts: [
     {
-      src: path.join(fontsDir, "inter-latin-400-normal.woff"),
+      src: path.join(fontsDir, "NotoSansCJKsc-Regular.otf"),
       fontWeight: 400,
     },
     {
-      src: path.join(fontsDir, "inter-latin-400-italic.woff"),
+      src: path.join(fontsDir, "NotoSansCJKsc-Regular.otf"),
       fontWeight: 400,
       fontStyle: "italic",
     },
     {
-      src: path.join(fontsDir, "inter-latin-600-normal.woff"),
+      src: path.join(fontsDir, "NotoSansCJKsc-Bold.otf"),
       fontWeight: 600,
     },
     {
-      src: path.join(fontsDir, "inter-latin-600-italic.woff"),
+      src: path.join(fontsDir, "NotoSansCJKsc-Bold.otf"),
       fontWeight: 600,
       fontStyle: "italic",
     },
     {
-      src: path.join(fontsDir, "inter-latin-700-normal.woff"),
+      src: path.join(fontsDir, "NotoSansCJKsc-Bold.otf"),
       fontWeight: 700,
     },
     {
-      src: path.join(fontsDir, "inter-latin-700-italic.woff"),
+      src: path.join(fontsDir, "NotoSansCJKsc-Bold.otf"),
       fontWeight: 700,
       fontStyle: "italic",
     },
   ],
 });
-
-// Note: IBM Plex Mono fonts fail to parse with fontkit on Alpine Linux (musl libc)
-// Using Courier (built-in to react-pdf) as a fallback monospace font
 
 export const createPdfDocument = (doc: TipTapDocument, options: PDFExportOptions = {}) => {
   const { title, author, subject, pageSize = "A4", pageOrientation = "portrait", metadata, noAssets } = options;
@@ -89,7 +86,7 @@ export const createPdfDocument = (doc: TipTapDocument, options: PDFExportOptions
   return (
     <Document title={title} author={author} subject={subject}>
       <Page size={pageSize} orientation={pageOrientation} style={pdfStyles.page}>
-        {title && <Text style={pdfStyles.title}>{title}</Text>}
+        {title && <Text style={[pdfStyles.title, getFontStyle(title)]}>{title}</Text>}
         {renderedContent}
       </Page>
     </Document>

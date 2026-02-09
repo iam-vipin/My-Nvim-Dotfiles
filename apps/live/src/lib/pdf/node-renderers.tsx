@@ -70,21 +70,27 @@ export const createKeyGenerator = (): KeyGenerator => {
   return () => `node-${counter++}`;
 };
 
+export const getFontStyle = (text: string | undefined): Record<string, string> => {
+  if (!text) return {};
+  return { fontFamily: "Noto Sans CJK" };
+};
+
 const renderTextWithMarks = (node: TipTapNode, getKey: KeyGenerator): ReactElement => {
   const style = applyMarks(node.marks, {});
+  const fontStyle = getFontStyle(node.text);
   const hasLink = node.marks?.find((m) => m.type === "link");
 
   if (hasLink) {
     const href = (hasLink.attrs?.href as string) || "#";
     return (
-      <Link key={getKey()} src={href} style={{ ...pdfStyles.link, ...style }}>
+      <Link key={getKey()} src={href} style={{ ...pdfStyles.link, ...style, ...fontStyle }}>
         {node.text || ""}
       </Link>
     );
   }
 
   return (
-    <Text key={getKey()} style={style}>
+    <Text key={getKey()} style={{ ...style, ...fontStyle }}>
       {node.text || ""}
     </Text>
   );
@@ -159,7 +165,7 @@ export const nodeRenderers: NodeRendererRegistry = {
     const shouldWrap = lineCount > 25;
     return (
       <View key={ctx.getKey()} style={pdfStyles.codeBlock} wrap={shouldWrap}>
-        <Text style={pdfStyles.codeBlockText}>{codeContent}</Text>
+        <Text style={{ ...pdfStyles.codeBlockText, ...getFontStyle(codeContent) }}>{codeContent}</Text>
       </View>
     );
   },
@@ -605,7 +611,7 @@ export const nodeRenderers: NodeRendererRegistry = {
   },
 
   drawIoComponent: (node: TipTapNode, _children: ReactElement[], ctx: PDFRenderContext): ReactElement => {
-    const mode = (node.attrs?.["data-mode"] as string) || EDrawioMode.DIAGRAM;
+    const mode = (node.attrs?.["data-mode"] as EDrawioMode) || EDrawioMode.DIAGRAM;
 
     if (ctx.metadata?.noAssets) {
       return (
@@ -658,7 +664,7 @@ type InternalRenderContext = {
 const renderNodeWithContext = (node: TipTapNode, context: InternalRenderContext): ReactElement => {
   const { parentType, nestingLevel, listItemIndex, textAlign, pdfContext } = context;
 
-  const nodeType = node.type as string;
+  const nodeType = node.type as CORE_EXTENSIONS;
   const isListContainer = nodeType === CORE_EXTENSIONS.BULLET_LIST || nodeType === CORE_EXTENSIONS.ORDERED_LIST;
 
   let childTextAlign = textAlign;
@@ -674,7 +680,7 @@ const renderNodeWithContext = (node: TipTapNode, context: InternalRenderContext)
       _nestingLevel: nestingLevel,
       _listItemIndex: listItemIndex,
       _textAlign: childTextAlign,
-      _isHeader: node.content?.some((child) => (child.type as string) === CORE_EXTENSIONS.TABLE_HEADER),
+      _isHeader: node.content?.some((child) => (child.type as CORE_EXTENSIONS) === CORE_EXTENSIONS.TABLE_HEADER),
     },
   };
 
@@ -694,7 +700,7 @@ const renderNodeWithContext = (node: TipTapNode, context: InternalRenderContext)
         pdfContext,
       };
 
-      if (isListContainer && (child.type as string) === CORE_EXTENSIONS.LIST_ITEM) {
+      if (isListContainer && (child.type as CORE_EXTENSIONS) === CORE_EXTENSIONS.LIST_ITEM) {
         currentListItemIndex++;
         childContext.listItemIndex = currentListItemIndex;
       }

@@ -13,7 +13,7 @@
 
 import { Command } from "cmdk";
 import { useState, useEffect } from "react";
-import { SearchResults } from "ee/components/workspace/search/results/root";
+import { SearchResults } from "@/components/workspace/search/results/root";
 import { observer } from "mobx-react";
 import { Search } from "lucide-react";
 // plane imports

@@ -24,7 +24,7 @@ import { cn } from "@plane/utils";
 import WorkflowsUpgradeDark from "@/app/assets/empty-state/workflows/upgrade-dark.webp?url";
 import WorkflowsUpgradeLight from "@/app/assets/empty-state/workflows/upgrade-light.webp?url";
 // plane web components
-import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace/upgrade-empty-state-button";
+import { UpgradeEmptyStateButton } from "@/components/workspace/upgrade-empty-state-button";
 
 export const WorkflowUpgrade = observer(function WorkflowUpgrade() {
   // router

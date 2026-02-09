@@ -21,7 +21,7 @@ import { Dropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { isEstimateSystemEnabled } from "@/components/estimates/helper";
-import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
+import { UpgradeBadge } from "@/components/workspace/upgrade-badge";
 import { ESTIMATE_SYSTEMS } from "@/constants/estimates";
 
 type TProps = {

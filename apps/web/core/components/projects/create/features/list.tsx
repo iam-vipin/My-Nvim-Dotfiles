@@ -21,7 +21,7 @@ import type { IProject, TProjectFeaturesList } from "@plane/types";
 // components
 import { SettingsHeading } from "@/components/settings/heading";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
-import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
+import { UpgradeBadge } from "@/components/workspace/upgrade-badge";
 // constants
 import { PROJECT_FEATURES_LIST } from "@/constants/project/settings";
 // hooks

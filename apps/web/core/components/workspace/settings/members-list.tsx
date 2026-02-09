@@ -13,7 +13,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -29,14 +28,12 @@ import { WorkspaceInvitationsListItem } from "./invitations-list-item";
 import { WorkspaceMembersListItem } from "./members-list-item";
 
 export const WorkspaceMembersList = observer(function WorkspaceMembersList(props: {
+  workspaceSlug: string;
   searchQuery: string;
   isAdmin: boolean;
 }) {
-  const { searchQuery, isAdmin } = props;
+  const { workspaceSlug, searchQuery, isAdmin } = props;
   const [showPendingInvites, setShowPendingInvites] = useState<boolean>(true);
-
-  // router
-  const { workspaceSlug } = useParams();
   // store hooks
   const {
     workspace: {
@@ -52,20 +49,15 @@ export const WorkspaceMembersList = observer(function WorkspaceMembersList(props
   } = useMember();
   const { t } = useTranslation();
   // fetching workspace invitations
-  useSWR(
-    workspaceSlug ? `WORKSPACE_MEMBERS_AND_MEMBER_INVITATIONS_${workspaceSlug.toString()}` : null,
-    workspaceSlug
-      ? async () => {
-          await fetchWorkspaceMemberInvitations(workspaceSlug.toString());
-          await fetchWorkspaceMembers(workspaceSlug.toString());
-        }
-      : null
-  );
+  useSWR(`WORKSPACE_MEMBERS_AND_MEMBER_INVITATIONS_${workspaceSlug}`, async () => {
+    await fetchWorkspaceMemberInvitations(workspaceSlug);
+    await fetchWorkspaceMembers(workspaceSlug);
+  });
 
   if (!workspaceMemberIds && !workspaceMemberInvitationIds) return <MembersSettingsLoader />;
 
   // derived values
-  const filteredMemberIds = workspaceSlug ? getFilteredWorkspaceMemberIds(workspaceSlug.toString()) : [];
+  const filteredMemberIds = getFilteredWorkspaceMemberIds(workspaceSlug);
   const searchedMemberIds = searchQuery ? getSearchedWorkspaceMemberIds(searchQuery) : filteredMemberIds;
   const searchedInvitationsIds = getSearchedWorkspaceInvitationIds(searchQuery);
   const memberDetails = searchedMemberIds
@@ -79,7 +71,9 @@ export const WorkspaceMembersList = observer(function WorkspaceMembersList(props
   return (
     <>
       <div className="divide-y-[0.5px] divide-subtle overflow-scroll">
-        {searchedMemberIds?.length !== 0 && <WorkspaceMembersListItem memberDetails={memberDetails ?? []} />}
+        {searchedMemberIds?.length !== 0 && (
+          <WorkspaceMembersListItem memberDetails={memberDetails ?? []} workspaceSlug={workspaceSlug} />
+        )}
         {searchedInvitationsIds?.length === 0 && searchedMemberIds?.length === 0 && (
           <h4 className="mt-16 text-center text-body-xs-regular text-placeholder">{t("no_matching_members")}</h4>
         )}

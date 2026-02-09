@@ -21,7 +21,7 @@ import { SidebarQuickActions } from "@/components/workspace/sidebar/quick-action
 import { SidebarMenuItems } from "@/components/workspace/sidebar/sidebar-menu-items";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { useUserPermissions } from "@/hooks/store/user";
-import { SidebarTeamsList } from "@/plane-web/components/workspace/sidebar/teamspaces/root";
+import { SidebarTeamsList } from "@/components/workspace/sidebar/teamspaces/root";
 
 export const AppSidebar = observer(function AppSidebar() {
   const { allowPermissions } = useUserPermissions();

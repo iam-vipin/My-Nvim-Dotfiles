@@ -23,7 +23,7 @@ import { cn } from "@plane/utils";
 import CustomerUpgradeDark from "@/app/assets/empty-state/customers/customer-upgrade-dark.webp?url";
 import CustomerUpgradeLight from "@/app/assets/empty-state/customers/customer-upgrade-light.webp?url";
 // local imports
-import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace/upgrade-empty-state-button";
+import { UpgradeEmptyStateButton } from "@/components/workspace/upgrade-empty-state-button";
 
 export const CustomerUpgrade = observer(function CustomerUpgrade() {
   const { workspaceSlug } = useParams();

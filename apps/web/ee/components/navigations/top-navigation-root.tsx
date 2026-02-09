@@ -39,7 +39,7 @@ import { isPiAllowed } from "@/helpers/pi-chat";
 import { useFlag, useWorkspaceFeatures, useTheme } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import { DesktopHeaderProvider } from "@/components/desktop/root";
-import { WorkspaceAppSwitcher } from "../workspace/app-switcher";
+import { WorkspaceAppSwitcher } from "@/components/workspace/app-switcher";
 import { TopNavSearch } from "./top-nav-search";
 import { NotificationsPopoverRoot } from "@/components/notifications/popover/root";
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
@@ -94,7 +94,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
 
     // Check if all items in the checklist are completed
     const allCompleted = checklist.every((item) => {
-      const key = item.id as TGettingStartedChecklistKeys;
+      const key = item.id;
       return checklistData?.[key] === true;
     });
 

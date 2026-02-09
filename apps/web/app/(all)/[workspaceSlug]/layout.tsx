@@ -18,7 +18,7 @@ import { WorkspaceAuthWrapper } from "@/layouts/auth-layout/workspace-wrapper";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 import { WithSocketProviderHOC } from "@/lib/socket/provider/hoc";
 // plane web imports
-import { WorkspaceContentWrapper } from "@/plane-web/components/workspace/content-wrapper";
+import { WorkspaceContentWrapper } from "@/components/workspace/content-wrapper";
 import { AppRailVisibilityProvider } from "@/plane-web/hooks/app-rail";
 import { GlobalModals } from "@/components/common/modal/global";
 import type { Route } from "./+types/layout";

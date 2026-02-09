@@ -27,6 +27,7 @@ from plane.app.views import (
     ProjectMemberPreferenceEndpoint,
     ProjectLabelsEndpoint,
     ProjectLabelDetailEndpoint,
+    ProjectSubscriberEndpoint,
 )
 
 
@@ -159,7 +160,16 @@ project_label_patterns = [
     ),
 ]
 
+project_subscriber_patterns = [
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/subscribers/",
+        ProjectSubscriberEndpoint.as_view({"get": "list", "post": "create_or_update"}),
+        name="project-subscribers",
+    ),
+]
+
 urlpatterns = [
     *project_patterns,
     *project_label_patterns,
+    *project_subscriber_patterns,
 ]

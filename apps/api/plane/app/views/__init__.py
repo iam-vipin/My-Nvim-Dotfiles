@@ -36,6 +36,8 @@ from .project.label import (
     ProjectLabelDetailEndpoint,
 )
 
+from .project.subscriber import ProjectSubscriberEndpoint
+
 from .user.base import (
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,

@@ -25,7 +25,7 @@ from plane.db.models import (
     ProjectPublicMember,
     IssueSequence,
 )
-from plane.ee.models import ProjectLabel
+from plane.ee.models import ProjectLabel, ProjectSubscriber
 from plane.utils.content_validator import (
     validate_html_content,
 )
@@ -333,3 +333,10 @@ class ProjectLabelSerializer(BaseSerializer):
             raise serializers.ValidationError(detail="PROJECT_LABEL_NAME_ALREADY_EXISTS")
 
         return name
+
+
+class ProjectSubscriberSerializer(BaseSerializer):
+    class Meta:
+        model = ProjectSubscriber
+        fields = "__all__"
+        read_only_fields = ["workspace", "deleted_at"]

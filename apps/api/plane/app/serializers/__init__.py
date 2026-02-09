@@ -51,6 +51,7 @@ from .project import (
     ProjectMemberRoleSerializer,
     ProjectMemberPreferenceSerializer,
     ProjectLabelSerializer,
+    ProjectSubscriberSerializer,
 )
 from .state import StateSerializer, StateLiteSerializer
 from .view import IssueViewSerializer, ViewIssueListSerializer
@@ -204,6 +205,7 @@ __all__ = [
     "ProjectMemberAdminSerializer",
     "ProjectPublicMemberSerializer",
     "ProjectMemberRoleSerializer",
+    "ProjectSubscriberSerializer",
     # State serializers
     "StateSerializer",
     "StateLiteSerializer",

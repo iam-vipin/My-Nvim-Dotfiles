@@ -819,6 +819,7 @@ export default {
     },
     comments: "Comentarii",
     updates: "Actualizări",
+    additional_updates: "Actualizări suplimentare",
     clear_all: "Șterge tot",
     copied: "Copiat!",
     link_copied: "Link copiat!",

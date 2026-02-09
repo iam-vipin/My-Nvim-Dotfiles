@@ -800,6 +800,7 @@ export default {
     },
     comments: "留言",
     updates: "更新",
+    additional_updates: "額外更新",
     clear_all: "清除全部",
     copied: "已複製！",
     link_copied: "連結已複製！",

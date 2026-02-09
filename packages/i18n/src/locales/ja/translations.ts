@@ -813,6 +813,7 @@ export default {
     },
     comments: "コメント",
     updates: "更新",
+    additional_updates: "追加の更新",
     clear_all: "すべてクリア",
     copied: "コピーしました！",
     link_copied: "リンクをコピーしました！",

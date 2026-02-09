@@ -821,6 +821,7 @@ export default {
     },
     comments: "Bình luận",
     updates: "Cập nhật",
+    additional_updates: "Cập nhật bổ sung",
     clear_all: "Xóa tất cả",
     copied: "Đã sao chép!",
     link_copied: "Đã sao chép liên kết!",

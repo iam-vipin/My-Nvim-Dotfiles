@@ -18,7 +18,6 @@ import {
   SUB_ISSUES_DISPLAY_PROPERTIES_KEYS,
 } from "./common";
 import type { TActivityFilters, TFiltersLayoutOptions, TIssueFiltersToDisplayByPageType } from "./filter";
-import { EActivityFilterType } from "./filter";
 
 export const ADDITIONAL_WORK_ITEM_FILTERS_KEYS = ["name", "milestone_id"] as const;
 
@@ -316,17 +315,18 @@ export const EE_ACTIVITY_FILTER_TYPE_OPTIONS: Record<EActivityFilterTypeEE, { la
     labelTranslationKey: "common.worklogs",
   },
   [EActivityFilterTypeEE.ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY]: {
-    labelTranslationKey: "common.updates",
+    labelTranslationKey: "common.additional_updates",
   },
 };
 
 // EE: Default activity filters for extended features
-export const EE_DEFAULT_ACTIVITY_FILTERS: EActivityFilterTypeEE[] = [EActivityFilterTypeEE.WORKLOG];
+export const EE_DEFAULT_ACTIVITY_FILTERS: EActivityFilterTypeEE[] = [
+  EActivityFilterTypeEE.WORKLOG,
+  EActivityFilterTypeEE.ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY,
+];
 
 export const shouldRenderActivity = (activity: TIssueActivityComment, filter: TActivityFilters): boolean =>
-  activity.activity_type === filter ||
-  (filter === EActivityFilterType.ACTIVITY &&
-    activity.activity_type === EActivityFilterTypeEE.ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY);
+  activity.activity_type === filter;
 
 export type TActivityFiltersEE =
   | EActivityFilterTypeEE.WORKLOG

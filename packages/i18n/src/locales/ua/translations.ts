@@ -816,6 +816,7 @@ export default {
     },
     comments: "Коментарі",
     updates: "Оновлення",
+    additional_updates: "Додаткові оновлення",
     clear_all: "Очистити все",
     copied: "Скопійовано!",
     link_copied: "Посилання скопійовано!",

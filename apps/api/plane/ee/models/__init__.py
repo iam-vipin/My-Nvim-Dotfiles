@@ -43,6 +43,7 @@ from .project import (
     ProjectMemberActivity,
     ProjectLabel,
     ProjectLabelAssociation,
+    ProjectSubscriber,
 )
 from .workspace import (
     WorkspaceFeature,

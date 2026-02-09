@@ -354,3 +354,28 @@ class ProjectLabelAssociation(BaseModel):
 
     def __str__(self):
         return f"{self.project.name} {self.label.name}"
+
+
+class ProjectSubscriber(ProjectBaseModel):
+    subscriber = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="project_subscribers",
+    )
+
+    class Meta:
+        unique_together = ["project", "subscriber", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project", "subscriber"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="project_subscriber_unique_project_subscriber_when_deleted_at_null",
+            )
+        ]
+        verbose_name = "Project Subscriber"
+        verbose_name_plural = "Project Subscribers"
+        db_table = "project_subscribers"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.project.name} {self.subscriber.email}"

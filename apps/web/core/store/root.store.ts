@@ -177,6 +177,11 @@ import type { IEpicAnalyticStore } from "./work-items/epic/analytic.store";
 import { EpicAnalytics } from "./work-items/epic/analytic.store";
 import type { IEpicBaseStore } from "./work-items/epic/base.store";
 import { EpicBaseStore } from "./work-items/epic/base.store";
+// subscriptions
+import type { ISelfHostedSubscriptionStore } from "./subscription/self-hosted-subscription.store";
+import { SelfHostedSubscriptionStore } from "./subscription/self-hosted-subscription.store";
+import type { IWorkspaceSubscriptionStore } from "./subscription/subscription.store";
+import { WorkspaceSubscriptionStore } from "./subscription/subscription.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -252,6 +257,9 @@ export class CoreRootStore {
   // epics
   epicAnalytics: IEpicAnalyticStore;
   epicBaseStore: IEpicBaseStore;
+  // subscriptions
+  workspaceSubscription: IWorkspaceSubscriptionStore;
+  selfHostedSubscription: ISelfHostedSubscriptionStore;
 
   constructor() {
     this.router = new RouterStore();
@@ -325,6 +333,9 @@ export class CoreRootStore {
     // epics
     this.epicAnalytics = new EpicAnalytics(this as unknown as RootStore);
     this.epicBaseStore = new EpicBaseStore(this as unknown as RootStore);
+    // subscriptions
+    this.workspaceSubscription = new WorkspaceSubscriptionStore(this as unknown as RootStore);
+    this.selfHostedSubscription = new SelfHostedSubscriptionStore(this as unknown as RootStore);
   }
 
   resetOnSignOut() {
@@ -401,5 +412,8 @@ export class CoreRootStore {
     // epics
     this.epicAnalytics = new EpicAnalytics(this as unknown as RootStore);
     this.epicBaseStore = new EpicBaseStore(this as unknown as RootStore);
+    // subscriptions
+    this.workspaceSubscription = new WorkspaceSubscriptionStore(this as unknown as RootStore);
+    this.selfHostedSubscription = new SelfHostedSubscriptionStore(this as unknown as RootStore);
   }
 }

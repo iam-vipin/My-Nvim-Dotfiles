@@ -33,7 +33,7 @@ import { TeamViewIssues, TeamViewIssuesFilter } from "@/store/work-items/team-vi
 import type { IWorkspaceIssues } from "@/store/work-items/workspace/issue.store";
 import { WorkspaceIssues } from "@/store/work-items/workspace/issue.store";
 import type { RootStore } from "@/plane-web/store/root.store";
-import type { IWorkspaceMembership } from "@/store/member/workspace/workspace-member.store";
+import type { IWorkspaceMembership } from "@/store/member/workspace/membership.store";
 // issues data store
 import type { IArchivedIssuesFilter, IArchivedIssues } from "./archived";
 import { ArchivedIssuesFilter, ArchivedIssues } from "./archived";

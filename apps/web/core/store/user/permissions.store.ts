@@ -23,6 +23,7 @@ import {
 } from "@plane/constants";
 import type { EUserProjectRoles, IUserProjectsRole, IWorkspaceMemberMe, TProjectMembership } from "@plane/types";
 import { EUserWorkspaceRoles } from "@plane/types";
+import { getHighestRole } from "@plane/utils";
 // plane web imports
 import { WorkspaceService } from "@/services/workspace.service";
 import type { RootStore } from "@/plane-web/store/root.store";
@@ -35,7 +36,7 @@ const workspaceService = new WorkspaceService();
 
 type ETempUserRole = TUserPermissions | EUserWorkspaceRoles | EUserProjectRoles; // TODO: Remove this once we have migrated user permissions to enums to plane constants package
 
-export interface IBaseUserPermissionStore {
+export interface IUserPermissionStore {
   loader: boolean;
   // observables
   workspaceUserInfo: Record<string, IWorkspaceMemberMe>; // workspaceSlug -> IWorkspaceMemberMe
@@ -71,7 +72,7 @@ export interface IBaseUserPermissionStore {
  * @description This store is used to handle permission layer for the currently logged user.
  * It manages workspace and project level permissions, roles and access control.
  */
-export abstract class BaseUserPermissionStore implements IBaseUserPermissionStore {
+export class UserPermissionStore implements IUserPermissionStore {
   loader: boolean = false;
   // constants
   workspaceUserInfo: Record<string, IWorkspaceMemberMe> = {};
@@ -152,16 +153,27 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
   });
 
   /**
-   * @description Returns the current project permissions
+   * @description Returns the highest role from the project and teamspace membership
    * @param { string } workspaceSlug
    * @param { string } projectId
    * @returns { EUserPermissions | undefined }
    */
-  abstract getProjectRoleByWorkspaceSlugAndProjectId: (
-    workspaceSlug: string,
-    projectId?: string
-  ) => EUserPermissions | undefined;
+  getProjectRoleByWorkspaceSlugAndProjectId = computedFn(
+    (workspaceSlug: string, projectId?: string): EUserPermissions | undefined => {
+      // Early return for invalid inputs
+      if (!workspaceSlug || !projectId) return undefined;
 
+      // Get permissions from the project and teamspace membership
+      const projectRole = this.getProjectRole(workspaceSlug, projectId);
+      const projectRoleFromTeamspace = this.getProjectRoleFromTeamspace(projectId);
+
+      // Filter out undefined roles and get the highest role
+      const roles = [projectRole, projectRoleFromTeamspace].filter(
+        (role): role is EUserPermissions => role !== undefined
+      );
+      return getHighestRole(roles);
+    }
+  );
   /**
    * @description Fetches project-level entities that are not automatically loaded by the project wrapper.
    * This is used when joining a project to ensure all necessary workspace-level project data is available.
@@ -169,7 +181,12 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
    * @param { string } projectId
    * @returns { Promise<void> }
    */
-  abstract fetchWorkspaceLevelProjectEntities: (workspaceSlug: string, projectId: string) => void;
+  fetchWorkspaceLevelProjectEntities = (workspaceSlug: string, projectId: string): void => {
+    void Promise.all([
+      this.store.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId),
+      this.store.issueTypes.fetchAll(workspaceSlug, projectId),
+    ]);
+  };
 
   /**
    * @description Returns whether the user has the permission to access a page
@@ -362,4 +379,17 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
       throw error;
     }
   };
+
+  // private helpers
+  /**
+   * @description Returns the project membership permission from the teamspace
+   * @description If project is linked to any teamspace, then the permission is MEMBER
+   * @param { string } projectId
+   * @returns { EUserPermissions | undefined }
+   */
+  private getProjectRoleFromTeamspace = computedFn((projectId: string): EUserPermissions | undefined => {
+    const projectTeamspaceIds = this.store.teamspaceRoot.teamspaces.getProjectTeamspaceIds(projectId);
+    if (!projectTeamspaceIds || projectTeamspaceIds.length === 0) return undefined;
+    return EUserPermissions.MEMBER;
+  });
 }

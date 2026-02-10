@@ -15,6 +15,7 @@ import { set, sortBy } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import type { EUserPermissions } from "@plane/constants";
 import type {
   IWorkspaceBulkInviteFormData,
@@ -32,9 +33,9 @@ import { WorkspaceService } from "@/services/workspace.service";
 import type { IRouterStore } from "@/store/router.store";
 import type { IUserStore } from "@/store/user";
 // store
-import type { IMemberRootStore } from "../index.ts";
-import type { IWorkspaceMemberFiltersStore } from "./workspace-member-filters.store";
-import { WorkspaceMemberFiltersStore } from "./workspace-member-filters.store";
+import type { IMemberRootStore } from "../index";
+import type { IWorkspaceMemberFiltersStore } from "./filters.store";
+import { WorkspaceMemberFiltersStore } from "./filters.store";
 // plane web imports
 import type { RootStore } from "@/plane-web/store/root.store";
 export interface IWorkspaceMembership {
@@ -44,7 +45,7 @@ export interface IWorkspaceMembership {
   is_active?: boolean;
 }
 
-export interface IBaseWorkspaceMemberStore {
+export interface IWorkspaceMemberStore {
   // observables
   workspaceMemberMap: Record<string, Record<string, IWorkspaceMembership>>;
   workspaceMemberInvitations: Record<string, IWorkspaceMemberInvitation[]>;
@@ -91,9 +92,11 @@ export interface IBaseWorkspaceMemberStore {
     checklist: Partial<Record<TGettingStartedChecklistKeys, boolean>>
   ) => Promise<IWorkspaceMemberMe>;
   updateChecklistIfNotDoneAlready: (workspaceSlug: string, key: TGettingStartedChecklistKeys) => Promise<void>;
+  // mutation helpers
+  mutateWorkspaceMembersActivity: (workspaceSlug: string) => Promise<void>;
 }
 
-export abstract class BaseWorkspaceMemberStore implements IBaseWorkspaceMemberStore {
+export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   // observables
   workspaceMemberMap: {
     [workspaceSlug: string]: Record<string, IWorkspaceMembership>;
@@ -300,6 +303,7 @@ export abstract class BaseWorkspaceMemberStore implements IBaseWorkspaceMemberSt
         set(this.workspaceMemberMap, [workspaceSlug, userId, "role"], data.role);
       });
       await this.workspaceService.updateWorkspaceMember(workspaceSlug, memberDetails.id, data);
+      void this.mutateWorkspaceMembersActivity(workspaceSlug);
     } catch (error) {
       // revert back to original members in case of error
       runInAction(() => {
@@ -321,6 +325,7 @@ export abstract class BaseWorkspaceMemberStore implements IBaseWorkspaceMemberSt
     runInAction(() => {
       set(this.workspaceMemberMap, [workspaceSlug, userId, "is_active"], false);
     });
+    void this.mutateWorkspaceMembersActivity(workspaceSlug);
   }
   /**
    * @description fetch all the member invitations of a workspace
@@ -344,6 +349,7 @@ export abstract class BaseWorkspaceMemberStore implements IBaseWorkspaceMemberSt
     await this.fetchWorkspaceMemberInvitations(workspaceSlug);
     // Auto-complete getting started checklist
     void this.updateChecklistIfNotDoneAlready(workspaceSlug, "team_members_invited");
+    void this.mutateWorkspaceMembersActivity(workspaceSlug);
   }
 
   /**
@@ -389,6 +395,7 @@ export abstract class BaseWorkspaceMemberStore implements IBaseWorkspaceMemberSt
         (inv) => inv.id !== invitationId
       );
     });
+    void this.mutateWorkspaceMembersActivity(workspaceSlug);
   }
 
   isUserSuspended = computedFn((userId: string, workspaceSlug: string) => {
@@ -404,18 +411,15 @@ export abstract class BaseWorkspaceMemberStore implements IBaseWorkspaceMemberSt
    */
   getGettingStartedChecklistByWorkspaceSlug = computedFn(
     (workspaceSlug: string): Partial<Record<TGettingStartedChecklistKeys, boolean>> | undefined => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const checklist = this.rootStore.user.permission.workspaceUserInfo[workspaceSlug]?.getting_started_checklist;
       if (!checklist) return undefined;
 
       // Filter out null values to match return type
       const filtered: Partial<Record<TGettingStartedChecklistKeys, boolean>> = {};
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+
       (Object.keys(checklist) as TGettingStartedChecklistKeys[]).forEach((key) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         const value = checklist[key];
         if (value !== null) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
           filtered[key] = value;
         }
       });
@@ -439,12 +443,10 @@ export abstract class BaseWorkspaceMemberStore implements IBaseWorkspaceMemberSt
     errorMessage: string
   ): Promise<IWorkspaceMemberMe> => {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const existingData = this.rootStore.user.permission.workspaceUserInfo[workspaceSlug]?.[fieldKey];
       const filteredExisting: Record<string, boolean> = {};
 
       if (existingData && typeof existingData === "object") {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         Object.entries(existingData).forEach(([key, value]) => {
           if (value !== null && typeof value === "boolean") {
             filteredExisting[key] = value;
@@ -452,7 +454,6 @@ export abstract class BaseWorkspaceMemberStore implements IBaseWorkspaceMemberSt
         });
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
       const response = await this.workspaceService.updateMemberOnboarding(workspaceSlug, {
         [fieldKey]: {
           ...filteredExisting,
@@ -462,12 +463,10 @@ export abstract class BaseWorkspaceMemberStore implements IBaseWorkspaceMemberSt
 
       if (response) {
         runInAction(() => {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           const currentFieldData = this.rootStore.user.permission.workspaceUserInfo[workspaceSlug]?.[fieldKey];
           const mergedData: Record<string, boolean> = {};
 
           if (currentFieldData && typeof currentFieldData === "object") {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             Object.entries(currentFieldData).forEach(([key, value]) => {
               if (value !== null && typeof value === "boolean") {
                 mergedData[key] = value;
@@ -485,7 +484,6 @@ export abstract class BaseWorkspaceMemberStore implements IBaseWorkspaceMemberSt
         });
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return response;
     } catch (error) {
       console.error(errorMessage, error);
@@ -541,6 +539,22 @@ export abstract class BaseWorkspaceMemberStore implements IBaseWorkspaceMemberSt
     const checklistData = this.getGettingStartedChecklistByWorkspaceSlug(workspaceSlug);
     if (!checklistData?.[key]) {
       await this.updateChecklist(workspaceSlug, { [key]: true });
+    }
+  };
+
+  /**
+   * Mutate workspace members activity
+   * @param workspaceSlug
+   */
+  mutateWorkspaceMembersActivity = async (workspaceSlug: string) => {
+    const isMembersActivityEnabled = this.rootStore.featureFlags.getFeatureFlag(
+      workspaceSlug,
+      E_FEATURE_FLAGS.WORKSPACE_MEMBER_ACTIVITY,
+      false
+    );
+
+    if (isMembersActivityEnabled) {
+      await this.rootStore.workspaceMembersActivityStore.fetchWorkspaceMembersActivity(workspaceSlug);
     }
   };
 }

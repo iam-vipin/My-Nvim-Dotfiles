@@ -20,10 +20,6 @@ import type { IPublishPageStore } from "@/plane-web/store/pages/publish-page.sto
 import { PublishPageStore } from "@/plane-web/store/pages/publish-page.store";
 import type { IWorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store";
 import { WorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store";
-import type { ISelfHostedSubscriptionStore } from "@/plane-web/store/subscription/self-hosted-subscription.store";
-import { SelfHostedSubscriptionStore } from "@/plane-web/store/subscription/self-hosted-subscription.store";
-import type { IWorkspaceSubscriptionStore } from "@/plane-web/store/subscription/subscription.store";
-import { WorkspaceSubscriptionStore } from "@/plane-web/store/subscription/subscription.store";
 import { TimeLineStore } from "@/plane-web/store/timeline";
 import type { IProjectFilterStore, IWorkspaceProjectStatesStore } from "@/plane-web/store/workspace-project-states";
 import { ProjectFilterStore, WorkspaceProjectStatesStore } from "@/plane-web/store/workspace-project-states";
@@ -51,8 +47,6 @@ export class RootStore extends CoreRootStore {
   theme: IThemeStore;
   workspacePages: IWorkspacePageStore;
   publishPage: IPublishPageStore;
-  workspaceSubscription: IWorkspaceSubscriptionStore;
-  selfHostedSubscription: ISelfHostedSubscriptionStore;
   workspaceProjectStates: IWorkspaceProjectStatesStore;
   projectFilter: IProjectFilterStore;
   cycle: ICycleStore;
@@ -69,8 +63,6 @@ export class RootStore extends CoreRootStore {
     this.theme = new ThemeStore();
     this.workspacePages = new WorkspacePageStore(this);
     this.publishPage = new PublishPageStore(this);
-    this.workspaceSubscription = new WorkspaceSubscriptionStore(this);
-    this.selfHostedSubscription = new SelfHostedSubscriptionStore(this);
     this.workspaceProjectStates = new WorkspaceProjectStatesStore(this);
     this.projectFilter = new ProjectFilterStore(this);
     this.cycle = new CycleStore(this);
@@ -90,8 +82,6 @@ export class RootStore extends CoreRootStore {
     this.theme = new ThemeStore();
     this.workspacePages = new WorkspacePageStore(this);
     this.publishPage = new PublishPageStore(this);
-    this.workspaceSubscription = new WorkspaceSubscriptionStore(this);
-    this.selfHostedSubscription = new SelfHostedSubscriptionStore(this);
     this.workspaceProjectStates = new WorkspaceProjectStatesStore(this);
     this.projectFilter = new ProjectFilterStore(this);
     this.cycle = new CycleStore(this);

@@ -2166,6 +2166,10 @@ export default {
         sub_heading: "프로젝트에서 작업할 멤버를 초대하세요.",
         select_co_worker: "동료 선택",
       },
+      project_lead_description: "프로젝트의 프로젝트 리더를 선택하세요.",
+      default_assignee_description: "프로젝트의 기본 담당자를 선택하세요.",
+      project_subscribers: "프로젝트 구독자",
+      project_subscribers_description: "이 프로젝트의 알림을 받을 멤버를 선택하세요.",
     },
     states: {
       describe_this_state_for_your_members: "멤버를 위해 이 상태를 설명하세요.",

@@ -153,6 +153,8 @@ export enum E_FEATURE_FLAGS {
   CLOUD_SSO = "CLOUD_SSO",
   // workspace socket connections
   WORKSPACE_SOCKET = "WORKSPACE_SOCKET",
+  // project subscribers
+  PROJECT_SUBSCRIBERS = "PROJECT_SUBSCRIBERS",
 }
 
 /**

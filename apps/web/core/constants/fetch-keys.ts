@@ -172,6 +172,9 @@ export const APPLICATION_CATEGORIES_LIST = () => `APPLICATION_CATEGORIES_LIST`;
 export const PROJECT_DETAILS = (workspaceSlug: string, projectId: string) =>
   `PROJECT_DETAILS_${projectId.toString().toUpperCase()}`;
 
+export const PROJECT_SUBSCRIBERS = (workspaceSlug: string, projectId: string) =>
+  `PROJECT_SUBSCRIBERS_${workspaceSlug.toUpperCase()}_${projectId.toString().toUpperCase()}`;
+
 export const PROJECT_ME_INFORMATION = (workspaceSlug: string, projectId: string) =>
   `PROJECT_ME_INFORMATION_${projectId.toString().toUpperCase()}`;
 

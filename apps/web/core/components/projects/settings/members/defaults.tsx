@@ -12,24 +12,28 @@
  */
 
 import type { ReactNode } from "react";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { E_FEATURE_FLAGS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Switch } from "@plane/propel/switch";
-import type { IProject, IUserLite, IWorkspace } from "@plane/types";
+import type { IProject, IProjectSubscriber, IUserLite, IWorkspace } from "@plane/types";
 import { Loader } from "@plane/ui";
 // constants
-import { PROJECT_DETAILS } from "@/constants/fetch-keys";
+import { PROJECT_DETAILS, PROJECT_SUBSCRIBERS } from "@/constants/fetch-keys";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
+import { useFlag } from "@/plane-web/hooks/store";
+// services
+import projectService from "@/services/project/project.service";
 // local imports
 import { MemberSelect } from "./member-select";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 
 const defaultValues: Partial<IProject> = {
   project_lead: null,
@@ -63,10 +67,13 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
   props: TProjectSettingsMemberDefaultsProps
 ) {
   const { workspaceSlug, projectId } = props;
+  const [optimisticSubscriberIds, setOptimisticSubscriberIds] = useState<string[] | null>(null);
+
   // plane hooks
   const { t } = useTranslation();
   // store hooks
   const { allowPermissions } = useUserPermissions();
+  const isProjectSubscribersEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.PROJECT_SUBSCRIBERS);
 
   const { currentProjectDetails, fetchProjectDetails, updateProject } = useProject();
   // derived values
@@ -76,6 +83,7 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
     workspaceSlug,
     currentProjectDetails?.id
   );
+
   // form info
   const { reset, control } = useForm<IProject>({ defaultValues });
   // fetching user members
@@ -83,6 +91,18 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
     workspaceSlug && projectId ? PROJECT_DETAILS(workspaceSlug, projectId) : null,
     workspaceSlug && projectId ? () => fetchProjectDetails(workspaceSlug, projectId) : null
   );
+
+  const { data: subscribers, mutate: mutateSubscribers } = useSWR<IProjectSubscriber[]>(
+    workspaceSlug && projectId ? PROJECT_SUBSCRIBERS(workspaceSlug, projectId) : null,
+    workspaceSlug && projectId ? () => projectService.getProjectSubscribers(workspaceSlug, projectId) : null
+  );
+
+  const subscriberIds = useMemo(() => {
+    if (!subscribers) return [];
+    return subscribers.map((s) => s.subscriber);
+  }, [subscribers]);
+
+  const currentSubscriberIds = optimisticSubscriberIds ?? subscriberIds;
 
   useEffect(() => {
     if (!currentProjectDetails) return;
@@ -107,47 +127,76 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
       ...formData,
     });
 
-    await updateProject(workspaceSlug, projectId, {
-      default_assignee:
-        formData.default_assignee === "none"
-          ? null
-          : (formData.default_assignee ?? currentProjectDetails?.default_assignee),
-      project_lead:
-        formData.project_lead === "none" ? null : (formData.project_lead ?? currentProjectDetails?.project_lead),
-    })
-      .then(() => {
-        setToast({
-          title: `${t("success")}!`,
-          type: TOAST_TYPE.SUCCESS,
-          message: t("project_settings.general.toast.success"),
-        });
-      })
-      .catch((err) => {
-        console.error(err);
+    try {
+      await updateProject(workspaceSlug, projectId, {
+        default_assignee:
+          formData.default_assignee === "none"
+            ? null
+            : (formData.default_assignee ?? currentProjectDetails?.default_assignee),
+        project_lead:
+          formData.project_lead === "none" ? null : (formData.project_lead ?? currentProjectDetails?.project_lead),
       });
+      setToast({
+        title: `${t("success")}!`,
+        type: TOAST_TYPE.SUCCESS,
+        message: t("project_settings.general.toast.success"),
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const toggleGuestViewAllIssues = async (value: boolean) => {
     if (!workspaceSlug || !projectId) return;
 
-    updateProject(workspaceSlug, projectId, {
-      guest_view_all_features: value,
-    })
-      .then(() => {
-        setToast({
-          title: `${t("success")}!`,
-          type: TOAST_TYPE.SUCCESS,
-          message: t("project_settings.general.toast.success"),
-        });
-      })
-      .catch((err) => {
-        console.error(err);
+    try {
+      await updateProject(workspaceSlug, projectId, {
+        guest_view_all_features: value,
       });
+      setToast({
+        title: `${t("success")}!`,
+        type: TOAST_TYPE.SUCCESS,
+        message: t("project_settings.general.toast.success"),
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSubscribersChange = async (newSubscriberIds: string[]) => {
+    if (!workspaceSlug || !projectId || !isAdmin) return;
+
+    setOptimisticSubscriberIds(newSubscriberIds);
+
+    try {
+      await projectService.updateProjectSubscribers(workspaceSlug, projectId, newSubscriberIds);
+
+      await mutateSubscribers();
+      setOptimisticSubscriberIds(null);
+
+      setToast({
+        title: `${t("success")}!`,
+        type: TOAST_TYPE.SUCCESS,
+        message: t("project_settings.general.toast.success"),
+      });
+    } catch (err) {
+      console.error(err);
+      setOptimisticSubscriberIds(null);
+      void mutateSubscribers();
+      setToast({
+        title: t("error"),
+        type: TOAST_TYPE.ERROR,
+        message: t("common.error.message"),
+      });
+    }
   };
 
   return (
     <div className="flex flex-col gap-y-6 my-6">
-      <DefaultSettingItem title="Project Lead" description="Select the project lead for the project.">
+      <DefaultSettingItem
+        title={t("project_settings.members.project_lead")}
+        description={t("project_settings.members.project_lead_description")}
+      >
         {currentProjectDetails ? (
           <Controller
             control={control}
@@ -156,7 +205,7 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
               <MemberSelect
                 value={value}
                 onChange={(val: string) => {
-                  submitChanges({ project_lead: val });
+                  void submitChanges({ project_lead: val });
                 }}
                 isDisabled={!isAdmin}
               />
@@ -168,7 +217,10 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
           </Loader>
         )}
       </DefaultSettingItem>
-      <DefaultSettingItem title="Default Assignee" description="Select the default assignee for the project.">
+      <DefaultSettingItem
+        title={t("project_settings.members.default_assignee")}
+        description={t("project_settings.members.default_assignee_description")}
+      >
         {currentProjectDetails ? (
           <Controller
             control={control}
@@ -177,7 +229,7 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
               <MemberSelect
                 value={value}
                 onChange={(val: string) => {
-                  submitChanges({ default_assignee: val });
+                  void submitChanges({ default_assignee: val });
                 }}
                 isDisabled={!isAdmin}
               />
@@ -189,15 +241,48 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
           </Loader>
         )}
       </DefaultSettingItem>
+      {isProjectSubscribersEnabled && (
+        <DefaultSettingItem
+          title={t("project_settings.members.project_subscribers")}
+          description={t("project_settings.members.project_subscribers_description")}
+        >
+          {currentProjectDetails ? (
+            subscribers !== undefined ? (
+              <MemberDropdown
+                value={currentSubscriberIds}
+                onChange={(val) => {
+                  void handleSubscribersChange(val);
+                }}
+                multiple
+                projectId={projectId}
+                disabled={!isAdmin}
+                buttonVariant="border-with-text"
+                buttonContainerClassName="w-full"
+                buttonClassName="w-full px-3 py-1"
+              />
+            ) : (
+              <Loader className="h-9 w-full">
+                <Loader.Item width="100%" height="100%" />
+              </Loader>
+            )
+          ) : (
+            <Loader className="h-9 w-full">
+              <Loader.Item width="100%" height="100%" />
+            </Loader>
+          )}
+        </DefaultSettingItem>
+      )}
       {currentProjectDetails && (
         <DefaultSettingItem
-          title="Guest access"
-          description="This will allow guests to have view access to all the project work items."
+          title={t("project_settings.members.guest_super_permissions.title")}
+          description={t("project_settings.members.guest_super_permissions.sub_heading")}
         >
           <div className="flex items-center justify-end">
             <Switch
               value={!!currentProjectDetails?.guest_view_all_features}
-              onChange={() => toggleGuestViewAllIssues(!currentProjectDetails?.guest_view_all_features)}
+              onChange={() => {
+                void toggleGuestViewAllIssues(!currentProjectDetails?.guest_view_all_features);
+              }}
               disabled={!isAdmin}
             />
           </div>

@@ -185,3 +185,15 @@ export interface ISearchIssueResponse {
 export type TPartialProject = IPartialProject;
 
 export type TProject = TPartialProject & IProject & TProjectExtended;
+
+export interface IProjectSubscriber {
+  id: string;
+  deleted_at: string | null;
+  created_at: string;
+  updated_at: string;
+  created_by: string;
+  updated_by: string | null;
+  project: string;
+  workspace: string;
+  subscriber: string;
+}

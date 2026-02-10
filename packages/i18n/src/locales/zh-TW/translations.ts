@@ -2146,6 +2146,10 @@ export default {
         sub_heading: "邀請成員參與您的專案。",
         select_co_worker: "選擇同事",
       },
+      project_lead_description: "請選擇該專案的專案負責人。",
+      default_assignee_description: "請選擇該專案的預設指派人。",
+      project_subscribers: "專案訂閱者",
+      project_subscribers_description: "請選擇將接收此專案通知的成員。",
     },
     states: {
       describe_this_state_for_your_members: "為您的成員描述此狀態。",

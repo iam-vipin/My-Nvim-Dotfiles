@@ -2183,6 +2183,10 @@ export default {
         sub_heading: "プロジェクトに参加するメンバーを招待します。",
         select_co_worker: "共同作業者を選択",
       },
+      project_lead_description: "プロジェクトのプロジェクトリーダーを選択してください。",
+      default_assignee_description: "プロジェクトのデフォルトの担当者を選択してください。",
+      project_subscribers: "プロジェクトの購読者",
+      project_subscribers_description: "このプロジェクトの通知を受け取るメンバーを選択してください。",
     },
     states: {
       describe_this_state_for_your_members: "このステータスについてメンバーに説明してください。",

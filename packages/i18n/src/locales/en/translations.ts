@@ -2124,7 +2124,11 @@ Create a new project instead`,
     members: {
       label: "Members",
       project_lead: "Project lead",
+      project_lead_description: "Select the project lead for the project.",
       default_assignee: "Default assignee",
+      default_assignee_description: "Select the default assignee for the project.",
+      project_subscribers: "Project subscribers",
+      project_subscribers_description: "Select members who will receive notifications for this project.",
       guest_super_permissions: {
         title: "Grant view access to all work items for guest users:",
         sub_heading: "This will allow guests to have view access to all the project work items.",

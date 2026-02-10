@@ -2189,6 +2189,10 @@ export default {
         sub_heading: "Пригласите коллег для работы над проектом.",
         select_co_worker: "Выберите сотрудника",
       },
+      project_lead_description: "Выберите руководителя проекта.",
+      default_assignee_description: "Выберите исполнителя по умолчанию для проекта.",
+      project_subscribers: "Подписчики проекта",
+      project_subscribers_description: "Выберите участников, которые будут получать уведомления по этому проекту.",
     },
     states: {
       describe_this_state_for_your_members: "Опишите этот статус для участников",

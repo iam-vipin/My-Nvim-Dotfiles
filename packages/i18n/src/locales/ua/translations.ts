@@ -2187,6 +2187,10 @@ export default {
         sub_heading: "Запросіть учасників до проєкту.",
         select_co_worker: "Вибрати колегу",
       },
+      project_lead_description: "Виберіть керівника проєкту.",
+      default_assignee_description: "Виберіть виконавця за замовчуванням для проєкту.",
+      project_subscribers: "Підписники проєкту",
+      project_subscribers_description: "Виберіть учасників, які отримуватимуть сповіщення для цього проєкту.",
     },
     states: {
       describe_this_state_for_your_members: "Опишіть цей стан для учасників.",

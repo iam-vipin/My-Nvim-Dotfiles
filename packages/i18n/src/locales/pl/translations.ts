@@ -2183,6 +2183,11 @@ Utwórz nowy.`,
         sub_heading: "Zaproś członków do projektu.",
         select_co_worker: "Wybierz współpracownika",
       },
+      project_lead_description: "Wybierz lidera projektu.",
+      default_assignee_description: "Wybierz domyślnego przypisanego do projektu.",
+      project_subscribers: "Subskrybenci projektu",
+      project_subscribers_description:
+        "Wybierz członków, którzy będą otrzymywać powiadomienia dotyczące tego projektu.",
     },
     states: {
       describe_this_state_for_your_members: "Opisz ten stan członkom projektu.",

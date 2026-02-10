@@ -14,6 +14,7 @@
 import { API_BASE_URL } from "@plane/constants";
 import type {
   GithubRepositoriesResponse,
+  IProjectSubscriber,
   IProjectUserPropertiesResponse,
   ISearchIssueResponse,
   TProjectAnalyticsCount,
@@ -320,6 +321,29 @@ export class ProjectService extends APIService {
   ): Promise<{ message: string; job_id: string }> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/work-items/import/`, {
       asset_id: assetId,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // project subscribers
+  async getProjectSubscribers(workspaceSlug: string, projectId: string): Promise<IProjectSubscriber[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/subscribers/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateProjectSubscribers(
+    workspaceSlug: string,
+    projectId: string,
+    subscriberIds: string[]
+  ): Promise<IProjectSubscriber[]> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/subscribers/`, {
+      subscriber_ids: subscriberIds,
     })
       .then((response) => response?.data)
       .catch((error) => {

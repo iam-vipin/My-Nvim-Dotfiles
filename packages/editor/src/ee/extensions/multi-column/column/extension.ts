@@ -19,6 +19,7 @@ import { createColumnResizePlugin } from "./plugins/column-resize";
 import { ColumnDragHandlePlugin } from "./plugins/drag-handle";
 import { ColumnSelectionOutlinePlugin } from "./plugins/selection-outline";
 import { ColumnClickHandler } from "./plugins/click-handler";
+import { ColumnDragStatePlugin } from "../plugins/drag-state";
 // types
 import { DEFAULT_COLUMN_ATTRIBUTES, EColumnAttributeNames } from "../types";
 import type { SetColumnWidthCommandOptions, TColumnAttributes, MultiColumnExtensionOptions } from "../types";
@@ -34,7 +35,7 @@ const getIsFlagged = (editor: {
   extensionManager: { extensions: Array<{ name: string; options?: MultiColumnExtensionOptions }> };
 }): boolean => {
   const multiColumnExt = editor.extensionManager.extensions.find(
-    (ext) => ext.name === (ADDITIONAL_EXTENSIONS.MULTI_COLUMN as string)
+    (ext) => ext.name === ADDITIONAL_EXTENSIONS.MULTI_COLUMN
   );
   return multiColumnExt?.options?.isFlagged ?? false;
 };
@@ -137,6 +138,7 @@ export const Column: ColumnNodeType = Node.create<TColumnAttributes>({
       createColumnResizePlugin(this.editor, isFlagged),
       ColumnSelectionOutlinePlugin(this.editor),
       ColumnClickHandler(),
+      ColumnDragStatePlugin,
     ];
   },
 });

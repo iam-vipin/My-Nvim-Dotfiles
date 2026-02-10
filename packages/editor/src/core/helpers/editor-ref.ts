@@ -80,12 +80,11 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
     getDocument: () => {
       const documentBinary = provider?.document ? Y.encodeStateAsUpdate(provider?.document) : null;
       const documentHTML = editor?.getHTML() ?? "<p></p>";
-      const convertedHTML = parseEditorHTMLtoGlobalHTML(documentHTML);
       const documentJSON = editor?.getJSON() ?? null;
 
       return {
         binary: documentBinary,
-        html: convertedHTML,
+        html: documentHTML,
         json: documentJSON,
       };
     },

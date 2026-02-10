@@ -50,16 +50,13 @@ export function findSourceNodePosition(
  * Handles both individual columns and columnLists
  */
 export function unwrapColumnContent(node: Node): Node[] {
-  const columnType = ADDITIONAL_EXTENSIONS.COLUMN as string;
-  const columnListType = ADDITIONAL_EXTENSIONS.COLUMN_LIST as string;
-
-  if (node.type.name === columnType) {
+  if (node.type.name === ADDITIONAL_EXTENSIONS.COLUMN) {
     const nodes: Node[] = [];
     node.content.forEach((child) => nodes.push(child));
     return nodes;
   }
 
-  if (node.type.name === columnListType) {
+  if (node.type.name === ADDITIONAL_EXTENSIONS.COLUMN_LIST) {
     const nodes: Node[] = [];
     node.forEach((column) => {
       column.content.forEach((child) => nodes.push(child));
@@ -79,8 +76,8 @@ function createColumnListFromBlocks(
   targetNode: Node,
   position: "left" | "right"
 ): Node {
-  const columnType = schema.nodes[ADDITIONAL_EXTENSIONS.COLUMN as string];
-  const columnListType = schema.nodes[ADDITIONAL_EXTENSIONS.COLUMN_LIST as string];
+  const columnType = schema.nodes[ADDITIONAL_EXTENSIONS.COLUMN];
+  const columnListType = schema.nodes[ADDITIONAL_EXTENSIONS.COLUMN_LIST];
 
   const [leftNode, rightNode] = position === "left" ? [draggedNode, targetNode] : [targetNode, draggedNode];
 
@@ -118,10 +115,10 @@ function removeSourceFromColumn(
 
   // Ensure column has at least an empty paragraph
   if (newContent.length === 0) {
-    newContent.push(schema.nodes[CORE_EXTENSIONS.PARAGRAPH as string].create());
+    newContent.push(schema.nodes[CORE_EXTENSIONS.PARAGRAPH].create());
   }
 
-  return schema.nodes[ADDITIONAL_EXTENSIONS.COLUMN as string].create(column.attrs, newContent);
+  return schema.nodes[ADDITIONAL_EXTENSIONS.COLUMN].create(column.attrs, newContent);
 }
 
 /**
@@ -137,8 +134,8 @@ function addColumnToList(
   sourceInfo?: { pos: number; size: number } | null,
   columnListPos?: number
 ): Node {
-  const columnType = schema.nodes[ADDITIONAL_EXTENSIONS.COLUMN as string];
-  const columnListType = schema.nodes[ADDITIONAL_EXTENSIONS.COLUMN_LIST as string];
+  const columnType = schema.nodes[ADDITIONAL_EXTENSIONS.COLUMN];
+  const columnListType = schema.nodes[ADDITIONAL_EXTENSIONS.COLUMN_LIST];
   const columns: Node[] = [];
   let currentOffset = 1;
 
@@ -161,7 +158,7 @@ function addColumnToList(
     }
 
     // Unwrap nested columnLists
-    const hasNestedColumnList = column.content.firstChild?.type.name === (ADDITIONAL_EXTENSIONS.COLUMN_LIST as string);
+    const hasNestedColumnList = column.content.firstChild?.type.name === ADDITIONAL_EXTENSIONS.COLUMN_LIST;
     columns.push(hasNestedColumnList ? columnType.create(column.attrs, unwrapColumnContent(column)) : column);
 
     currentOffset += column.nodeSize;
@@ -224,12 +221,12 @@ export function canCreateColumns(node1: Node | null | undefined, node2: Node | n
   const node2Id = node2.attrs?.[EColumnAttributeNames.ID] || node2.attrs?.[EColumnListAttributeNames.ID];
   if (node1Id && node1Id === node2Id) return false;
 
-  const columnType = ADDITIONAL_EXTENSIONS.COLUMN as string;
-  const columnListType = ADDITIONAL_EXTENSIONS.COLUMN_LIST as string;
-
   // Can't nest columns or columnLists inside new columns
-  if (node1.type.name === columnType || node1.type.name === columnListType) return false;
-  if (node2.type.name === columnListType) return false;
+  if (
+    [ADDITIONAL_EXTENSIONS.COLUMN, ADDITIONAL_EXTENSIONS.COLUMN_LIST].includes(node1.type.name as ADDITIONAL_EXTENSIONS)
+  )
+    return false;
+  if (node2.type.name === ADDITIONAL_EXTENSIONS.COLUMN_LIST) return false;
 
   return true;
 }
@@ -237,6 +234,7 @@ export function canCreateColumns(node1: Node | null | undefined, node2: Node | n
 /**
  * Handle dropping a node to create or modify column structures
  * @param isFlagged - Whether multi-column is flagged (prevents column creation/manipulation)
+ * @param sourceInfoOverride - Optional override for source node position (used for list items)
  * @returns true if the drop was handled, false otherwise
  */
 export function handleColumnDrop(
@@ -246,7 +244,8 @@ export function handleColumnDrop(
   targetPos: number,
   position: "left" | "right",
   isMove: boolean,
-  isFlagged: boolean
+  isFlagged: boolean,
+  sourceInfoOverride?: { pos: number; size: number } | null
 ): boolean {
   // Prevent column creation/manipulation when flagged
   if (isFlagged) return false;
@@ -255,15 +254,12 @@ export function handleColumnDrop(
   const { schema, tr } = state;
 
   try {
-    const sourceInfo = findSourceNodePosition(state, draggedNode, isMove);
+    const sourceInfo = sourceInfoOverride ?? findSourceNodePosition(state, draggedNode, isMove);
     const $targetPos = state.doc.resolve(targetPos);
 
-    const columnType = ADDITIONAL_EXTENSIONS.COLUMN as string;
-    const columnListType = ADDITIONAL_EXTENSIONS.COLUMN_LIST as string;
-
     // Handle dropping on existing column/columnList
-    const isTargetColumn = targetNode.type.name === columnType;
-    const isTargetColumnList = targetNode.type.name === columnListType;
+    const isTargetColumn = targetNode.type.name === ADDITIONAL_EXTENSIONS.COLUMN;
+    const isTargetColumnList = targetNode.type.name === ADDITIONAL_EXTENSIONS.COLUMN_LIST;
 
     if (isTargetColumn || isTargetColumnList) {
       const columnListPos = isTargetColumn ? $targetPos.before() : targetPos;
@@ -278,14 +274,8 @@ export function handleColumnDrop(
           }
         });
       } else {
-        // Count columns to determine insertion point
-        let columnCount = 0;
-        columnList.forEach((column) => {
-          if (column.type.name === columnType) {
-            columnCount++;
-          }
-        });
-        targetColumnIndex = position === "left" ? 0 : columnCount;
+        // Count columns to determine insertion point (columnList can only have columns as children)
+        targetColumnIndex = position === "left" ? 0 : columnList.childCount;
       }
 
       const sourceInsideList =

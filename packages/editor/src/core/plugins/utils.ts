@@ -22,7 +22,7 @@ export const EDGE_DROP_THRESHOLD = 0.1;
 
 export function isInsideColumn($pos: ResolvedPos): boolean {
   for (let d = $pos.depth; d > 0; d--) {
-    if ($pos.node(d).type.name === (ADDITIONAL_EXTENSIONS.COLUMN as string)) return true;
+    if ($pos.node(d).type.name === ADDITIONAL_EXTENSIONS.COLUMN) return true;
   }
   return false;
 }
@@ -30,8 +30,7 @@ export function isInsideColumn($pos: ResolvedPos): boolean {
 export function isInsideColumnStructure($pos: ResolvedPos): boolean {
   for (let d = $pos.depth; d > 0; d--) {
     const name = $pos.node(d).type.name;
-    if (name === (ADDITIONAL_EXTENSIONS.COLUMN as string) || name === (ADDITIONAL_EXTENSIONS.COLUMN_LIST as string))
-      return true;
+    if (name === ADDITIONAL_EXTENSIONS.COLUMN || name === ADDITIONAL_EXTENSIONS.COLUMN_LIST) return true;
   }
   return false;
 }
@@ -45,13 +44,13 @@ export function getTargetBlockInfo(
 
   for (let d = $pos.depth; d > 0; d--) {
     const node = $pos.node(d);
-    if (node.isBlock && node.type.name !== (CORE_EXTENSIONS.DOCUMENT as string)) {
+    if (node.isBlock && node.type.name !== CORE_EXTENSIONS.DOCUMENT) {
       resolvedPos = state.doc.resolve($pos.before(d));
       break;
     }
   }
 
-  if (resolvedPos.depth > 0 && resolvedPos.parent.type.name === (ADDITIONAL_EXTENSIONS.COLUMN as string)) {
+  if (resolvedPos.depth > 0 && resolvedPos.parent.type.name === ADDITIONAL_EXTENSIONS.COLUMN) {
     resolvedPos = state.doc.resolve(resolvedPos.before());
   }
   return { pos: resolvedPos.pos, node: resolvedPos.nodeAfter };

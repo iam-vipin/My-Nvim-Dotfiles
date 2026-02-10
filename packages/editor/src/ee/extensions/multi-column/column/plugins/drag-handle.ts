@@ -13,26 +13,75 @@
 
 import type { Editor } from "@tiptap/core";
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
+import type { EditorState, Transaction } from "@tiptap/pm/state";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { Decoration, DecorationSet } from "@tiptap/pm/view";
-import { ReactRenderer } from "@tiptap/react";
-// constants
 import { ADDITIONAL_EXTENSIONS } from "@plane/utils";
-// components
-import type { ColumnDragHandleProps } from "../components/drag-handle";
-import { ColumnDragHandle } from "../components/drag-handle";
+import type { DragHandleInstance } from "../helpers/create-drag-handle";
+import { createColumnDragHandle } from "../helpers/create-drag-handle";
+
+type ColumnListInfo = {
+  pos: number;
+  columnCount: number;
+};
 
 type ColumnDragHandlePluginState = {
   decorations: DecorationSet;
-  columnCount: number;
-  columnPositions: number[];
-  renderers: ReactRenderer[];
+  columnLists: ColumnListInfo[];
+  dragHandles: DragHandleInstance[];
 };
 
 export const COLUMN_DRAG_HANDLE_PLUGIN_KEY = new PluginKey<ColumnDragHandlePluginState>("columnDragHandlePlugin");
 
 /**
- * Collect all column positions in the document
+ * Find all column lists and their column counts in the document
+ */
+function findColumnLists(doc: ProseMirrorNode): ColumnListInfo[] {
+  const columnLists: ColumnListInfo[] = [];
+
+  doc.descendants((node: ProseMirrorNode, pos: number) => {
+    if (node.type.name === ADDITIONAL_EXTENSIONS.COLUMN_LIST) {
+      // columnList can only have columns as children
+      columnLists.push({ pos, columnCount: node.childCount });
+      return false; // Don't descend into column list
+    }
+    return true;
+  });
+
+  return columnLists;
+}
+
+/**
+ * Check if column structure has changed (not positions, but actual structure)
+ */
+function hasColumnStructureChanged(prev: ColumnListInfo[], current: ColumnListInfo[]): boolean {
+  if (prev.length !== current.length) return true;
+
+  for (let i = 0; i < prev.length; i++) {
+    // Only check column count, not position (positions shift when typing)
+    if (prev[i].columnCount !== current[i].columnCount) return true;
+  }
+
+  return false;
+}
+
+/**
+ * Check if transaction has column-related changes worth processing
+ */
+function haveColumnRelatedChanges(
+  editor: Editor,
+  oldState: EditorState,
+  newState: EditorState,
+  tr: Transaction
+): boolean {
+  if (!editor.isEditable) return false;
+
+  // Only process if document changed or selection changed
+  return tr.docChanged || !newState.selection.eq(oldState.selection);
+}
+
+/**
+ * Collect all column positions for creating decorations
  */
 function collectColumnPositions(doc: ProseMirrorNode): number[] {
   const positions: number[] = [];
@@ -48,63 +97,38 @@ function collectColumnPositions(doc: ProseMirrorNode): number[] {
 }
 
 /**
- * Check if plugin state is stale and needs to be refreshed
+ * Cleanup drag handles safely
  */
-function isPluginStateStale(
-  prev: ColumnDragHandlePluginState,
-  currentPositions: number[],
-  docChanged: boolean,
-  mappedDecorations?: DecorationSet
-): boolean {
-  // Column structure changed
-  if (prev.columnCount !== currentPositions.length) return true;
-  if (!currentPositions.every((pos, idx) => prev.columnPositions[idx] === pos)) return true;
-
-  // If doc changed and decorations don't match expected positions
-  if (docChanged && mappedDecorations) {
-    return !currentPositions.every((pos) => mappedDecorations.find(pos + 1, pos + 2)?.length === 1);
-  }
-
-  return false;
-}
-
-/**
- * Cleanup renderers safely
- */
-function cleanupRenderers(renderers: ReactRenderer[]): void {
-  renderers.forEach((renderer) => {
+function cleanupDragHandles(dragHandles: DragHandleInstance[]): void {
+  dragHandles.forEach((handle) => {
     try {
-      renderer.destroy();
+      handle.destroy();
     } catch (error) {
-      console.error("[ColumnDragHandle] Error destroying renderer:", error);
+      console.error("[ColumnDragHandle] Error destroying handle:", error);
     }
   });
 }
 
 /**
- * Create decorations for all columns
+ * Create decorations for all columns using vanilla DOM
  */
 function createColumnDecorations(
   positions: number[],
   editor: Editor
 ): {
   decorations: Decoration[];
-  renderers: ReactRenderer[];
+  dragHandles: DragHandleInstance[];
 } {
   const decorations: Decoration[] = [];
-  const renderers: ReactRenderer[] = [];
+  const dragHandles: DragHandleInstance[] = [];
 
-  positions.forEach((pos) => {
-    const dragHandleComponent = new ReactRenderer(ColumnDragHandle, {
-      props: { columnPos: pos, editor } satisfies ColumnDragHandleProps,
-      editor,
-    });
-
-    renderers.push(dragHandleComponent);
-    decorations.push(Decoration.widget(pos + 1, () => dragHandleComponent.element, { side: -1 }));
+  positions.forEach((pos, index) => {
+    const handle = createColumnDragHandle(editor, pos, index);
+    dragHandles.push(handle);
+    decorations.push(Decoration.widget(pos + 1, () => handle.element, { side: -1 }));
   });
 
-  return { decorations, renderers };
+  return { decorations, dragHandles };
 }
 
 export const ColumnDragHandlePlugin = (editor: Editor, isFlagged: boolean): Plugin<ColumnDragHandlePluginState> =>
@@ -114,48 +138,80 @@ export const ColumnDragHandlePlugin = (editor: Editor, isFlagged: boolean): Plug
     state: {
       init: () => ({
         decorations: DecorationSet.empty,
-        columnCount: 0,
-        columnPositions: [],
-        renderers: [],
+        columnLists: [],
+        dragHandles: [],
       }),
 
-      apply(tr, prev, _oldState, newState) {
-        const currentPositions = collectColumnPositions(newState.doc);
-
-        // No columns exist - cleanup and return empty state
-        if (currentPositions.length === 0 || isFlagged) {
-          cleanupRenderers(prev.renderers);
+      apply(tr, prev, oldState, newState) {
+        // Early exit if flagged
+        if (isFlagged) {
+          if (prev.dragHandles.length > 0) {
+            cleanupDragHandles(prev.dragHandles);
+          }
           return {
             decorations: DecorationSet.empty,
-            columnCount: 0,
-            columnPositions: [],
-            renderers: [],
+            columnLists: [],
+            dragHandles: [],
           };
         }
 
-        // Check if state is stale
-        const mappedDecorations = tr.docChanged ? prev.decorations.map(tr.mapping, tr.doc) : prev.decorations;
-        const isStale = isPluginStateStale(prev, currentPositions, tr.docChanged, mappedDecorations);
+        const currentColumnLists = findColumnLists(newState.doc);
 
-        // Return mapped state if not stale
-        if (!isStale) {
+        // No columns exist - cleanup and return empty state
+        if (currentColumnLists.length === 0) {
+          if (prev.dragHandles.length > 0) {
+            cleanupDragHandles(prev.dragHandles);
+          }
           return {
-            decorations: mappedDecorations,
-            columnCount: prev.columnCount,
-            columnPositions: prev.columnPositions,
-            renderers: prev.renderers,
+            decorations: DecorationSet.empty,
+            columnLists: [],
+            dragHandles: [],
           };
         }
 
-        // Recreate all decorations
-        cleanupRenderers(prev.renderers);
-        const { decorations, renderers } = createColumnDecorations(currentPositions, editor);
+        // Check if we have any changes worth processing
+        if (!haveColumnRelatedChanges(editor, oldState, newState, tr)) {
+          return prev;
+        }
+
+        // Check if structure changed (column count in any column list)
+        const structureChanged = hasColumnStructureChanged(prev.columnLists, currentColumnLists);
+
+        // If structure hasn't changed, just map the decorations
+        if (!structureChanged && prev.decorations) {
+          const mapped = prev.decorations.map(tr.mapping, tr.doc);
+
+          // Verify decorations are still valid
+          const positions = collectColumnPositions(newState.doc);
+          let decorationsValid = positions.length === prev.dragHandles.length;
+
+          if (decorationsValid) {
+            for (const pos of positions) {
+              if (mapped.find(pos + 1, pos + 2)?.length !== 1) {
+                decorationsValid = false;
+                break;
+              }
+            }
+          }
+
+          if (decorationsValid) {
+            return {
+              decorations: mapped,
+              columnLists: currentColumnLists,
+              dragHandles: prev.dragHandles,
+            };
+          }
+        }
+
+        // Structure changed or decorations invalid - recreate all
+        cleanupDragHandles(prev.dragHandles);
+        const positions = collectColumnPositions(newState.doc);
+        const { decorations, dragHandles } = createColumnDecorations(positions, editor);
 
         return {
           decorations: DecorationSet.create(newState.doc, decorations),
-          columnCount: currentPositions.length,
-          columnPositions: currentPositions,
-          renderers,
+          columnLists: currentColumnLists,
+          dragHandles,
         };
       },
     },
@@ -168,8 +224,8 @@ export const ColumnDragHandlePlugin = (editor: Editor, isFlagged: boolean): Plug
 
     destroy() {
       const state = editor.state && COLUMN_DRAG_HANDLE_PLUGIN_KEY.getState(editor.state);
-      if (state?.renderers) {
-        cleanupRenderers(state.renderers);
+      if (state?.dragHandles) {
+        cleanupDragHandles(state.dragHandles);
       }
     },
   });

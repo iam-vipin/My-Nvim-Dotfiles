@@ -30,11 +30,22 @@ import type { MultiColumnExtensionOptions } from "src/ee/extensions/multi-column
 // Helper function to get isFlagged from editor extension options
 function getIsMultiColumnFlagged(editor: Editor): boolean {
   const multiColumnExt = editor.extensionManager.extensions.find(
-    (ext) => ext.name === (ADDITIONAL_EXTENSIONS.MULTI_COLUMN as string)
+    (ext) => ext.name === ADDITIONAL_EXTENSIONS.MULTI_COLUMN
   );
   if (!multiColumnExt) return false;
   const multiColumnExtensionOptions = multiColumnExt.options as MultiColumnExtensionOptions;
   return !!multiColumnExtensionOptions?.isFlagged;
+}
+
+// Helper function to wrap list items in a list for column creation
+function wrapListItemForColumnDrop(node: Node, schema: Schema, listType: string): Node {
+  const isListItem = [CORE_EXTENSIONS.LIST_ITEM, CORE_EXTENSIONS.TASK_ITEM].includes(node.type.name as CORE_EXTENSIONS);
+  if (!isListItem) return node;
+
+  const listNodeType = listType === "OL" ? schema.nodes.orderedList : schema.nodes.bulletList;
+  if (!listNodeType) return node;
+
+  return listNodeType.create(null, [node]);
 }
 
 const verticalEllipsisIcon =
@@ -157,14 +168,14 @@ function detectEdgeDrop(
   let blockPos = dropPos.pos;
   for (let d = resolvedPos.depth; d > 0; d--) {
     const node = resolvedPos.node(d);
-    if (node.isBlock && node.type.name !== (CORE_EXTENSIONS.DOCUMENT as string)) {
+    if (node.isBlock && node.type.name !== CORE_EXTENSIONS.DOCUMENT) {
       blockPos = resolvedPos.before(d);
       break;
     }
   }
 
   const $blockPos = view.state.doc.resolve(blockPos);
-  if ($blockPos.parent.type.name === (ADDITIONAL_EXTENSIONS.COLUMN as string)) {
+  if ($blockPos.parent.type.name === ADDITIONAL_EXTENSIONS.COLUMN) {
     blockPos = $blockPos.before();
   }
 
@@ -340,8 +351,9 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
 
       // Prevent dropping column/columnList inside another column structure
       if (
-        (droppedNode.type.name === (ADDITIONAL_EXTENSIONS.COLUMN as string) ||
-          droppedNode.type.name === (ADDITIONAL_EXTENSIONS.COLUMN_LIST as string)) &&
+        [ADDITIONAL_EXTENSIONS.COLUMN, ADDITIONAL_EXTENSIONS.COLUMN_LIST].includes(
+          droppedNode.type.name as ADDITIONAL_EXTENSIONS
+        ) &&
         isInsideColumnStructure($dropPos)
       ) {
         event.preventDefault();
@@ -357,20 +369,32 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
         const $pos = view.state.doc.resolve(blockPos);
         const targetNode = $pos.nodeAfter;
 
-        const isColumnListTarget = targetNode?.type.name === (ADDITIONAL_EXTENSIONS.COLUMN_LIST as string);
-        const canCreate = targetNode && canCreateColumns(droppedNode, targetNode);
+        // Wrap list items in a list for column creation
+        const nodeForColumns = wrapListItemForColumnDrop(droppedNode, view.state.schema, listType);
+
+        const isColumnListTarget = targetNode?.type.name === ADDITIONAL_EXTENSIONS.COLUMN_LIST;
+        const canCreate = targetNode && canCreateColumns(nodeForColumns, targetNode);
 
         if (!isInsideColumn($pos) && targetNode && (canCreate || isColumnListTarget)) {
+          // Get source info for proper move handling of list items
+          const isMove = view.dragging?.move ?? true;
+          const selection = view.state.selection;
+          const sourceInfoOverride =
+            isMove && selection instanceof NodeSelection
+              ? { pos: selection.from, size: selection.node.nodeSize }
+              : null;
+
           try {
             if (
               handleColumnDrop(
                 view,
-                droppedNode,
+                nodeForColumns,
                 targetNode,
                 blockPos,
                 position,
-                view.dragging?.move ?? true,
-                isMultiColumnFlagged
+                isMove,
+                isMultiColumnFlagged,
+                sourceInfoOverride
               )
             ) {
               event.preventDefault();
@@ -469,7 +493,7 @@ const handleNodeSelection = (
     const $pos = view.state.doc.resolve(draggedNodePos);
 
     // If at column boundary, move inside to get the actual content
-    if ($pos.depth === 1 && $pos.parent.type.name === (ADDITIONAL_EXTENSIONS.COLUMN_LIST as string)) {
+    if ($pos.depth === 1 && $pos.parent.type.name === ADDITIONAL_EXTENSIONS.COLUMN_LIST) {
       draggedNodePos = draggedNodePos + 2;
     }
 
@@ -479,7 +503,7 @@ const handleNodeSelection = (
       const nodeAtDepth = $finalPos.node(d);
       const parentAtDepth = $finalPos.node(d - 1);
 
-      if (nodeAtDepth.isBlock && parentAtDepth?.type.name === (ADDITIONAL_EXTENSIONS.COLUMN as string)) {
+      if (nodeAtDepth.isBlock && parentAtDepth?.type.name === ADDITIONAL_EXTENSIONS.COLUMN) {
         draggedNodePos = $finalPos.before(d);
         break;
       }
@@ -500,7 +524,7 @@ const handleNodeSelection = (
   const nodeSelection = NodeSelection.create(view.state.doc, draggedNodePos);
 
   // Prevent dragging individual columns
-  if (nodeSelection.node.type.name === (ADDITIONAL_EXTENSIONS.COLUMN as string)) return;
+  if (nodeSelection.node.type.name === ADDITIONAL_EXTENSIONS.COLUMN) return;
 
   view.dispatch(view.state.tr.setSelection(nodeSelection));
 

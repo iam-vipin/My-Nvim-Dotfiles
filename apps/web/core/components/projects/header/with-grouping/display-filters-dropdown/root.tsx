@@ -11,8 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-" use client";
-
 import { observer } from "mobx-react";
 // components
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";

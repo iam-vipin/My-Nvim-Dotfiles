@@ -11,8 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-"use client";
-
 import React, { useRef } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "../utils";

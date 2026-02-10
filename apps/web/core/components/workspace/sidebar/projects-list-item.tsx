@@ -47,10 +47,11 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
-import { useNavigationItems } from "@/plane-web/components/navigations";
-import { ProjectNavigationRoot } from "@/plane-web/components/sidebar";
+import { useNavigationItems } from "@/components/navigation";
 // helpers
 import { HIGHLIGHT_CLASS, highlightOnDrop } from "@/helpers/common";
+// local imports
+import { ProjectNavigationRoot } from "./project-navigation-root";
 
 type Props = {
   projectId: string;

@@ -11,8 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-"use client";
-
 import React, { useState, useCallback, Fragment } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";

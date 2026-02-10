@@ -21,7 +21,7 @@ import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 import type { AppSidebarItemData } from "@/components/sidebar/sidebar-item";
 import { useAppRailVisibility } from "@/lib/app-rail/context";
-import { withDockItems } from "@/plane-web/components/app-rail/app-rail-hoc";
+import { withDockItems } from "@/components/app-rail/app-rail-hoc";
 
 type Props = {
   dockItems: (AppSidebarItemData & { shouldRender: boolean })[];

@@ -19,7 +19,7 @@ import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 import { WithFeatureFlagHOC } from "@/components/feature-flags/with-feature-flag-hoc";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
+import { useTimeLineRelationOptions } from "@/components/relations";
 import { useCustomers } from "@/plane-web/hooks/store/customers/use-customers";
 // local imports
 import { AttachmentsCollapsible } from "./attachments";

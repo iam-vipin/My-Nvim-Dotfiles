@@ -27,7 +27,8 @@ import type { TBaseActivityVerbs, TIssueActivity } from "@plane/types";
 import { convertMinutesToHoursMinutesString, getPageName, renderFormattedDate } from "@plane/utils";
 import { LabelActivityChip } from "@/components/issues/issue-detail/issue-activity/activity/actions";
 import { store } from "@/lib/store-context";
-import { getRelationActivityContent, ISSUE_RELATION_OPTIONS } from "@/plane-web/components/relations";
+import { getRelationActivityContent } from "@/components/relations/activity";
+import { WORK_ITEM_RELATION_OPTIONS } from "@/components/relations";
 import type { TIssueRelationTypes } from "@/types";
 
 // Get the key for the issue property type based on the property type and relation type
@@ -74,7 +75,7 @@ const createRelationIconWrapper = (relationType: TIssueRelationTypes | undefined
     if (!relationType) {
       return <Network className={className} />;
     }
-    const iconFn = ISSUE_RELATION_OPTIONS[relationType]?.icon;
+    const iconFn = WORK_ITEM_RELATION_OPTIONS[relationType]?.icon;
     if (!iconFn) {
       return <Network className={className} />;
     }

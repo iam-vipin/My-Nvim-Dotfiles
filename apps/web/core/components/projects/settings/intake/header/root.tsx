@@ -24,7 +24,7 @@ import { EUserProjectRoles } from "@plane/types";
 import { Breadcrumbs, Header, Popover, Loader } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-import { InboxIssueCreateModalRoot } from "@/components/inbox/modals/create-modal";
+import { InboxIssueCreateModalRoot } from "@/components/intake/modals/create-modal";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";

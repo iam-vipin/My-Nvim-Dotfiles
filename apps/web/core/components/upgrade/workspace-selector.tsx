@@ -11,8 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";

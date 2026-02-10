@@ -30,9 +30,9 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
-import { WorkflowSettingsQuickActions } from "@/plane-web/components/workflow/page/quick-actions";
-import { StateWorkflowRoot } from "@/plane-web/components/workflow/page/root";
-import { WorkflowUpgrade } from "@/plane-web/components/workflow/page/upgrade";
+import { WorkflowSettingsQuickActions } from "@/components/workflow/page/quick-actions";
+import { StateWorkflowRoot } from "@/components/workflow/page/root";
+import { WorkflowUpgrade } from "@/components/workflow/page/upgrade";
 import { useFlag } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 // local imports

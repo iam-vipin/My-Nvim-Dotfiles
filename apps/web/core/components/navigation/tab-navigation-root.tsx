@@ -24,7 +24,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { useNavigationItems } from "@/plane-web/components/navigations";
+import { useNavigationItems } from "@/components/navigation";
 import { LeaveProjectModal } from "@/components/projects/modals/leave-project-modal";
 import { PublishProjectModal } from "@/components/projects/modals/publish-modal";
 // local imports

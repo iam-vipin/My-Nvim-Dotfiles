@@ -11,8 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-"use client";
-
 import { autoUpdate, flip, hide, offset, shift, useDismiss, useFloating, useInteractions } from "@floating-ui/react";
 import type { Editor } from "@tiptap/react";
 import type { FC } from "react";

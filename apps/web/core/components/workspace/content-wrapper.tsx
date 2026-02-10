@@ -17,12 +17,11 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { cn } from "@plane/utils";
 // components
-import { AppRailRoot } from "@/components/navigation";
+import { AppRailRoot, TopNavigationRoot } from "@/components/navigation";
 import { StickyActionBar } from "@/components/stickies/action-bar";
 // plane web imports
 import { useAppRailVisibility } from "@/lib/app-rail";
 import { PiChatArtifactsRoot } from "@/components/pi-chat/actions/artifacts/detail/root";
-import { TopNavigationRoot } from "@/plane-web/components/navigations";
 import { WorkspaceSidecar } from "./sidecar";
 
 export const WorkspaceContentWrapper = observer(function WorkspaceContentWrapper({

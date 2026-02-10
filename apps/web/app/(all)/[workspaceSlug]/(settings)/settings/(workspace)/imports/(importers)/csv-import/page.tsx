@@ -11,14 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-"use client";
-
 import { Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
 import { DashboardLoaderRoot } from "@/components/importers/common/dashboard";
-import { CSVDashboardRoot, CSVStepsRoot } from "@/plane-web/components/importers/csv";
+import { CSVDashboardRoot } from "@/components/importers/csv/dashboard";
+import { CSVStepsRoot } from "@/components/importers/csv/steps";
 // hooks
 import { useCSVImporter } from "@/plane-web/hooks/store";
 

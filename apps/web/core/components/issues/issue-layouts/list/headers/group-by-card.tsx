@@ -32,7 +32,7 @@ import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // plane-web
 import { CreateUpdateEpicModal } from "@/components/epics/epic-modal";
 // Plane-web
-import { WorkFlowGroupTree } from "@/plane-web/components/workflow";
+import { WorkFlowGroupTree } from "@/components/workflow";
 
 interface IHeaderGroupByCard {
   groupID: string;

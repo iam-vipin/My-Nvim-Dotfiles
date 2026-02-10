@@ -11,8 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-"use client";
-
 import React from "react";
 import type { NavigationTourArrowProps } from "./navigation-tour-types";
 

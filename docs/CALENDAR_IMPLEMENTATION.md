@@ -140,8 +140,6 @@ apps/web/app/(all)/[workspaceSlug]/(calendar)/
 **File**: `apps/web/app/(all)/[workspaceSlug]/(calendar)/layout.tsx`
 
 ```typescript
-"use client";
-
 import { observer } from "mobx-react";
 import { Outlet } from "react-router";
 import type { Route } from "./+types/layout";
@@ -165,8 +163,6 @@ export default CalendarLayout;
 **File**: `apps/web/app/(all)/[workspaceSlug]/(calendar)/calendar/page.tsx`
 
 ```typescript
-"use client";
-
 import { observer } from "mobx-react";
 import type { Route } from "./+types/page";
 

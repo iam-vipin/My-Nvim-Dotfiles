@@ -11,8 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-"use client";
-
 import { useState } from "react";
 // plane imports
 import type { EExternalUpgradePlanType } from "@plane/constants";

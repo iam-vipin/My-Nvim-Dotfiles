@@ -21,7 +21,6 @@ import type { TContextMenuItem } from "@plane/ui";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web imports
 import { useQuickActionsFactory } from "@/components/common/quick-actions/factory";
-import type { IIssueCommentStoreExtended } from "@/plane-web/store/issue/issue-details/comments/comment.store";
 
 export const useCommentRepliesOperations = (
   workspaceSlug: string | undefined,
@@ -30,7 +29,7 @@ export const useCommentRepliesOperations = (
 ): TCommentReplyOperations | undefined => {
   // store hooks
   const { comment } = useIssueDetail();
-  const repliesStore = (comment as IIssueCommentStoreExtended).replies;
+  const repliesStore = comment.replies;
   // translation
   const { t } = useTranslation();
 

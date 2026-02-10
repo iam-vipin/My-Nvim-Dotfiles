@@ -22,7 +22,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // store
-import type { IProjectMemberDetails } from "@/store/member/project/base-project-member.store";
+import type { IProjectMemberDetails } from "@/store/member/project/membership.store";
 // local imports
 import { useProjectMemberColumns } from "./useProjectMemberColumns";
 

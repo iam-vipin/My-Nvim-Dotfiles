@@ -26,8 +26,8 @@ import {
   getFilteredWorkItems,
   getGroupedWorkItemIds,
   updateSubWorkItemFilters,
-} from "@/store/issue/helpers/base-issues-utils";
-import { DEFAULT_DISPLAY_PROPERTIES } from "@/store/issue/issue-details/sub_issues_filter.store";
+} from "@/store/work-items/helpers/base-issues-utils";
+import { DEFAULT_DISPLAY_PROPERTIES } from "@/store/work-items/details/sub_issues_filter.store";
 import type { InitiativeEpicStore } from "./initiative-epics.store";
 
 export interface IInitiativeEpicsFilterStore {

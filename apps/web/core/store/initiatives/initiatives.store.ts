@@ -48,8 +48,8 @@ import { InitiativeScopeStore } from "./initiative-scope-filters.store";
 import type { IInitiativeCommentActivityStore } from "./initiatives-comment-activity.store";
 import { InitiativeCommentActivityStore } from "./initiatives-comment-activity.store";
 import type { IInitiativeFilterStore } from "./initiatives-filter.store";
-import type { IUpdateStore } from "@/plane-web/store/updates/base.store";
-import { UpdateStore } from "@/plane-web/store/updates/base.store";
+import type { IUpdateStore } from "@/store/work-items/epic/updates/base.store";
+import { UpdateStore } from "@/store/work-items/epic/updates/base.store";
 import type { RootStore } from "@/plane-web/store/root.store";
 
 export const ALL_INITIATIVES = "All Initiatives";

@@ -25,13 +25,13 @@ import { cn, renderFormattedPayloadDate } from "@plane/utils";
 import { highlightOnDrop } from "@/helpers/common";
 // components
 // store
-import type { ICycleIssuesFilter } from "@/store/issue/cycle";
-import type { IModuleIssuesFilter } from "@/store/issue/module";
-import type { IProjectIssuesFilter } from "@/store/issue/project";
-import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import type { ICycleIssuesFilter } from "@/store/work-items/cycle";
+import type { IModuleIssuesFilter } from "@/store/work-items/module";
+import type { IProjectIssuesFilter } from "@/store/work-items/project";
+import type { IProjectViewIssuesFilter } from "@/store/work-items/project-views";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { CalendarIssueBlocks } from "./issue-blocks";
-import type { IWorkspaceIssuesFilter } from "@/store/issue/workspace";
+import type { IWorkspaceIssuesFilter } from "@/store/work-items/workspace";
 
 type Props = {
   issuesFilterStore:

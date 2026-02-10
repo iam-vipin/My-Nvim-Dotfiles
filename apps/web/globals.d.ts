@@ -11,5 +11,17 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./authentication";
-export * from "./get-app";
+declare global {
+  interface RelatedApp {
+    id: string;
+    platform: string;
+    url: string;
+    version?: string;
+  }
+
+  interface Navigator {
+    getInstalledRelatedApps?(): Promise<RelatedApp[]>;
+  }
+}
+
+export {};

@@ -17,7 +17,7 @@ import { Links, Meta, Outlet, Scripts } from "react-router";
 import type { LinksFunction } from "react-router";
 import { ThemeProvider, useTheme } from "next-themes";
 // plane imports
-import { SITE_DESCRIPTION, SITE_NAME } from "@plane/constants";
+import { SITE_DESCRIPTION, SITE_NAME, IOS_APP_ID } from "@plane/constants";
 import { cn } from "@plane/utils";
 // types
 // assets
@@ -31,6 +31,7 @@ import globalStyles from "@/styles/globals.css?url";
 import type { Route } from "./+types/root";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
+import { GetMobileApp } from "@/components/mobile";
 // plane web imports
 import { TrialBanner } from "@/components/workspace/license/banner/trial-banner";
 // local
@@ -79,6 +80,8 @@ export function Layout({ children }: { children: ReactNode }) {
         <meta name="apple-mobile-web-app-title" content={SITE_NAME} />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
+        {/* Meta info for ios smart banner */}
+        <meta name="apple-itunes-app" content={`app-id=${IOS_APP_ID}`} />
         <Meta />
         <Links />
       </head>
@@ -138,6 +141,7 @@ export default function Root() {
         <div
           className={cn("h-screen w-full overflow-hidden bg-canvas relative flex flex-col", "desktop-app-container")}
         >
+          <GetMobileApp />
           {/* free trial banner */}
           <TrialBanner />
           <main className="w-full h-full overflow-hidden relative">

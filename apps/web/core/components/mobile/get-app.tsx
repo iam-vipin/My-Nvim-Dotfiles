@@ -11,5 +11,15 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./authentication";
-export * from "./get-app";
+// local components
+import { GetMobileAppBanner } from "./get-app-banner";
+import { GetMobileAppBottomSheet } from "./get-app-bottom-sheet";
+
+export const GetMobileApp = () => {
+  return (
+    <>
+      <GetMobileAppBottomSheet />
+      <GetMobileAppBanner />
+    </>
+  );
+};

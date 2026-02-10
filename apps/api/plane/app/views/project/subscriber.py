@@ -10,6 +10,8 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Third Party imports
+
+
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -19,6 +21,7 @@ from plane.app.serializers import ProjectSubscriberSerializer
 from plane.app.permissions import ProjectAdminPermission
 from plane.db.models import Workspace
 from plane.ee.models import ProjectSubscriber
+from plane.bgtasks.project_subscriber_task import add_project_subscribers_to_work_items_task
 
 
 class ProjectSubscriberEndpoint(BaseViewSet):
@@ -44,15 +47,17 @@ class ProjectSubscriberEndpoint(BaseViewSet):
         serializer = ProjectSubscriberSerializer(subscribers, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def _get_existing_subscriber_ids(self, workspace, project_id):
+    def _get_existing_subscriber_ids(self, workspace: Workspace, project_id: str) -> set[str]:
         return set(
-            ProjectSubscriber.objects.filter(
-                workspace=workspace,
-                project_id=project_id,
-            ).values_list("subscriber_id", flat=True)
+            list(
+                ProjectSubscriber.objects.filter(
+                    workspace=workspace,
+                    project_id=project_id,
+                ).values_list("subscriber_id", flat=True)
+            )
         )
 
-    def _remove_subscribers(self, workspace, project_id, subscriber_ids):
+    def _remove_subscribers(self, workspace: Workspace, project_id: str, subscriber_ids: set[str]):
         if subscriber_ids:
             ProjectSubscriber.objects.filter(
                 workspace=workspace,
@@ -60,7 +65,7 @@ class ProjectSubscriberEndpoint(BaseViewSet):
                 subscriber_id__in=subscriber_ids,
             ).delete()
 
-    def _add_subscribers(self, workspace, project_id, subscriber_ids):
+    def _add_subscribers(self, workspace: Workspace, project_id: str, subscriber_ids: set[str]):
         if subscriber_ids:
             ProjectSubscriber.objects.bulk_create(
                 [
@@ -75,19 +80,31 @@ class ProjectSubscriberEndpoint(BaseViewSet):
                 ignore_conflicts=True,
             )
 
-    def create_or_update(self, request, slug, project_id):
-        subscriber_ids = request.data.get("subscriber_ids", [])
+    def create_or_update(self, request, slug: str, project_id: str):
+        subscriber_ids: list[str] = request.data.get("subscriber_ids", [])
 
         workspace = Workspace.objects.get(slug=slug)
-        incoming_ids = set(subscriber_ids)
-        existing_ids = self._get_existing_subscriber_ids(workspace, project_id)
+        incoming_ids: set[str] = set(subscriber_ids)
+        existing_ids: set[str] = self._get_existing_subscriber_ids(workspace, project_id)
 
-        self._remove_subscribers(workspace, project_id, existing_ids - incoming_ids)
-        self._add_subscribers(workspace, project_id, incoming_ids - existing_ids)
+        ids_to_remove: set[str] = existing_ids - incoming_ids
+        ids_to_add: set[str] = incoming_ids - existing_ids
+
+        self._remove_subscribers(workspace, project_id, ids_to_remove)
+        self._add_subscribers(workspace, project_id, ids_to_add)
+
+        # Subscribe new users to all existing work items in the project
+        if ids_to_add:
+            add_project_subscribers_to_work_items_task.delay(
+                workspace_id=str(workspace.id),
+                project_id=str(project_id),
+                subscriber_ids=[str(uid) for uid in ids_to_add],
+            )
 
         subscribers = ProjectSubscriber.objects.filter(
             workspace=workspace,
             project_id=project_id,
         )
         serializer = ProjectSubscriberSerializer(subscribers, many=True)
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)

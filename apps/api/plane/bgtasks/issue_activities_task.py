@@ -49,6 +49,7 @@ from plane.utils.exception_logger import log_exception
 from plane.utils.issue_relation_mapper import get_inverse_relation
 from plane.utils.uuid import is_valid_uuid
 from plane.bgtasks.notification_task import process_workitem_notifications
+from plane.bgtasks.project_subscriber_task import add_project_subscribers_to_single_work_item_task
 
 
 def extract_ids(data: dict | None, primary_key: str, fallback_key: str) -> set[str]:
@@ -1730,6 +1731,10 @@ def create_issue_activity(
             epoch,
         )
 
+    add_project_subscribers_to_single_work_item_task.delay(
+        workspace_id=workspace_id, project_id=project_id, work_item_id=issue_id
+    )
+
 
 def create_customer_activity(
     requested_data,
@@ -2066,6 +2071,7 @@ def issue_activity(
             )
 
         return
+
     except Exception as e:
         log_exception(e)
         return

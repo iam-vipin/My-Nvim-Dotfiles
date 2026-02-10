@@ -41,7 +41,7 @@ export const CreateUpdateCustomerModal = observer(function CreateUpdateCustomerM
           isOpen={isOpen}
           position={EModalPosition.TOP}
           width={EModalWidth.XXXL}
-          className="flex flex-col min-h-0"
+          className="flex flex-col min-h-0 max-h-[80vh]"
         >
           <CustomerForm data={customerDetails} handleModalClose={onClose} />
         </ModalCore>

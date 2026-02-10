@@ -58,6 +58,16 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
     # Format: recurring_{task_id}_{timestamp} for consistency and debuggability
     task_id = self.request.id or f"recurring_{recurring_workitem_task_id}_{int(timezone.now().timestamp())}"
 
+    # Idempotency guard: skip if this task_id already completed successfully
+    if RecurringWorkitemTaskLog.objects.filter(
+        task_id=task_id,
+        status=RecurringWorkitemTaskLog.TaskStatus.SUCCESS,
+    ).exists():
+        logger.info(
+            f"Recurring task {recurring_workitem_task_id} already completed (task_id={task_id}), skipping duplicate"
+        )
+        return {"status": "skipped", "message": "Duplicate execution"}
+
     try:
         # Get the recurring task
         recurring_task = (

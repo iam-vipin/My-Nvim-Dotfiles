@@ -18,14 +18,14 @@ import { cn, getOrderedDays, renderFormattedPayloadDate } from "@plane/utils";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 // types
-import type { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
-import type { ICycleIssuesFilter } from "@/store/issue/cycle";
-import type { IModuleIssuesFilter } from "@/store/issue/module";
-import type { IProjectIssuesFilter } from "@/store/issue/project";
-import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import type { IProjectEpicsFilter } from "@/store/work-items/epic";
+import type { ICycleIssuesFilter } from "@/store/work-items/cycle";
+import type { IModuleIssuesFilter } from "@/store/work-items/module";
+import type { IProjectIssuesFilter } from "@/store/work-items/project";
+import type { IProjectViewIssuesFilter } from "@/store/work-items/project-views";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { CalendarDayTile } from "./day-tile";
-import type { IWorkspaceIssuesFilter } from "@/store/issue/workspace";
+import type { IWorkspaceIssuesFilter } from "@/store/work-items/workspace";
 
 type Props = {
   issuesFilterStore:

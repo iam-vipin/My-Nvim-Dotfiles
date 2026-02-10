@@ -13,7 +13,7 @@
 
 import { action, makeObservable } from "mobx";
 import milestoneService from "@/services/milestone.service";
-import type { IIssueStore } from "@/store/issue/issue.store";
+import type { IIssueStore } from "@/store/work-items/issue.store";
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { IMilestoneStore } from "./milestone.store";
 

@@ -44,8 +44,8 @@ import type { IProjectInboxStore } from "./inbox/project-inbox.store";
 import { ProjectInboxStore } from "./inbox/project-inbox.store";
 import type { IInstanceStore } from "./instance.store";
 import { InstanceStore } from "./instance.store";
-import type { IIssueRootStore } from "./issue/root.store";
-import { IssueRootStore } from "./issue/root.store";
+import type { IIssueRootStore } from "./work-items/root.store";
+import { IssueRootStore } from "./work-items/root.store";
 import type { ILabelStore } from "./label.store";
 import { LabelStore } from "./label.store";
 import type { IMemberRootStore } from "./member";
@@ -172,6 +172,11 @@ import { IntakeTypeFormStore } from "./intake-type-form.store";
 // intake responsibility
 import type { IIntakeResponsibilityStore } from "./intake-responsibility.store";
 import { IntakeResponsibilityStore } from "./intake-responsibility.store";
+// epics
+import type { IEpicAnalyticStore } from "./work-items/epic/analytic.store";
+import { EpicAnalytics } from "./work-items/epic/analytic.store";
+import type { IEpicBaseStore } from "./work-items/epic/base.store";
+import { EpicBaseStore } from "./work-items/epic/base.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -244,6 +249,9 @@ export class CoreRootStore {
   issueTypes: IIssueTypesStore;
   intakeTypeForms: IIntakeTypeFormStore;
   intakeResponsibility: IIntakeResponsibilityStore;
+  // epics
+  epicAnalytics: IEpicAnalyticStore;
+  epicBaseStore: IEpicBaseStore;
 
   constructor() {
     this.router = new RouterStore();
@@ -314,6 +322,9 @@ export class CoreRootStore {
     this.issueTypes = new IssueTypes(this as unknown as RootStore);
     this.intakeTypeForms = new IntakeTypeFormStore(this as unknown as RootStore);
     this.intakeResponsibility = new IntakeResponsibilityStore(this as unknown as RootStore);
+    // epics
+    this.epicAnalytics = new EpicAnalytics(this as unknown as RootStore);
+    this.epicBaseStore = new EpicBaseStore(this as unknown as RootStore);
   }
 
   resetOnSignOut() {
@@ -387,5 +398,8 @@ export class CoreRootStore {
     this.issueTypes = new IssueTypes(this as unknown as RootStore);
     this.intakeTypeForms = new IntakeTypeFormStore(this as unknown as RootStore);
     this.intakeResponsibility = new IntakeResponsibilityStore(this as unknown as RootStore);
+    // epics
+    this.epicAnalytics = new EpicAnalytics(this as unknown as RootStore);
+    this.epicBaseStore = new EpicBaseStore(this as unknown as RootStore);
   }
 }

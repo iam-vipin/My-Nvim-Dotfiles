@@ -18,7 +18,7 @@ import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 // hooks
 import { useCustomers } from "@/plane-web/hooks/store";
 // types
-import type { TAttachmentUploadStatus } from "@/store/issue/issue-details/attachment.store";
+import type { TAttachmentUploadStatus } from "@/store/work-items/details/attachment.store";
 
 export type TAttachmentOperations = {
   create: (file: File) => Promise<void>;

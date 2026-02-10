@@ -13,7 +13,7 @@
 
 import { API_BASE_URL } from "@plane/constants";
 // plane web imports
-import type { TWorkspaceMemberActivity } from "@/plane-web/components/workspace/members/sidebar/activity/helper";
+import type { TWorkspaceMemberActivity } from "@/components/workspace/settings/members/sidebar/activity/helper";
 import { APIService } from "@/services/api.service";
 
 export class WorkspaceMembersActivityService extends APIService {

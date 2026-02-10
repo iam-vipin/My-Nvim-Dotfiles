@@ -16,7 +16,7 @@ import { clone, pull, uniq, concat } from "lodash-es";
 // plane imports
 import type { IPragmaticDropPayload, TIssue, TIssueGroupByOptions } from "@plane/types";
 // store
-import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/base-issues.store";
+import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/work-items/helpers/base-issues.store";
 // types
 import type { GroupDropLocation, IssueUpdates } from "./types";
 

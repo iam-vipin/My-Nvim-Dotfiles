@@ -22,7 +22,7 @@ import { SettingsMobileNav } from "@/components/settings/mobile/nav";
 import { WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
 import type { EUserWorkspaceRoles } from "@plane/types";
 // plane web components
-import { WorkspaceRightSidebar } from "@/plane-web/components/workspace/right-sidebar";
+import { WorkspaceRightSidebar } from "@/components/workspace/right-sidebar";
 // components
 import { WorkspaceSettingsSidebarRoot } from "@/components/settings/workspace/sidebar";
 // hooks

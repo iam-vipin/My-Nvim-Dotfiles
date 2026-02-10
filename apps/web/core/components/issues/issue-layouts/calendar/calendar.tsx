@@ -33,12 +33,12 @@ import { renderFormattedPayloadDate, cn } from "@plane/utils";
 import { useIssues } from "@/hooks/store/use-issues";
 import useSize from "@/hooks/use-window-size";
 // store
-import type { ICycleIssuesFilter } from "@/store/issue/cycle";
-import type { ICalendarStore } from "@/store/issue/issue_calendar_view.store";
-import type { IModuleIssuesFilter } from "@/store/issue/module";
-import type { IProjectIssuesFilter } from "@/store/issue/project";
-import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
-import type { IWorkspaceIssuesFilter } from "@/store/issue/workspace";
+import type { ICycleIssuesFilter } from "@/store/work-items/cycle";
+import type { ICalendarStore } from "@/store/work-items/issue_calendar_view.store";
+import type { IModuleIssuesFilter } from "@/store/work-items/module";
+import type { IProjectIssuesFilter } from "@/store/work-items/project";
+import type { IProjectViewIssuesFilter } from "@/store/work-items/project-views";
+import type { IWorkspaceIssuesFilter } from "@/store/work-items/workspace";
 // local imports
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import type { TRenderQuickActions } from "../list/list-view-types";

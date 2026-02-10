@@ -568,10 +568,16 @@ class IssueViewSet(BaseViewSet):
         if serializer.is_valid():
             serializer.save()
 
+            assignees = list(request.data.get("assignee_ids", []))
+            assignees.append(project.default_assignee_id)
+
+            requested_data = dict(request.data)
+            requested_data["assignee_ids"] = assignees
+
             # Track the issue
             issue_activity.delay(
                 type="issue.activity.created",
-                requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+                requested_data=json.dumps(requested_data, cls=DjangoJSONEncoder),
                 actor_id=str(request.user.id),
                 issue_id=str(serializer.data.get("id", None)),
                 project_id=str(project_id),
@@ -912,7 +918,6 @@ class IssueViewSet(BaseViewSet):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         serializer = IssueCreateSerializer(
             issue,
             data=request.data,
@@ -936,6 +941,9 @@ class IssueViewSet(BaseViewSet):
 
             # Check if the update is a migration description update
             is_migration_description_update = skip_activity and is_description_update
+
+            requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
+
             # Log all the updates
             if not is_migration_description_update:
                 issue_activity.delay(

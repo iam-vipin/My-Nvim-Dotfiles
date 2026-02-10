@@ -37,7 +37,7 @@ import { useKanbanView } from "@/hooks/store/use-kanban-view";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // types
 // parent components
-import { useWorkFlowFDragNDrop } from "@/plane-web/components/workflow";
+import { useWorkFlowFDragNDrop } from "@/components/workflow";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import type { GroupDropLocation } from "@/helpers/work-item-layout";
 import { getGroupByColumns, isWorkspaceLevel, getApproximateCardHeight } from "@/helpers/work-item-layout";

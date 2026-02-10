@@ -13,7 +13,7 @@
 
 import { FileUp, Layers3 } from "lucide-react";
 // components
-import { SelectPlaneProject, UploadCSV } from "@/plane-web/components/importers/csv";
+import { SelectPlaneProject, UploadCSV } from "@/components/importers/csv";
 // plane web types
 import type { TCSVImporterStep } from "@/types/importers/csv";
 import { E_CSV_IMPORTER_STEPS } from "@/types/importers/csv";

@@ -28,7 +28,7 @@ import { hideFloatingBot, showFloatingBot } from "@/helpers/pi-chat";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
-import { UpgradeToast } from "@/plane-web/components/workspace/upgrade-toast";
+import { UpgradeToast } from "@/components/workspace/upgrade-toast";
 import { BulkOperationsActionsRoot } from "./actions";
 import { IssueBulkOperationsProperties } from "./properties";
 

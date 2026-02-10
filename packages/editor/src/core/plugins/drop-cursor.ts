@@ -11,17 +11,32 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import type { Node as ProseMirrorNode, Schema } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import type { EditorState } from "@tiptap/pm/state";
 import { dropPoint } from "@tiptap/pm/transform";
 import type { EditorView } from "@tiptap/pm/view";
 // constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 import { ADDITIONAL_EXTENSIONS } from "@plane/utils";
 // extensions
 import { canCreateColumns } from "@/plane-editor/extensions/multi-column/column-drop";
 // utils
 import { EDGE_DROP_THRESHOLD, getTargetBlockInfo, isInsideColumn, isInsideColumnStructure } from "./utils";
 import { columnResizePluginKey } from "@/plane-editor/extensions/multi-column/column/plugins/column-resize";
+
+// Helper function to check if a node is a list item for column cursor purposes
+function isListItemNode(node: ProseMirrorNode): boolean {
+  return [CORE_EXTENSIONS.LIST_ITEM, CORE_EXTENSIONS.TASK_ITEM].includes(node.type.name as CORE_EXTENSIONS);
+}
+
+// Helper function to wrap list items in a list for column cursor purposes
+function wrapListItemForColumnCheck(node: ProseMirrorNode, schema: Schema): ProseMirrorNode {
+  if (!isListItemNode(node)) return node;
+  const listNodeType = schema.nodes.bulletList;
+  if (!listNodeType) return node;
+  return listNodeType.create(null, [node]);
+}
 
 export const DropCursorPluginKey = new PluginKey("DropCursor");
 
@@ -280,8 +295,9 @@ class DropCursorView {
 
     // Prevent nesting columns inside column structures
     if (
-      (draggedNode.type.name === (ADDITIONAL_EXTENSIONS.COLUMN as string) ||
-        draggedNode.type.name === (ADDITIONAL_EXTENSIONS.COLUMN_LIST as string)) &&
+      [ADDITIONAL_EXTENSIONS.COLUMN, ADDITIONAL_EXTENSIONS.COLUMN_LIST].includes(
+        draggedNode.type.name as ADDITIONAL_EXTENSIONS
+      ) &&
       isInsideColumnStructure(this.editorView.state.doc.resolve(pos.pos))
     ) {
       this.setCursor(null);
@@ -297,18 +313,21 @@ class DropCursorView {
 
     const $blockPos = this.editorView.state.doc.resolve(blockInfo.pos);
 
+    // Wrap list items for column creation check
+    const nodeForColumns = wrapListItemForColumnCheck(draggedNode, this.editorView.state.schema);
+
     // Show vertical cursor for edge drops that can create columns
     // Skip if multi-column is flagged
     if (
       !this.isMultiColumnFlagged &&
       (isLeftEdge || isRightEdge) &&
       !isInsideColumn($blockPos) &&
-      canCreateColumns(draggedNode, blockInfo.node)
+      canCreateColumns(nodeForColumns, blockInfo.node)
     ) {
       const isPrevSiblingColumn =
-        blockInfo.node?.type.name === (ADDITIONAL_EXTENSIONS.COLUMN as string) &&
+        blockInfo.node?.type.name === ADDITIONAL_EXTENSIONS.COLUMN &&
         isLeftEdge &&
-        $blockPos.nodeBefore?.type.name === (ADDITIONAL_EXTENSIONS.COLUMN as string);
+        $blockPos.nodeBefore?.type.name === ADDITIONAL_EXTENSIONS.COLUMN;
 
       if (!isPrevSiblingColumn) {
         this.setCursor({

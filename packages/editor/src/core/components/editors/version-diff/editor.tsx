@@ -11,8 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-"use client";
-
 import Collaboration from "@tiptap/extension-collaboration";
 import type { Content, Extensions } from "@tiptap/core";
 import type { Editor } from "@tiptap/react";

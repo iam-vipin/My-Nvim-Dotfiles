@@ -817,6 +817,7 @@ export default {
     },
     comments: "Комментарии",
     updates: "Обновления",
+    additional_updates: "Дополнительные обновления",
     clear_all: "Очистить все",
     copied: "Скопировано!",
     link_copied: "Ссылка скопирована!",

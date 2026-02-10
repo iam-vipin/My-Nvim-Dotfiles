@@ -28,7 +28,7 @@ import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
 import { WorkItemDetailRoot } from "@/components/browse/workItem-detail";
 import { useWorkItemCommentOperations } from "@/components/issues/issue-detail/issue-activity/helper";
-import { InboxIssueRoot } from "@/components/inbox/root";
+import { InboxIssueRoot } from "@/components/intake/root";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";

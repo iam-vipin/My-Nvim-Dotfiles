@@ -518,14 +518,21 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
             issue.created_by_id = request.data.get("created_by", request.user.id)
             issue.save(update_fields=["created_at", "created_by"])
 
+            assignees = list(request.data.get("assignees", []))
+            assignees.append(project.default_assignee_id)
+
+            requested_data = dict(request.data)
+            requested_data["assignee_ids"] = assignees
+
             # Track the issue
             issue_activity.delay(
                 type="issue.activity.created",
-                requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+                requested_data=json.dumps(requested_data, cls=DjangoJSONEncoder),
                 actor_id=str(request.user.id),
                 issue_id=str(serializer.data.get("id", None)),
                 project_id=str(project_id),
                 current_instance=None,
+                notification=True,
                 epoch=int(timezone.now().timestamp()),
             )
 
@@ -705,6 +712,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                         issue_id=str(issue.id),
                         project_id=str(project_id),
                         current_instance=current_instance,
+                        notification=True,
                         epoch=int(timezone.now().timestamp()),
                     )
                     cycle_issue = CycleIssue.objects.filter(issue_id=issue.id).first()
@@ -867,6 +875,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                 issue_id=str(pk),
                 project_id=str(project_id),
                 current_instance=current_instance,
+                notification=True,
                 epoch=int(timezone.now().timestamp()),
             )
             cycle_issue = CycleIssue.objects.filter(issue_id=pk).first()

@@ -24,7 +24,7 @@ import lightIntakeAsset from "@/app/assets/empty-state/disabled-feature/intake-l
 // components
 import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-import { InboxIssueRoot } from "@/components/inbox";
+import { InboxIssueRoot } from "@/components/intake";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";

@@ -24,7 +24,7 @@ import { cn } from "@plane/utils";
 import RecurringWorkItemsUpgradeDark from "@/app/assets/empty-state/recurring-work-items/upgrade-dark.webp?url";
 import RecurringWorkItemsUpgradeLight from "@/app/assets/empty-state/recurring-work-items/upgrade-light.webp?url";
 // plane web imports
-import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace/upgrade-empty-state-button";
+import { UpgradeEmptyStateButton } from "@/components/workspace/upgrade-empty-state-button";
 
 export const RecurringWorkItemsUpgrade = observer(function RecurringWorkItemsUpgrade() {
   // router

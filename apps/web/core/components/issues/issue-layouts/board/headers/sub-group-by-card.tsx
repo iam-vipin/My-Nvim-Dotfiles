@@ -19,7 +19,7 @@ import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 // Plane
 import type { TIssueGroupByOptions, TIssueKanbanFilters } from "@plane/types";
 // Plane-web
-import { WorkFlowGroupTree } from "@/plane-web/components/workflow";
+import { WorkFlowGroupTree } from "@/components/workflow";
 // mobx
 
 interface IHeaderSubGroupByCard {

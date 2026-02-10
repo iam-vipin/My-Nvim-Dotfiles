@@ -806,6 +806,7 @@ export default {
     },
     comments: "댓글",
     updates: "업데이트",
+    additional_updates: "추가 업데이트",
     clear_all: "모두 지우기",
     copied: "복사됨!",
     link_copied: "링크 복사됨!",

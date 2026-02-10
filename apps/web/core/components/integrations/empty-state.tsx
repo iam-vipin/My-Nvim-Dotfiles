@@ -24,7 +24,7 @@ import integrationsCta1Light from "@/app/assets/upcoming-features/integrations-c
 import integrationsCta2Dark from "@/app/assets/upcoming-features/integrations-cta-2-dark.png?url";
 import integrationsCta2Light from "@/app/assets/upcoming-features/integrations-cta-2-light.png?url";
 // components
-import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace/upgrade-empty-state-button";
+import { UpgradeEmptyStateButton } from "@/components/workspace/upgrade-empty-state-button";
 
 export type IntegrationsEmptyStateProps = {
   theme: string;

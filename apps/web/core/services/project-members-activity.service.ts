@@ -12,7 +12,7 @@
  */
 
 import { API_BASE_URL } from "@plane/constants";
-import type { TProjectMemberActivity } from "@/plane-web/components/projects/members/siderbar/activity/helper";
+import type { TProjectMemberActivity } from "@/components/projects/settings/members/sidebar/activity/helper";
 import { APIService } from "@/services/api.service";
 
 export class ProjectMembersActivityService extends APIService {

@@ -36,6 +36,7 @@ import {
 } from "../../utils";
 import { setSelectedColumn } from "../plugins/selection-outline";
 import { ColumnOptionsDropdown } from "./drag-handle-dropdown";
+import { constructColumnDragPreview } from "../utils/drag-utils";
 
 const DROP_MARKER_THICKNESS = 4;
 
@@ -89,50 +90,9 @@ const copyComputedStyles = (sourceElement: Element, targetElement: Element): voi
 };
 
 const createDragPreview = (columnElement: HTMLElement | null, clientX: number, clientY: number): HTMLElement => {
-  const preview = document.createElement("div");
-  preview.style.cssText = `
-    position: fixed;
-    z-index: 10000;
-    pointer-events: none;
-    opacity: 0.9;
-    left: ${clientX + 10}px;
-    top: ${clientY + 10}px;
-  `;
-
-  if (columnElement) {
-    const cloned = columnElement.cloneNode(true) as HTMLElement;
-    const columnRect = columnElement.getBoundingClientRect();
-
-    // Copy computed styles to preserve appearance
-    copyComputedStyles(columnElement, cloned);
-
-    // Set exact dimensions from original element
-    const dimension = `${columnRect.width}px`;
-    const height = `${columnRect.height}px`;
-    Object.assign(cloned.style, {
-      width: dimension,
-      height,
-      minWidth: dimension,
-      minHeight: height,
-      maxWidth: dimension,
-      maxHeight: height,
-      // Override with drag-specific styling
-      boxShadow: "0 8px 32px rgba(0, 0, 0, 0.15)",
-      border: "2px solid var(--border-color-accent-strong)",
-      borderRadius: "0.375rem",
-      backgroundColor: "var(--background-color-surface-1)",
-      overflow: "hidden",
-      position: "static",
-      visibility: "visible",
-    });
-
-    // Remove interactive elements from preview
-    cloned.querySelectorAll(".column-drag-handle-container, .ProseMirror-widget").forEach((el) => el.remove());
-
-    preview.appendChild(cloned);
-  }
-
-  document.body.appendChild(preview);
+  const preview = constructColumnDragPreview(columnElement);
+  preview.style.left = `${clientX + 10}px`;
+  preview.style.top = `${clientY + 10}px`;
   return preview;
 };
 
@@ -301,8 +261,7 @@ export const ColumnDragHandle: React.FC<ColumnDragHandleProps> = ({ columnPos, e
         editor.view.dom.classList.remove("column-dragging");
 
         // Apply column swap if position changed
-        if (currentIndex !== dropIndex) {
-          hasDraggedRef.current = true;
+        if (currentIndex !== dropIndex && hasDraggedRef.current) {
           const tr = moveColumn(editor.state.tr, columnListInfo.pos, currentIndex, dropIndex, editor.state);
           editor.view.dispatch(tr);
         }

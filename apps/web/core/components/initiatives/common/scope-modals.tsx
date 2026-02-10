@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // hooks
-import { ProjectMultiSelectModal } from "@/components/project/multi-select-modal";
+import { ProjectMultiSelectModal } from "@/components/projects/modals/multi-select-modal";
 import { useProject } from "@/hooks/store/use-project";
 // plane web hooks
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";

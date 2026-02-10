@@ -24,7 +24,7 @@ import { cn } from "@plane/utils";
 import TemplatesUpgradeDark from "@/app/assets/empty-state/templates/upgrade-dark.webp?url";
 import TemplatesUpgradeLight from "@/app/assets/empty-state/templates/upgrade-light.webp?url";
 // plane web components
-import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace/upgrade-empty-state-button";
+import { UpgradeEmptyStateButton } from "@/components/workspace/upgrade-empty-state-button";
 
 type TTemplatesUpgradeProps = {
   flag: TSupportedFlagsForUpgrade;

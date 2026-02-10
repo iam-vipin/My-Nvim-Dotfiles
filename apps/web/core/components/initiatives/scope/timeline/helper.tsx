@@ -15,11 +15,13 @@ import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IBlockUpdateData, IBlockUpdateDependencyData, TIssue, TProject } from "@plane/types";
 import { EGanttBlockType, EIssuesStoreType } from "@plane/types";
+// components
+import { ProjectTimelineBlock } from "@/components/projects/list/with-grouping/layouts/timeline/blocks";
 import { WorkItemTimelineBlock } from "@/components/issues/issue-layouts/timeline/blocks";
+// hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
-import { ProjectTimelineBlock } from "@/plane-web/components/projects/layouts/timeline/blocks";
 
 export const useTimelineOperations = (workspaceSlug: string) => {
   const { updateProject } = useProject();

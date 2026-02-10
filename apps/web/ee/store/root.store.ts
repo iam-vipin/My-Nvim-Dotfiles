@@ -20,10 +20,6 @@ import type { IPublishPageStore } from "@/plane-web/store/pages/publish-page.sto
 import { PublishPageStore } from "@/plane-web/store/pages/publish-page.store";
 import type { IWorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store";
 import { WorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store";
-import type { ISelfHostedSubscriptionStore } from "@/plane-web/store/subscription/self-hosted-subscription.store";
-import { SelfHostedSubscriptionStore } from "@/plane-web/store/subscription/self-hosted-subscription.store";
-import type { IWorkspaceSubscriptionStore } from "@/plane-web/store/subscription/subscription.store";
-import { WorkspaceSubscriptionStore } from "@/plane-web/store/subscription/subscription.store";
 import { TimeLineStore } from "@/plane-web/store/timeline";
 import type { IProjectFilterStore, IWorkspaceProjectStatesStore } from "@/plane-web/store/workspace-project-states";
 import { ProjectFilterStore, WorkspaceProjectStatesStore } from "@/plane-web/store/workspace-project-states";
@@ -35,10 +31,6 @@ import { ThemeStore } from "./theme.store";
 // importers
 import type { IGlobalViewStore } from "./global-view.store";
 import { GlobalViewStore } from "./global-view.store";
-import type { IEpicAnalyticStore } from "./issue/epic/analytic.store";
-import { EpicAnalytics } from "./issue/epic/analytic.store";
-import type { IEpicBaseStore } from "./issue/epic/base.store";
-import { EpicBaseStore } from "./issue/epic/base.store";
 // timeline
 import type { IProjectInboxStore } from "./project-inbox.store";
 import { ProjectInboxStore } from "./project-inbox.store";
@@ -55,8 +47,6 @@ export class RootStore extends CoreRootStore {
   theme: IThemeStore;
   workspacePages: IWorkspacePageStore;
   publishPage: IPublishPageStore;
-  workspaceSubscription: IWorkspaceSubscriptionStore;
-  selfHostedSubscription: ISelfHostedSubscriptionStore;
   workspaceProjectStates: IWorkspaceProjectStatesStore;
   projectFilter: IProjectFilterStore;
   cycle: ICycleStore;
@@ -66,9 +56,6 @@ export class RootStore extends CoreRootStore {
   projectInbox: IProjectInboxStore;
   projectView: IProjectViewStore;
   globalView: IGlobalViewStore;
-  // epics
-  epicAnalytics: IEpicAnalyticStore;
-  epicBaseStore: IEpicBaseStore;
 
   constructor() {
     super();
@@ -76,8 +63,6 @@ export class RootStore extends CoreRootStore {
     this.theme = new ThemeStore();
     this.workspacePages = new WorkspacePageStore(this);
     this.publishPage = new PublishPageStore(this);
-    this.workspaceSubscription = new WorkspaceSubscriptionStore(this);
-    this.selfHostedSubscription = new SelfHostedSubscriptionStore(this);
     this.workspaceProjectStates = new WorkspaceProjectStatesStore(this);
     this.projectFilter = new ProjectFilterStore(this);
     this.cycle = new CycleStore(this);
@@ -89,9 +74,6 @@ export class RootStore extends CoreRootStore {
     // project view
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
-    // epics
-    this.epicAnalytics = new EpicAnalytics(this);
-    this.epicBaseStore = new EpicBaseStore(this);
   }
 
   resetOnSignOut() {
@@ -100,8 +82,6 @@ export class RootStore extends CoreRootStore {
     this.theme = new ThemeStore();
     this.workspacePages = new WorkspacePageStore(this);
     this.publishPage = new PublishPageStore(this);
-    this.workspaceSubscription = new WorkspaceSubscriptionStore(this);
-    this.selfHostedSubscription = new SelfHostedSubscriptionStore(this);
     this.workspaceProjectStates = new WorkspaceProjectStatesStore(this);
     this.projectFilter = new ProjectFilterStore(this);
     this.cycle = new CycleStore(this);
@@ -109,7 +89,5 @@ export class RootStore extends CoreRootStore {
     this.projectDetails = new ProjectStore(this);
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
-    // epics
-    this.epicAnalytics = new EpicAnalytics(this);
   }
 }

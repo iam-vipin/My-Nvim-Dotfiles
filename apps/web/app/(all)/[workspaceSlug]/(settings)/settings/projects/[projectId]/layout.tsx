@@ -21,7 +21,7 @@ import { ProjectSettingsSidebarRoot } from "@/components/settings/project/sideba
 // layouts
 import { ProjectAuthWrapper } from "@/layouts/auth-layout/project-wrapper";
 // plane web imports
-import { ProjectRightSidebar } from "@/plane-web/components/projects/right-sidebar";
+import { ProjectRightSidebar } from "@/components/projects/settings/right-sidebar";
 // types
 import type { Route } from "./+types/layout";
 

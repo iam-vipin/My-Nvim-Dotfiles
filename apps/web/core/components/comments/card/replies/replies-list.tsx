@@ -16,8 +16,6 @@ import { observer } from "mobx-react";
 import type { TCommentsOperations } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-// plane web imports
-import type { IIssueCommentStoreExtended } from "@/plane-web/store/issue/issue-details/comments/comment.store";
 // local imports
 import { ReplyCard } from "./reply-card";
 import { Button } from "@plane/propel/button";
@@ -37,7 +35,7 @@ export const RepliesList = observer(function RepliesList(props: TRepliesList) {
     props;
   // store hooks
   const { comment } = useIssueDetail();
-  const repliesStore = (comment as IIssueCommentStoreExtended).replies;
+  const repliesStore = comment.replies;
   // derived values
   const replyIds = repliesStore?.getReplyIdsByCommentId(commentId);
   const commentMap = repliesStore?.repliesMap.get(commentId);

@@ -27,7 +27,7 @@ const CreateUpdateWorkItemModal = lazy(() =>
   import("@/components/issues/issue-modal/root").then((module) => ({ default: module.CreateUpdateIssueModal }))
 );
 const CreateProjectModal = lazy(() =>
-  import("@/components/project/create-project-modal").then((module) => ({ default: module.CreateProjectModal }))
+  import("@/components/projects/modals/create-project-modal").then((module) => ({ default: module.CreateProjectModal }))
 );
 const CreateUpdateCustomerModal = lazy(() =>
   import("@/components/customers/customer-modal").then((module) => ({ default: module.CreateUpdateCustomerModal }))

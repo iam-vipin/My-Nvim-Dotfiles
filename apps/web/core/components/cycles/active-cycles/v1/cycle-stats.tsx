@@ -47,7 +47,7 @@ import useLocalStorage from "@/hooks/use-local-storage";
 // plane web components
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // store
-import type { ActiveCycleIssueDetails } from "@/store/issue/cycle";
+import type { ActiveCycleIssueDetails } from "@/store/work-items/cycle";
 
 export type ActiveCycleStatsProps = {
   workspaceSlug: string;

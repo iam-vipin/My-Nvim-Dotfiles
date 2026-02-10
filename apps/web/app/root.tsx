@@ -32,7 +32,7 @@ import type { Route } from "./+types/root";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 // plane web imports
-import { TrialBanner } from "@/plane-web/components/license/banner/trial-banner";
+import { TrialBanner } from "@/components/workspace/license/banner/trial-banner";
 // local
 import { CustomErrorComponent } from "./error";
 import { AppProvider } from "./provider";

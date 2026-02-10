@@ -18,7 +18,7 @@ import { computedFn } from "mobx-utils";
 import { E_SORT_ORDER } from "@plane/constants";
 import type { TLoader } from "@plane/types";
 // plane web imports
-import type { TWorkspaceMemberActivity } from "@/plane-web/components/workspace/members/sidebar/activity/helper";
+import type { TWorkspaceMemberActivity } from "@/components/workspace/settings/members/sidebar/activity/helper";
 // services
 import { WorkspaceMembersActivityService } from "@/services/workspace-members-activity.service";
 // store

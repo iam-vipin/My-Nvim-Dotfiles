@@ -23,7 +23,7 @@ import { useHome } from "@/hooks/store/use-home";
 import { useUserProfile, useUser } from "@/hooks/store/user";
 // plane web imports
 import { HomePeekOverviewsRoot } from "@/components/home/peek-overviews";
-import { TourRoot } from "@/plane-web/components/onboarding/tour/root";
+import { TourRoot } from "@/components/onboarding/tour/root";
 // local imports
 import { DashboardWidgets } from "./home-dashboard-widgets";
 import { UserGreetingsView } from "./user-greetings";

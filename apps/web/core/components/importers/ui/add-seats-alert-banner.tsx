@@ -19,7 +19,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane web imports
-import { AddSeatsModal } from "@/plane-web/components/workspace/billing/manage-seats/add-seats/modal";
+import { AddSeatsModal } from "@/components/workspace/settings/billing/manage-seats/add-seats/modal";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 type Props = {

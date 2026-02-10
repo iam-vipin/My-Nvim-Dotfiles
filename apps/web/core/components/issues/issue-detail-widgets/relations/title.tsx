@@ -21,7 +21,7 @@ import { CollapsibleButton } from "@plane/propel/collapsible";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // Plane-web
-import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
+import { useTimeLineRelationOptions } from "@/components/relations";
 // local imports
 import { RelationActionButton } from "./quick-action-button";
 

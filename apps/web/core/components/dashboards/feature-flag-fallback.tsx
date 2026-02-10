@@ -27,7 +27,7 @@ import ffInsideLight from "@/app/assets/empty-state/dashboards/feature-flag/insi
 import ffOutsideDark from "@/app/assets/empty-state/dashboards/feature-flag/outside-dark.webp?url";
 import ffOutsideLight from "@/app/assets/empty-state/dashboards/feature-flag/outside-light.webp?url";
 // plane web imports
-import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace/upgrade-empty-state-button";
+import { UpgradeEmptyStateButton } from "@/components/workspace/upgrade-empty-state-button";
 
 const CARDS_LIST = [
   {

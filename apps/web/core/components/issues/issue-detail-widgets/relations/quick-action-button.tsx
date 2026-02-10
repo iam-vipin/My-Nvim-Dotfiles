@@ -23,7 +23,7 @@ import { CustomMenu } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // Plane-web
-import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
+import { useTimeLineRelationOptions } from "@/components/relations";
 import type { TIssueRelationTypes } from "@/types";
 
 type Props = {

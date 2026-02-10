@@ -21,28 +21,26 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
+// components
+import { JoinButton } from "@/components/projects/common/join-button";
+import { Attributes } from "@/components/projects/list/with-grouping/layouts/attributes";
+import { QuickActions } from "@/components/projects/common/quick-actions";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { JoinButton } from "@/plane-web/components/projects/common/join-button";
-import { Attributes } from "@/plane-web/components/projects/layouts/attributes";
-import { QuickActions } from "@/plane-web/components/projects/quick-actions";
-// plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store";
-// plane web types
+// types
 import { EProjectScope } from "@/types/workspace-project-filters";
 
-// types
-interface TeamspaceProjectBlockProps {
+type TeamspaceProjectBlockProps = {
   projectId: string;
   isCurrentBlockDragging?: boolean;
   setIsCurrentBlockDragging?: React.Dispatch<React.SetStateAction<boolean>>;
   canDrag?: boolean;
   teamspaceId: string;
-}
+};
 
 export const TeamspaceProjectBlock = observer(function TeamspaceProjectBlock(props: TeamspaceProjectBlockProps) {
   const { projectId, isCurrentBlockDragging, canDrag, teamspaceId } = props;

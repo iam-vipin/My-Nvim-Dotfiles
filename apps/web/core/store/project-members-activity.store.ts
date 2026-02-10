@@ -17,7 +17,7 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import { E_SORT_ORDER } from "@plane/constants";
 import type { TLoader } from "@plane/types";
-import type { TProjectMemberActivity } from "@/plane-web/components/projects/members/siderbar/activity/helper";
+import type { TProjectMemberActivity } from "@/components/projects/settings/members/sidebar/activity/helper";
 // services
 import { ProjectMembersActivityService } from "@/services/project-members-activity.service";
 // store

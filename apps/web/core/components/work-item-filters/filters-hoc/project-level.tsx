@@ -16,6 +16,7 @@ import { isEqual, cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
+import { enrichRichFiltersWithEntityContext } from "@plane/shared-state";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IProjectView, TWorkItemFilterExpression } from "@plane/types";
 import { EIssuesStoreType, EUserProjectRoles, EViewAccess } from "@plane/types";
@@ -48,8 +49,16 @@ type TProjectLevelWorkItemFiltersHOCProps = TSharedWorkItemFiltersHOCProps & {
 export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWorkItemFiltersHOC(
   props: TProjectLevelWorkItemFiltersHOCProps
 ) {
-  const { children, enableSaveView, enableUpdateView, entityId, initialWorkItemFilters, projectId, workspaceSlug } =
-    props;
+  const {
+    children,
+    enableSaveView,
+    enableUpdateView,
+    entityId,
+    entityType,
+    initialWorkItemFilters,
+    projectId,
+    workspaceSlug,
+  } = props;
   // states
   const [isCreateViewModalOpen, setIsCreateViewModalOpen] = useState(false);
   const [createViewPayload, setCreateViewPayload] = useState<Partial<IProjectView> | null>(null);
@@ -165,13 +174,23 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
 
   const handleViewSave = useCallback(
     (expression: TWorkItemFilterExpression) => {
+      const filterPayload = getViewFilterPayload(expression);
+      const enrichedFilterPayload: Partial<IProjectView> = {
+        ...filterPayload,
+        rich_filters: enrichRichFiltersWithEntityContext({
+          richFilters: filterPayload.rich_filters,
+          entityType: entityType,
+          entityId: entityId,
+        }),
+      };
+
       setCreateViewPayload({
         ...getDefaultViewDetailPayload(),
-        ...getViewFilterPayload(expression),
+        ...enrichedFilterPayload,
       });
       setIsCreateViewModalOpen(true);
     },
-    [getDefaultViewDetailPayload, getViewFilterPayload]
+    [getDefaultViewDetailPayload, getViewFilterPayload, entityType, entityId]
   );
 
   const handleViewUpdate = useCallback(

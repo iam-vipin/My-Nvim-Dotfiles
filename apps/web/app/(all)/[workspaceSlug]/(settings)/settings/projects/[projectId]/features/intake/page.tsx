@@ -26,7 +26,7 @@ import { ProjectSettingsFeatureControlItem } from "@/components/settings/project
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { IntakeFeatureChildren } from "@/plane-web/components/projects/settings/intake/feature-children";
+import { IntakeFeatureChildren } from "@/components/projects/settings/intake/feature-children";
 // local imports
 import type { Route } from "./+types/page";
 import { FeaturesIntakeProjectSettingsHeader } from "./header";

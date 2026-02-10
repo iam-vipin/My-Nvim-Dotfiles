@@ -18,11 +18,12 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { EpicIcon, ProjectIcon } from "@plane/propel/icons";
 import { EGanttBlockType } from "@plane/types";
+// components
+import { ProjectTimelineSidebarBlock } from "@/components/projects/list/with-grouping/layouts/timeline/blocks";
 // hooks
 import { BLOCK_HEIGHT } from "@/components/timeline/constants";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
-//
-import { ProjectTimelineSidebarBlock } from "@/plane-web/components/projects/layouts/timeline/blocks";
+// local imports
 import { ListHeader } from "../../list/header";
 import { EpicSidebarBlock } from "./epic-block";
 

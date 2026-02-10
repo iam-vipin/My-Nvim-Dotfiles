@@ -332,8 +332,26 @@ class ColumnResizePluginView {
 
     this.detachDocumentListeners();
 
+    // Get the final column widths and commit to history
+    const leftColumnData = getNodeById(pluginState.leftColumnId, this.view.state.doc);
+    const rightColumnData = getNodeById(pluginState.rightColumnId, this.view.state.doc);
+
     const newState = this.getColumnHoverOrDefaultState(event);
-    this.view.dispatch(this.view.state.tr.setMeta(columnResizePluginKey, newState));
+    const tr = this.view.state.tr.setMeta(columnResizePluginKey, newState);
+
+    // Commit the final resize state to history (addToHistory defaults to true)
+    if (leftColumnData && rightColumnData) {
+      const leftWidth = leftColumnData.node.attrs[EColumnAttributeNames.WIDTH] as number;
+      const rightWidth = rightColumnData.node.attrs[EColumnAttributeNames.WIDTH] as number;
+
+      // Only add to history if widths actually changed from the start
+      if (leftWidth !== pluginState.startLeftWidth || rightWidth !== pluginState.startRightWidth) {
+        tr.setNodeAttribute(leftColumnData.posBeforeNode, EColumnAttributeNames.WIDTH, leftWidth);
+        tr.setNodeAttribute(rightColumnData.posBeforeNode, EColumnAttributeNames.WIDTH, rightWidth);
+      }
+    }
+
+    this.view.dispatch(tr);
   };
 
   destroy() {

@@ -36,7 +36,7 @@ import type { Relation } from "@/types";
 // local imports
 import { DependencyLineSVG } from "./dependency-line-svg";
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
-import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
+import { useTimeLineRelationOptions } from "@/components/relations";
 
 type IssueBlockProps = {
   blockId: string;

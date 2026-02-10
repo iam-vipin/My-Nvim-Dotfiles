@@ -827,6 +827,7 @@ export default {
     },
     comments: "Kommentare",
     updates: "Aktualisierungen",
+    additional_updates: "Zusätzliche Aktualisierungen",
     clear_all: "Alles löschen",
     copied: "Kopiert!",
     link_copied: "Link kopiert!",

@@ -20,7 +20,7 @@ import type { IState } from "@plane/types";
 import { PowerKModalCommandItem } from "@/components/power-k/ui/modal/command-item";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web imports
-import { WorkFlowDisabledMessage } from "@/plane-web/components/workflow/workflow-tree/workflow-disabled-message";
+import { WorkFlowDisabledMessage } from "@/components/workflow/workflow-tree/workflow-disabled-message";
 
 export type TPowerKProjectStatesMenuItemsProps = {
   handleSelect: (stateId: string) => void;

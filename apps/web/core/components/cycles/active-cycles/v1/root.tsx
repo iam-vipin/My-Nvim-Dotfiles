@@ -25,7 +25,7 @@ import { CyclesListItem } from "@/components/cycles/list/cycles-list-item";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 // store
-import type { ActiveCycleIssueDetails } from "@/store/issue/cycle/issue.store";
+import type { ActiveCycleIssueDetails } from "@/store/work-items/cycle/issue.store";
 // local imports
 import { ActiveCycleStats } from "./cycle-stats";
 import { ActiveCycleProductivity } from "./productivity";

@@ -17,20 +17,20 @@ import type { TIssueMap } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { StoreContext } from "@/lib/store-context";
 // plane web types
-import type { IProjectEpics, IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
+import type { IProjectEpics, IProjectEpicsFilter } from "@/store/work-items/epic";
 // types
-import type { ITeamIssues, ITeamIssuesFilter } from "@/plane-web/store/issue/team";
-import type { ITeamProjectWorkItemsFilter, ITeamProjectWorkItems } from "@/plane-web/store/issue/team-project";
-import type { ITeamViewIssues, ITeamViewIssuesFilter } from "@/plane-web/store/issue/team-views";
-import type { IWorkspaceIssues } from "@/plane-web/store/issue/workspace/issue.store";
-import type { IArchivedIssues, IArchivedIssuesFilter } from "@/store/issue/archived";
-import type { ICycleIssues, ICycleIssuesFilter } from "@/store/issue/cycle";
-import type { IModuleIssues, IModuleIssuesFilter } from "@/store/issue/module";
-import type { IProfileIssues, IProfileIssuesFilter } from "@/store/issue/profile";
-import type { IProjectIssues, IProjectIssuesFilter } from "@/store/issue/project";
-import type { IProjectViewIssues, IProjectViewIssuesFilter } from "@/store/issue/project-views";
-import type { IWorkspaceIssuesFilter } from "@/store/issue/workspace";
-import type { IWorkspaceDraftIssues, IWorkspaceDraftIssuesFilter } from "@/store/issue/workspace-draft";
+import type { ITeamIssues, ITeamIssuesFilter } from "@/store/work-items/team";
+import type { ITeamProjectWorkItemsFilter, ITeamProjectWorkItems } from "@/store/work-items/team-project";
+import type { ITeamViewIssues, ITeamViewIssuesFilter } from "@/store/work-items/team-views";
+import type { IWorkspaceIssues } from "@/store/work-items/workspace/issue.store";
+import type { IArchivedIssues, IArchivedIssuesFilter } from "@/store/work-items/archived";
+import type { ICycleIssues, ICycleIssuesFilter } from "@/store/work-items/cycle";
+import type { IModuleIssues, IModuleIssuesFilter } from "@/store/work-items/module";
+import type { IProfileIssues, IProfileIssuesFilter } from "@/store/work-items/profile";
+import type { IProjectIssues, IProjectIssuesFilter } from "@/store/work-items/project";
+import type { IProjectViewIssues, IProjectViewIssuesFilter } from "@/store/work-items/project-views";
+import type { IWorkspaceIssuesFilter } from "@/store/work-items/workspace";
+import type { IWorkspaceDraftIssues, IWorkspaceDraftIssuesFilter } from "@/store/work-items/workspace-draft";
 // constants
 
 type defaultIssueStore = {

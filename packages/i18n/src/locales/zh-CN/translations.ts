@@ -801,6 +801,7 @@ export default {
     },
     comments: "评论",
     updates: "更新",
+    additional_updates: "额外更新",
     clear_all: "清除全部",
     copied: "已复制！",
     link_copied: "链接已复制！",

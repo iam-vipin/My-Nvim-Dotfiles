@@ -34,11 +34,10 @@ export function findColumnList(
   pos: number
 ): { node: ProseMirrorNode; pos: number; depth: number } | null {
   const $pos = state.doc.resolve(pos);
-  const columnListType = ADDITIONAL_EXTENSIONS.COLUMN_LIST as string;
 
   for (let depth = $pos.depth; depth > 0; depth--) {
     const node = $pos.node(depth);
-    if (node.type.name === columnListType) {
+    if (node.type.name === ADDITIONAL_EXTENSIONS.COLUMN_LIST) {
       return {
         node,
         pos: $pos.before(depth),
@@ -59,11 +58,10 @@ export function findColumnAtPos(
   pos: number
 ): { node: ProseMirrorNode; pos: number; depth: number } | null {
   const $pos = state.doc.resolve(pos);
-  const columnType = ADDITIONAL_EXTENSIONS.COLUMN as string;
 
   // Check if node at position is a column
   const nodeAtPos = state.doc.nodeAt(pos);
-  if (nodeAtPos && nodeAtPos.type.name === columnType) {
+  if (nodeAtPos && nodeAtPos.type.name === ADDITIONAL_EXTENSIONS.COLUMN) {
     return {
       node: nodeAtPos,
       pos,
@@ -74,7 +72,7 @@ export function findColumnAtPos(
   // Search ancestors for column
   for (let depth = $pos.depth; depth > 0; depth--) {
     const node = $pos.node(depth);
-    if (node.type.name === columnType) {
+    if (node.type.name === ADDITIONAL_EXTENSIONS.COLUMN) {
       return {
         node,
         pos: $pos.before(depth),
@@ -92,29 +90,26 @@ export function findColumnAtPos(
  */
 export function getColumnListColumns(columnList: { node: ProseMirrorNode; pos: number }, editor: Editor): ColumnInfo[] {
   const columns: ColumnInfo[] = [];
-  const columnType = ADDITIONAL_EXTENSIONS.COLUMN as string;
   let currentPos = columnList.pos + 1;
   let leftPx = 0;
 
   columnList.node.forEach((child, _offset, idx) => {
-    if (child.type.name === columnType) {
-      const nodeDOM = editor.view.nodeDOM(currentPos);
+    const nodeDOM = editor.view.nodeDOM(currentPos);
 
-      if (nodeDOM instanceof HTMLElement) {
-        const rect = nodeDOM.getBoundingClientRect();
-        const columnListDOM = editor.view.nodeDOM(columnList.pos) as HTMLElement;
-        const gap = columnListDOM ? parseFloat(getComputedStyle(columnListDOM).gap || "0") : 0;
+    if (nodeDOM instanceof HTMLElement) {
+      const rect = nodeDOM.getBoundingClientRect();
+      const columnListDOM = editor.view.nodeDOM(columnList.pos) as HTMLElement;
+      const gap = columnListDOM ? parseFloat(getComputedStyle(columnListDOM).gap || "0") : 0;
 
-        columns.push({
-          node: child,
-          pos: currentPos,
-          index: idx,
-          left: leftPx,
-          width: rect.width,
-        });
+      columns.push({
+        node: child,
+        pos: currentPos,
+        index: idx,
+        left: leftPx,
+        width: rect.width,
+      });
 
-        leftPx += rect.width + gap;
-      }
+      leftPx += rect.width + gap;
     }
     currentPos += child.nodeSize;
   });
@@ -123,7 +118,8 @@ export function getColumnListColumns(columnList: { node: ProseMirrorNode; pos: n
 }
 
 /**
- * Swap two columns in a columnList by their indices
+ * Move a column from one index to another within a columnList
+ * Properly reorders (not swaps) the columns array
  * @returns Modified transaction
  */
 export function moveColumn(
@@ -139,30 +135,25 @@ export function moveColumn(
   }
 
   const columnList = state.doc.nodeAt(columnListPos);
-  const columnListType = ADDITIONAL_EXTENSIONS.COLUMN_LIST as string;
-  const columnType = ADDITIONAL_EXTENSIONS.COLUMN as string;
 
-  if (!columnList || columnList.type.name !== columnListType) {
+  if (!columnList || columnList.type.name !== ADDITIONAL_EXTENSIONS.COLUMN_LIST) {
     return tr;
   }
 
-  // Extract column nodes
+  // Extract column nodes (columnList can only have columns as children)
   const columns: ProseMirrorNode[] = [];
-  columnList.forEach((child) => {
-    if (child.type.name === columnType) {
-      columns.push(child);
-    }
-  });
+  columnList.forEach((child) => columns.push(child));
 
   // Validate indices
   if (fromIndex >= columns.length || toIndex >= columns.length) {
     return tr;
   }
 
-  // Swap columns
-  [columns[fromIndex], columns[toIndex]] = [columns[toIndex], columns[fromIndex]];
+  // Move column from fromIndex to toIndex (reorder, not swap)
+  const [movedColumn] = columns.splice(fromIndex, 1);
+  columns.splice(toIndex, 0, movedColumn);
 
-  // Create new columnList with swapped columns
+  // Create new columnList with reordered columns
   const newColumnList = columnList.type.create(columnList.attrs, columns, columnList.marks);
   tr.replaceWith(columnListPos, columnListPos + columnList.nodeSize, newColumnList);
 

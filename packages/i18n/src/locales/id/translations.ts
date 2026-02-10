@@ -817,6 +817,7 @@ export default {
     },
     comments: "Komentar",
     updates: "Pembaruan",
+    additional_updates: "Pembaruan tambahan",
     clear_all: "Hapus semua",
     copied: "Disalin!",
     link_copied: "Tautan disalin!",

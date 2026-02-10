@@ -20,7 +20,7 @@ import { SettingsControlItem } from "@/components/settings/control-item";
 // hooks
 import { useUserProfile } from "@/hooks/store/use-user-profile";
 // local imports
-import { ThemeSwitcher } from "ce/components/preferences/theme-switcher";
+import { ThemeSwitcher } from "./theme-switcher";
 
 export const ProfileSettingsDefaultPreferencesList = observer(function ProfileSettingsDefaultPreferencesList() {
   // store hooks

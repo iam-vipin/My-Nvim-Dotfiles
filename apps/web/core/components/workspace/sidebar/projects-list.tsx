@@ -28,7 +28,7 @@ import { Tooltip } from "@plane/propel/tooltip";
 import { Loader } from "@plane/ui";
 import { copyUrlToClipboard, cn, orderJoinedProjects } from "@plane/utils";
 // components
-import { CreateProjectModal } from "@/components/project/create-project-modal";
+import { CreateProjectModal } from "@/components/projects/modals/create-project-modal";
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";

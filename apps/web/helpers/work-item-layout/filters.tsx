@@ -22,7 +22,7 @@ import type {
   TIssueGroupByOptions,
 } from "@plane/types";
 // store
-import { DEFAULT_DISPLAY_PROPERTIES } from "@/store/issue/issue-details/sub_issues_filter.store";
+import { DEFAULT_DISPLAY_PROPERTIES } from "@/store/work-items/details/sub_issues_filter.store";
 // hooks
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 

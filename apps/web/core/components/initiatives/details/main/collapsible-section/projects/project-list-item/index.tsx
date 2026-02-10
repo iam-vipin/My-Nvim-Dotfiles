@@ -18,17 +18,18 @@ import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon } from "@plane/propel/icons";
 import { CircularProgressIndicator } from "@plane/ui";
 import { getProgress } from "@plane/utils";
+// components
+import { Attributes } from "@/components/projects/list/with-grouping/layouts/attributes";
+import { UpdateStatusIcons } from "@/components/updates/status-icons";
 // hooks
 import { ListItem } from "@/components/core/list";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web
-import { Attributes } from "@/plane-web/components/projects/layouts/attributes";
-// local components
-import { UpdateStatusIcons } from "@/components/updates/status-icons";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
+// types
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
+// local components
 import { QuickActions } from "./quick-actions";
 
 type Props = {

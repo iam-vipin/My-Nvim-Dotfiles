@@ -17,7 +17,7 @@ import { getValidKeysFromObject } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
-import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
+import { useTimeLineRelationOptions } from "@/components/relations";
 // local components
 import {
   CustomerActivity,

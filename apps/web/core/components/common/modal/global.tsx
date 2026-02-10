@@ -18,21 +18,21 @@ import { useSelfHostedSubscription, useWorkspaceSubscription } from "@/plane-web
 
 // Lazy load modal components
 const PaidPlanSuccessModal = lazy(() =>
-  import("@/plane-web/components/license").then((module) => ({ default: module.PaidPlanSuccessModal }))
+  import("@/components/workspace/license").then((module) => ({ default: module.PaidPlanSuccessModal }))
 );
 const PaidPlanUpgradeModal = lazy(() =>
-  import("@/plane-web/components/license").then((module) => ({ default: module.PaidPlanUpgradeModal }))
+  import("@/components/workspace/license").then((module) => ({ default: module.PaidPlanUpgradeModal }))
 );
 const SubscriptionActivationModal = lazy(() =>
-  import("@/plane-web/components/license/activation/modal").then((module) => ({
+  import("@/components/workspace/license/activation/modal").then((module) => ({
     default: module.SubscriptionActivationModal,
   }))
 );
 const AddSeatsModal = lazy(() =>
-  import("@/plane-web/components/workspace/billing/manage-seats").then((module) => ({ default: module.AddSeatsModal }))
+  import("@/components/workspace/settings/billing/manage-seats").then((module) => ({ default: module.AddSeatsModal }))
 );
 const RemoveUnusedSeatsModal = lazy(() =>
-  import("@/plane-web/components/workspace/billing/manage-seats").then((module) => ({
+  import("@/components/workspace/settings/billing/manage-seats").then((module) => ({
     default: module.RemoveUnusedSeatsModal,
   }))
 );

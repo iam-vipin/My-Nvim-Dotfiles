@@ -50,7 +50,7 @@ const getIsFlagged = (editor: {
   extensionManager: { extensions: Array<{ name: string; options?: MultiColumnExtensionOptions }> };
 }): boolean => {
   const multiColumnExt = editor.extensionManager.extensions.find(
-    (ext) => ext.name === (ADDITIONAL_EXTENSIONS.MULTI_COLUMN as string)
+    (ext) => ext.name === ADDITIONAL_EXTENSIONS.MULTI_COLUMN
   );
   return multiColumnExt?.options?.isFlagged ?? false;
 };
@@ -179,34 +179,27 @@ export const columnListCommands = (nodeType: NodeType): Partial<RawCommands> => 
       const columnListInfo = findColumnList(state, pos);
       if (!columnListInfo) return false;
 
-      // Count columns in the list
-      let columnCount = 0;
+      // Collect all columns (columnList can only have columns as children)
+      const columns: { node: typeof columnListInfo.node; pos: number }[] = [];
+      let currentPos = columnListInfo.pos + 1;
+
       columnListInfo.node.forEach((child) => {
-        if (child.type.name === (ADDITIONAL_EXTENSIONS.COLUMN as string)) {
-          columnCount++;
-        }
+        columns.push({ node: child, pos: currentPos });
+        currentPos += child.nodeSize;
       });
 
       // If only 2 columns remain, unwrap the remaining column
-      if (columnCount === 2) {
+      if (columns.length === 2) {
         if (dispatch) {
           // Find the remaining column content
-          let remainingColumnContent: typeof columnListInfo.node.content | null = null;
+          const remainingColumn = columns.find((col) => col.pos !== columnInfo.pos);
 
-          columnListInfo.node.forEach((child, offset) => {
-            const childPos = columnListInfo.pos + 1 + offset;
-            // If not the column being deleted, keep its content
-            if (childPos !== columnInfo.pos) {
-              remainingColumnContent = child.content;
-            }
-          });
-
-          if (remainingColumnContent) {
+          if (remainingColumn) {
             // Replace entire columnList with the remaining column's content
             tr.replaceWith(
               columnListInfo.pos,
               columnListInfo.pos + columnListInfo.node.nodeSize,
-              remainingColumnContent
+              remainingColumn.node.content
             );
           }
         }

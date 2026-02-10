@@ -814,6 +814,7 @@ export default {
     },
     comments: "Yorumlar",
     updates: "Güncellemeler",
+    additional_updates: "Ek güncellemeler",
     clear_all: "Tümünü temizle",
     copied: "Kopyalandı!",
     link_copied: "Bağlantı kopyalandı!",

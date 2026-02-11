@@ -327,8 +327,8 @@ export class ProjectMemberStore implements IProjectMemberStore {
    * @param data
    * @returns Promise<TProjectMembership[]>
    */
-  async bulkAddMembersToProject(workspaceSlug: string, projectId: string, data: IProjectBulkAddFormData) {
-    return await this.projectMemberService.bulkAddMembersToProject(workspaceSlug, projectId, data).then((response) => {
+  bulkAddMembersToProject = async (workspaceSlug: string, projectId: string, data: IProjectBulkAddFormData) =>
+    await this.projectMemberService.bulkAddMembersToProject(workspaceSlug, projectId, data).then((response) => {
       runInAction(() => {
         response.forEach((member) => {
           set(this.projectMemberMap, [projectId, member.member], {
@@ -347,7 +347,6 @@ export class ProjectMemberStore implements IProjectMemberStore {
       void this.mutateProjectMembersActivity(workspaceSlug, projectId);
       return response;
     });
-  }
 
   /**
    * @description Returns the highest role from the project and teamspace membership
@@ -372,7 +371,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
    * @param userId
    * @param data
    */
-  async updateMemberRole(workspaceSlug: string, projectId: string, userId: string, role: EUserProjectRoles) {
+  updateMemberRole = async (workspaceSlug: string, projectId: string, userId: string, role: EUserProjectRoles) => {
     const memberDetails = this.getProjectMemberDetails(userId, projectId);
     if (!memberDetails || !memberDetails?.id) throw new Error("Member not found");
     // original data to revert back in case of error
@@ -425,7 +424,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
       });
       throw error;
     }
-  }
+  };
 
   /**
    * @description Handles the removal of a member from a project
@@ -476,7 +475,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
    * @param projectId
    * @param userId
    */
-  async removeMemberFromProject(workspaceSlug: string, projectId: string, userId: string) {
+  removeMemberFromProject = async (workspaceSlug: string, projectId: string, userId: string) => {
     const memberDetails = this.getProjectMemberDetails(userId, projectId);
     if (!memberDetails || !memberDetails?.id) throw new Error("Member not found");
     await this.projectMemberService.deleteProjectMember(workspaceSlug, projectId, memberDetails?.id);
@@ -484,7 +483,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
       this.processMemberRemoval(projectId, userId);
     });
     void this.mutateProjectMembersActivity(workspaceSlug, projectId);
-  }
+  };
 
   /**
    * @description get project member preferences

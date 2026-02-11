@@ -1210,7 +1210,12 @@ async def execute_tools_for_build_mode(
                 content = str(response.content).strip()
                 # Strip delimiter - we only want the final answer part for persistence
                 if ANSWER_DELIMITER in content:
-                    content = content.split(ANSWER_DELIMITER, 1)[-1].strip()
+                    parts = content.split(ANSWER_DELIMITER, 1)
+                    answer_part = parts[-1].strip()
+                    if answer_part:
+                        content = answer_part
+                    else:
+                        content = parts[0].strip()
 
             if not content:
                 # Fallback if no content provided
@@ -1253,7 +1258,12 @@ async def execute_tools_for_build_mode(
             content = str(response.content).strip()
             # Strip delimiter - we only want the final answer part for persistence
             if ANSWER_DELIMITER in content:
-                content = content.split(ANSWER_DELIMITER, 1)[-1].strip()
+                parts = content.split(ANSWER_DELIMITER, 1)
+                answer_part = parts[-1].strip()
+                if answer_part:
+                    content = answer_part
+                else:
+                    content = parts[0].strip()
             final_response_content = content
 
         # Record tool executions in database

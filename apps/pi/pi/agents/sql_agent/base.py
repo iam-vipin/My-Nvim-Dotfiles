@@ -40,6 +40,7 @@ from pi.services.chat.helpers.flow_tracking import FlowStepCollector
 from pi.services.llm.cache_utils import create_claude_cached_system_message
 from pi.services.llm.cache_utils import should_enable_claude_caching
 from pi.services.llm.error_handling import llm_error_handler
+from pi.services.llm.llms import LazyLLM
 from pi.services.llm.llms import get_sql_agent_llm
 from pi.services.schemas.chat import QueryFlowStore
 
@@ -104,8 +105,10 @@ Message = Union[SystemMessage, HumanMessage, AIMessage]
 # LLM Configuration
 # Note: Create base models, but avoid setting tracking context on shared singletons.
 # Derive per-call instances below to prevent context collisions.
-table_selection_model = get_sql_agent_llm("table_selection")
-sql_generation_model = get_sql_agent_llm("sql_generation")
+# Wrapped in LazyLLM to defer creation until first use — prevents import-time crash
+# when no API keys are configured (e.g., custom-only deployments).
+table_selection_model = LazyLLM(lambda: get_sql_agent_llm("table_selection"))
+sql_generation_model = LazyLLM(lambda: get_sql_agent_llm("sql_generation"))
 
 
 # Log the default models being used
@@ -159,7 +162,7 @@ async def _perform_table_selection_llm_call(
 
         table_selection_model_instance = get_sql_agent_llm("table_selection", effective_model)
     else:
-        table_selection_model_instance = table_selection_model
+        table_selection_model_instance = table_selection_model  # type: ignore[assignment]
 
     # Set tracking context on the model
     table_selection_model_instance.set_tracking_context(message_id, db, MessageMetaStepType.SQL_TABLE_SELECTION, chat_id=chat_id)  # type: ignore[attr-defined]
@@ -224,11 +227,18 @@ async def select_relevant_tables(
     # Handle failure case
     if response == "TABLE_SELECTION_FAILURE":
         log.error("Table selection failed after all retries")
+
+        # Fallback to fast provider model for OpenAI/Anthropic deployments
         has_openai_key = bool(settings.llm_config.OPENAI_API_KEY and settings.llm_config.OPENAI_API_KEY.strip())
+        has_claude_key = bool(settings.llm_config.CLAUDE_API_KEY and settings.llm_config.CLAUDE_API_KEY.strip())
+
         if has_openai_key:
             fallback_model = settings.llm_config.PROVIDER_DEFAULT_MODELS_FAST.get("openai")
-        else:
+        elif has_claude_key:
             fallback_model = settings.llm_config.PROVIDER_DEFAULT_MODELS_FAST.get("anthropic")
+        else:
+            fallback_model = settings.llm_model.DEFAULT
+
         log.info(f"Attempting table selection fallback with {fallback_model} replacing {llm_model}")
         try:
             fallback_response = await _perform_table_selection_llm_call(langchain_messages, message_id, db, llm_model=fallback_model, chat_id=chat_id)
@@ -280,7 +290,7 @@ async def _perform_sql_generation_llm_call(
     if llm_model:
         per_call_sql_model = get_sql_agent_llm("sql_generation", llm_model)
     else:
-        per_call_sql_model = sql_generation_model
+        per_call_sql_model = sql_generation_model  # type: ignore[assignment]
     per_call_sql_model.set_tracking_context(message_id, db, MessageMetaStepType.SQL_GENERATION, chat_id=chat_id)  # type: ignore[attr-defined]
     return await per_call_sql_model.ainvoke(langchain_messages)
 

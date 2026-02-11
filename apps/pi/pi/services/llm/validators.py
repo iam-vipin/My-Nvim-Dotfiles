@@ -125,6 +125,28 @@ def validate_cohere_key(api_key: Optional[str] = None, base_url: Optional[str] =
         return False, f"Error validating Cohere key: {clean_msg}"
 
 
+def validate_custom_llm(api_key: Optional[str] = None, base_url: Optional[str] = None, model_key: Optional[str] = None) -> tuple[bool, str]:
+    """Validate custom self-hosted LLM connectivity."""
+
+    key = api_key or settings.llm_config.CUSTOM_LLM_API_KEY or "not-needed"
+    url = base_url or settings.llm_config.CUSTOM_LLM_BASE_URL
+    model = model_key or settings.llm_config.CUSTOM_LLM_MODEL_KEY
+
+    if not url:
+        return False, "CUSTOM_LLM_BASE_URL not configured"
+    if not model:
+        return False, "CUSTOM_LLM_MODEL_KEY not configured"
+
+    try:
+        config = LLMConfig(model=model, base_url=url, api_key=key, streaming=False, temperature=0.0)
+        llm = create_openai_llm(config, track_tokens=False)
+        llm.invoke("Hi")
+        return True, f"Valid custom LLM. Model: {model}, URL: {url}"
+    except Exception as e:
+        clean_msg = _extract_error_message(str(e))
+        return False, f"Custom LLM validation failed: {clean_msg}"
+
+
 def validate_embedding_model_id(model_id: Optional[str] = None) -> tuple[bool, str]:
     """Validate OpenSearch embedding model by generating embeddings via OpenSearch ML."""
 

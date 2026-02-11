@@ -17,6 +17,7 @@ from typing import Optional
 
 from pi import logger
 from pi import settings
+from pi.services.llm.llms import _is_custom_model
 
 log = logger.getChild(__name__)
 
@@ -43,6 +44,11 @@ class WebSearchService:
     async def search(self, query: str, *, workspace_in_context: bool, max_results: int = DEFAULT_MAX_RESULTS) -> Optional[WebSearchResult]:
         cleaned_query = (query or "").strip()
         if not cleaned_query:
+            return None
+
+        # Custom self-hosted models don't support built-in web search
+        if _is_custom_model(self.model):
+            log.info("Web search skipped: custom self-hosted model does not support web search")
             return None
 
         if _is_anthropic_model(self.model):

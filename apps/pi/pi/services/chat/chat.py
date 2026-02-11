@@ -70,7 +70,7 @@ PI_ACTION_EXECUTION = settings.feature_flags.PI_ACTION_EXECUTION
 
 
 class PlaneChatBot(ChatKit):
-    def __init__(self, llm: str = "gpt-4.1", token: str | None = None):
+    def __init__(self, llm: str = settings.llm_model.DEFAULT, token: str | None = None):
         """Initializes PlaneChatBot with specified LLM model."""
         super().__init__(switch_llm=llm, token=token)
         self.chat_title = None
@@ -763,12 +763,15 @@ class PlaneChatBot(ChatKit):
 
                 # Ensure we always have content to persist (prevent placeholder on refresh)
                 if not final_response or not final_response.strip():
-                    final_response = "I wasn't able to generate a complete response. Please try again."
+                    fallback_message = "I wasn't able to generate a complete response. But, if you are satisfied with the action plan, click `Confirm`, else please try again."  # noqa: E501
+                    final_response = fallback_message
                     log.warning(
                         f"ChatID: {chat_id} - Empty final_response detected. "
                         f"Chunks collected: {len(final_response_chunks)}, "
                         f"Using fallback message to prevent placeholder on refresh."
                     )
+                    # Yield the fallback message to prevent frontend hanging
+                    yield fallback_message
 
                 # Save assistant message with reasoning blocks (always persist to avoid placeholder)
                 assistant_message_result = await upsert_message(

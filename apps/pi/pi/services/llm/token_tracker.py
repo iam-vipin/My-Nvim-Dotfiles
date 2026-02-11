@@ -21,6 +21,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from pi import logger
 from pi import settings
 from pi.app.models.enums import MessageMetaStepType
+from pi.services.llm.llms import _is_custom_model
 from pi.services.retrievers.pg_store.message import upsert_message_meta
 from pi.services.retrievers.pg_store.model import get_llm_model_id_from_key
 from pi.services.retrievers.pg_store.model import get_llm_pricing
@@ -278,6 +279,9 @@ class TokenTracker:
             # Get LLM model ID
             llm_model_id = await get_llm_model_id_from_key(model_key, self.db)
             if not llm_model_id:
+                if _is_custom_model(model_key):
+                    log.warning(f"Custom model '{model_key}' not found in DB — run 'sync-llms'. Skipping tracking.")
+                    return {"message": "skipped", "reason": "custom model not synced"}
                 log.error(f"Could not find LLM model ID for key: {model_key}")
                 return {"message": "error", "error": f"LLM model not found: {model_key}"}
 
@@ -350,6 +354,9 @@ class TokenTracker:
             # Get LLM model ID
             llm_model_id = await get_llm_model_id_from_key(model_key, self.db)
             if not llm_model_id:
+                if _is_custom_model(model_key):
+                    log.warning(f"Custom model '{model_key}' not found in DB — run 'sync-llms'. Skipping entity tracking.")
+                    return {"success": True, "message": "skipped", "reason": "custom model not synced"}
                 log.error(f"Could not find LLM model ID for key: {model_key}")
                 return {"success": False, "error": f"LLM model not found: {model_key}"}
 

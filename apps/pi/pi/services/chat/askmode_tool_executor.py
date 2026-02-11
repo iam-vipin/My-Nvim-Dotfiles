@@ -362,6 +362,16 @@ async def execute_tools_for_ask_mode(
                         # Extract content from the accumulated message and emit as answer
                         if ai_message and hasattr(ai_message, "content") and ai_message.content:
                             content = str(ai_message.content).strip()
+                            # Handle case where delimiter exists but answer is empty (fallback to reasoning)
+                            ANSWER_DELIMITER = "ππANSWERππ"
+                            if ANSWER_DELIMITER in content:
+                                parts = content.split(ANSWER_DELIMITER, 1)
+                                answer_part = parts[-1].strip()
+                                if answer_part:
+                                    content = answer_part
+                                else:
+                                    content = parts[0].strip()
+
                             if content:
                                 answer_streaming_started = True
                                 final_answer_streamed = True
@@ -784,7 +794,12 @@ async def execute_tools_for_ask_mode(
                 final_content = extract_text_from_content(ai_message.content)
                 ANSWER_DELIMITER = "ππANSWERππ"
                 if ANSWER_DELIMITER in final_content:
-                    final_content = final_content.split(ANSWER_DELIMITER, 1)[-1].strip()
+                    parts = final_content.split(ANSWER_DELIMITER, 1)
+                    answer_part = parts[-1].strip()
+                    if answer_part:
+                        final_content = answer_part
+                    else:
+                        final_content = parts[0].strip()
                 if final_content:
                     async for chunk in stream_content_in_chunks(final_content):
                         yield chunk
@@ -817,7 +832,12 @@ async def execute_tools_for_ask_mode(
             # Strip content before delimiter (keep only answer part)
             ANSWER_DELIMITER = "ππANSWERππ"
             if ANSWER_DELIMITER in final_content:
-                final_content = final_content.split(ANSWER_DELIMITER, 1)[-1].strip()
+                parts = final_content.split(ANSWER_DELIMITER, 1)
+                answer_part = parts[-1].strip()
+                if answer_part:
+                    final_content = answer_part
+                else:
+                    final_content = parts[0].strip()
             log.info(f"ChatID: {chat_id} - Final response length: {len(final_content)} chars")
             # Stream the final answer in chunks to simulate streaming
             # Note: plane-attachment:// placeholders are replaced with presigned URLs in chat.py

@@ -30,6 +30,7 @@ from sqlalchemy import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
+from pi import settings
 from pi.app.api.dependencies import get_current_user
 from pi.app.api.dependencies import validate_plane_token
 from pi.app.api.v1.endpoints._sse import normalize_error_chunk
@@ -186,7 +187,7 @@ async def create_response_slack(data: ChatRequest, request: Request, db: AsyncSe
             )
 
         # Execute batch actions using the service
-        service = BuildModeToolExecutor(chatbot=PlaneChatBot("gpt-4.1"), db=db)
+        service = BuildModeToolExecutor(chatbot=PlaneChatBot(settings.llm_model.DEFAULT), db=db)
 
         result = await service.execute(
             ActionBatchExecutionRequest(

@@ -292,7 +292,9 @@ async def get_answer_for_silo_app(data: ChatRequest, request: Request, db: Async
         log.error(f"Error validating plane token: {e!s}")
         return JSONResponse(status_code=401, content={"detail": "Invalid Plane token"})
 
-    plane_apps_llm = "claude-sonnet-4-5"
+    # Use Claude if available, otherwise fall back to default model (e.g., custom LLM)
+    has_claude_key = bool(settings.llm_config.CLAUDE_API_KEY and settings.llm_config.CLAUDE_API_KEY.strip())
+    plane_apps_llm = "claude-sonnet-4-5" if has_claude_key else settings.llm_model.DEFAULT
     chatbot = PlaneChatBot(llm=plane_apps_llm, token=access_token)
 
     final_response = ""
@@ -451,7 +453,9 @@ async def get_answer_for_slack(data: ChatRequest, request: Request, db: AsyncSes
         log.error(f"Error validating plane token: {e!s}")
         return JSONResponse(status_code=401, content={"detail": "Invalid Plane token"})
 
-    slack_ai_llm = "claude-sonnet-4-5"
+    # Use Claude if available, otherwise fall back to default model (e.g., custom LLM)
+    has_claude_key = bool(settings.llm_config.CLAUDE_API_KEY and settings.llm_config.CLAUDE_API_KEY.strip())
+    slack_ai_llm = "claude-sonnet-4-5" if has_claude_key else settings.llm_model.DEFAULT
     chatbot = PlaneChatBot(llm=slack_ai_llm, token=access_token)
 
     final_response = ""
@@ -1230,7 +1234,7 @@ async def execute_action(request: ActionBatchExecutionRequest, db: AsyncSession 
 
         llm_model = await chosen_llm(db=db, message_id=request.message_id)
         # Use default model if none was found in the message
-        chatbot = PlaneChatBot(llm_model or "gpt-4.1")
+        chatbot = PlaneChatBot(llm_model or settings.llm_model.DEFAULT)
         build_mode_tool_executor = BuildModeToolExecutor(chatbot=chatbot, db=db)
         result = await build_mode_tool_executor.execute(request, user_id)
 

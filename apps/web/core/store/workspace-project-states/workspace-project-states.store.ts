@@ -20,8 +20,8 @@ import { WORKSPACE_PROJECT_STATE_GROUPS } from "@/constants/workspace-project-st
 import projectStateService from "@/services/workspace-project-states.service";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
-import type { IProjectState } from "@/plane-web/store/workspace-project-states";
-import { ProjectState } from "@/plane-web/store/workspace-project-states";
+import type { IProjectState } from "./project-state";
+import { ProjectState } from "./project-state";
 // plane web types
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import type {

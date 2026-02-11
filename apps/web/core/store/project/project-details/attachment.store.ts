@@ -18,7 +18,7 @@ import { v4 as uuidv4 } from "uuid";
 // services
 import { ProjectAttachmentService } from "@/services/project/project_attachment.service";
 import type { TProjectAttachment, TProjectAttachmentMap, TProjectAttachmentIdMap } from "@/types";
-import type { IProjectStore } from "../projects";
+import type { IProjectDetailsStore } from "./index";
 
 export type TAttachmentUploadStatus = {
   id: string;
@@ -53,11 +53,11 @@ export class ProjectAttachmentStore implements IProjectAttachmentStore {
   attachmentMap: TProjectAttachmentMap = {};
   attachmentsUploadStatusMap: Record<string, Record<string, TAttachmentUploadStatus>> = {};
   // root store
-  rootProjectStore: IProjectStore;
+  rootProjectStore: IProjectDetailsStore;
   // services
   projectAttachmentService: ProjectAttachmentService;
 
-  constructor(rootStore: IProjectStore) {
+  constructor(rootStore: IProjectDetailsStore) {
     makeObservable(this, {
       // observables
       attachments: observable,

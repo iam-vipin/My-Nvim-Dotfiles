@@ -16,8 +16,8 @@ import { action, computed, makeObservable, observable } from "mobx";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 // plane web store helpers
-import type { IProjectFilterHelper } from "@/plane-web/store/workspace-project-states/filters";
-import { ProjectFilterHelper } from "@/plane-web/store/workspace-project-states/filters";
+import type { IProjectFilterHelper } from "./helpers";
+import { ProjectFilterHelper } from "./helpers";
 // plane web types
 import type { TProject } from "@/types/projects";
 import type {

@@ -17,7 +17,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import type { TProjectLink, TProjectLinkMap, TProjectLinkIdMap } from "@plane/types";
 // types
 import { ProjectService } from "@/services/project/project.service";
-import type { IProjectStore } from "../projects";
+import type { IProjectDetailsStore } from "./index";
 
 export interface IProjectLinkStoreActions {
   addLinks: (projectId: string, links: TProjectLink[]) => void;
@@ -52,11 +52,11 @@ export class ProjectLinkStore implements IProjectLinkStore {
   linkData: TProjectLink | undefined = undefined;
   isLinkModalOpen = false;
   // root store
-  rootProjectDetailStore: IProjectStore;
+  rootProjectDetailStore: IProjectDetailsStore;
   // services
   projectService;
 
-  constructor(rootStore: IProjectStore) {
+  constructor(rootStore: IProjectDetailsStore) {
     makeObservable(this, {
       // observables
       links: observable,

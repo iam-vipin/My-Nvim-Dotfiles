@@ -60,8 +60,12 @@ import type { IWorkspaceNotificationStore } from "./notifications/workspace-noti
 import { WorkspaceNotificationStore } from "./notifications/workspace-notifications.store";
 import type { IProjectPageStore } from "./pages/project-page.store";
 import { ProjectPageStore } from "./pages/project-page.store";
+import type { IProjectFilterStore, IWorkspaceProjectStatesStore } from "./workspace-project-states";
+import { ProjectFilterStore, WorkspaceProjectStatesStore } from "./workspace-project-states";
 import type { IProjectRootStore } from "./project";
 import { ProjectRootStore } from "./project";
+import type { IProjectDetailsStore } from "./project/project-details";
+import { ProjectDetailsStore } from "./project/project-details";
 import type { IProjectViewStore } from "./project-view.store";
 import { ProjectViewStore } from "./project-view.store";
 import type { IRouterStore } from "./router.store";
@@ -187,7 +191,10 @@ enableStaticRendering(typeof window === "undefined");
 
 export class CoreRootStore {
   workspaceRoot: IWorkspaceRootStore;
+  workspaceProjectStates: IWorkspaceProjectStatesStore;
+  projectFilter: IProjectFilterStore;
   projectRoot: IProjectRootStore;
+  projectDetails: IProjectDetailsStore;
   memberRoot: IMemberRootStore;
   cycle: ICycleStore;
   cycleFilter: ICycleFilterStore;
@@ -268,7 +275,10 @@ export class CoreRootStore {
     this.user = new UserStore(this as unknown as RootStore);
     this.theme = new ThemeStore();
     this.workspaceRoot = new WorkspaceRootStore(this as unknown as RootStore);
+    this.workspaceProjectStates = new WorkspaceProjectStatesStore(this as unknown as RootStore);
+    this.projectFilter = new ProjectFilterStore(this as unknown as RootStore);
     this.projectRoot = new ProjectRootStore(this);
+    this.projectDetails = new ProjectDetailsStore(this as unknown as RootStore);
     this.memberRoot = new MemberRootStore(this as unknown as RootStore);
     this.cycle = new CycleStore(this);
     this.cycleFilter = new CycleFilterStore(this);
@@ -347,7 +357,10 @@ export class CoreRootStore {
     this.instance = new InstanceStore();
     this.user = new UserStore(this as unknown as RootStore);
     this.workspaceRoot = new WorkspaceRootStore(this as unknown as RootStore);
+    this.workspaceProjectStates = new WorkspaceProjectStatesStore(this as unknown as RootStore);
+    this.projectFilter = new ProjectFilterStore(this as unknown as RootStore);
     this.projectRoot = new ProjectRootStore(this);
+    this.projectDetails = new ProjectDetailsStore(this as unknown as RootStore);
     this.memberRoot = new MemberRootStore(this as unknown as RootStore);
     this.cycle = new CycleStore(this);
     this.cycleFilter = new CycleFilterStore(this);

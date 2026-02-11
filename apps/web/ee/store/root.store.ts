@@ -21,8 +21,6 @@ import { PublishPageStore } from "@/plane-web/store/pages/publish-page.store";
 import type { IWorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store";
 import { WorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store";
 import { TimeLineStore } from "@/plane-web/store/timeline";
-import type { IProjectFilterStore, IWorkspaceProjectStatesStore } from "@/plane-web/store/workspace-project-states";
-import { ProjectFilterStore, WorkspaceProjectStatesStore } from "@/plane-web/store/workspace-project-states";
 // store
 import { CoreRootStore } from "@/store/root.store";
 // theme
@@ -37,8 +35,6 @@ import { ProjectInboxStore } from "./project-inbox.store";
 // project view
 import type { IProjectViewStore } from "./project-view.store";
 import { ProjectViewStore } from "./project-view.store";
-import type { IProjectStore } from "./projects/projects";
-import { ProjectStore } from "./projects/projects";
 // timeline
 import type { ITimelineStore } from "./timeline";
 
@@ -47,11 +43,8 @@ export class RootStore extends CoreRootStore {
   theme: IThemeStore;
   workspacePages: IWorkspacePageStore;
   publishPage: IPublishPageStore;
-  workspaceProjectStates: IWorkspaceProjectStatesStore;
-  projectFilter: IProjectFilterStore;
   cycle: ICycleStore;
   timelineStore: ITimelineStore;
-  projectDetails: IProjectStore;
   workspaceNotification: IWorkspaceNotificationStore;
   projectInbox: IProjectInboxStore;
   projectView: IProjectViewStore;
@@ -63,11 +56,8 @@ export class RootStore extends CoreRootStore {
     this.theme = new ThemeStore();
     this.workspacePages = new WorkspacePageStore(this);
     this.publishPage = new PublishPageStore(this);
-    this.workspaceProjectStates = new WorkspaceProjectStatesStore(this);
-    this.projectFilter = new ProjectFilterStore(this);
     this.cycle = new CycleStore(this);
     this.timelineStore = new TimeLineStore(this);
-    this.projectDetails = new ProjectStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);
     this.projectInbox = new ProjectInboxStore(this);
     // project members activity
@@ -82,11 +72,8 @@ export class RootStore extends CoreRootStore {
     this.theme = new ThemeStore();
     this.workspacePages = new WorkspacePageStore(this);
     this.publishPage = new PublishPageStore(this);
-    this.workspaceProjectStates = new WorkspaceProjectStatesStore(this);
-    this.projectFilter = new ProjectFilterStore(this);
     this.cycle = new CycleStore(this);
     this.timelineStore = new TimeLineStore(this);
-    this.projectDetails = new ProjectStore(this);
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
   }

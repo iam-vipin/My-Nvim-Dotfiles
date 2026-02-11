@@ -24,16 +24,16 @@ import type {
   TProjectFeatures,
   TProjectFeaturesList,
 } from "@/types";
-import type { IProjectAttachmentStore } from "./project-details/attachment.store";
-import { ProjectAttachmentStore } from "./project-details/attachment.store";
-import type { IProjectLinkStore } from "./project-details/link.store";
-import { ProjectLinkStore } from "./project-details/link.store";
-import type { IProjectReactionStore } from "./project-details/project_reaction.store";
-import { ProjectReactionStore } from "./project-details/project_reaction.store";
-import type { IProjectUpdateStore } from "./project-details/updates.store";
-import { ProjectUpdateStore } from "./project-details/updates.store";
+import type { IProjectAttachmentStore } from "./attachment.store";
+import { ProjectAttachmentStore } from "./attachment.store";
+import type { IProjectLinkStore } from "./link.store";
+import { ProjectLinkStore } from "./link.store";
+import type { IProjectReactionStore } from "./project_reaction.store";
+import { ProjectReactionStore } from "./project_reaction.store";
+import type { IProjectUpdateStore } from "./updates.store";
+import { ProjectUpdateStore } from "./updates.store";
 
-export interface IProjectStore {
+export interface IProjectDetailsStore {
   reactionStore: IProjectReactionStore;
   attachmentStore: IProjectAttachmentStore;
   featuresLoader: boolean;
@@ -66,7 +66,7 @@ export interface IProjectStore {
   updatesStore: IProjectUpdateStore;
 }
 
-export class ProjectStore implements IProjectStore {
+export class ProjectDetailsStore implements IProjectDetailsStore {
   features: Record<string, TProjectFeatures> = {};
   featuresLoader: boolean = false;
   projectCreationLoader: boolean = false;

@@ -18,13 +18,11 @@ const viteEnv = Object.keys(process.env)
 const plugins = [reactRouter(), tsconfigPaths({ projects: [path.resolve(__dirname, "tsconfig.json")] })];
 
 if (process.env.SENTRY_AUTH_TOKEN) {
-  const release = process.env.VITE_APP_VERSION ?? "v26.01.01";
   plugins.push(
     sentryVitePlugin({
       authToken: process.env.SENTRY_AUTH_TOKEN,
       org: "plane-hq",
       project: "plane-web",
-      release: { name: release },
       sourcemaps: {
         filesToDeleteAfterUpload: ["build/client/**/*.map", "build/server/**/*.map"],
       },

@@ -38,8 +38,8 @@ export function JiraIcon({ color = "currentColor", ...rest }: ISvgIcons) {
           y2="7.32501"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.176" stop-color="#0052CC" />
-          <stop offset="1" stop-color="#2684FF" />
+          <stop offset="0.176" stopColor="#0052CC" />
+          <stop offset="1" stopColor="#2684FF" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_3387_49"
@@ -49,8 +49,8 @@ export function JiraIcon({ color = "currentColor", ...rest }: ISvgIcons) {
           y2="10.9715"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.176" stop-color="#0052CC" />
-          <stop offset="1" stop-color="#2684FF" />
+          <stop offset="0.176" stopColor="#0052CC" />
+          <stop offset="1" stopColor="#2684FF" />
         </linearGradient>
       </defs>
     </IconWrapper>

@@ -11,6 +11,7 @@
     "GITLAB_CLIENT_SECRET",
     "LOG_LEVEL",
     "NODE_ENV",
+    "VERCEL",
     "REQUEST_INTERVAL",
     "SENTRY_DSN",
     "SENTRY_ENVIRONMENT",
@@ -102,13 +103,12 @@
       "dependsOn": ["fix:format", "fix:lint"]
     },
     "fix:format": {
-      "inputs": ["$TURBO_DEFAULT$"],
-      "outputs": ["node_modules/.cache/prettier/**"]
+      "cache": false
     },
     "fix:lint": {
+      "cache": false,
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", "!**/*.md"],
-      "outputs": ["node_modules/.cache/eslint/**"]
+      "inputs": ["$TURBO_DEFAULT$", "!**/*.md"]
     },
     "start": {
       "cache": false,

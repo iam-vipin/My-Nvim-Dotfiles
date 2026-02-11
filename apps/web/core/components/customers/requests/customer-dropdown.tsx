@@ -11,9 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { CustomersIcon } from "@plane/propel/icons";
@@ -25,9 +24,7 @@ import { useDropdown } from "@/hooks/use-dropdown";
 import { useCustomers } from "@/plane-web/hooks/store";
 import { CustomerOptions } from "./customer-options";
 
-type TProps = {
-  value: any;
-  onChange: (value: string[] | string) => void;
+type TCommonProps = {
   tabIndex?: number;
   className?: string;
   customButtonClassName?: string;
@@ -35,20 +32,24 @@ type TProps = {
   maxHeight?: "sm" | "rg" | "md" | "lg" | undefined;
   disabled: boolean;
   customButton?: React.ReactNode;
-  multiple?: boolean;
 };
 
+type TSingleProps = TCommonProps & {
+  multiple?: false;
+  value: string | undefined;
+  onChange: (value: string) => void;
+};
+
+type TMultipleProps = TCommonProps & {
+  multiple: true;
+  value: string[];
+  onChange: (value: string[]) => void;
+};
+
+type TProps = TSingleProps | TMultipleProps;
+
 export const CustomerDropDown: FC<TProps> = observer(function CustomerDropDown(props: TProps) {
-  const {
-    value,
-    onChange,
-    tabIndex,
-    customButtonClassName,
-    className,
-    disabled,
-    customButton,
-    multiple = false,
-  } = props;
+  const { value, onChange, tabIndex, customButtonClassName, className, disabled, customButton } = props;
 
   const { t } = useTranslation();
 
@@ -71,11 +72,11 @@ export const CustomerDropDown: FC<TProps> = observer(function CustomerDropDown(p
 
   const dropdownOnChange = (val: string & string[]) => {
     onChange(val);
-    if (!multiple) handleClose();
+    if (!props.multiple) handleClose();
   };
 
   // Get display content for single select
-  const selectedCustomer = !multiple && value ? getCustomerById(value) : undefined;
+  const selectedCustomer = typeof value === "string" ? getCustomerById(value) : undefined;
 
   const comboButton = customButton ? (
     <button
@@ -127,7 +128,7 @@ export const CustomerDropDown: FC<TProps> = observer(function CustomerDropDown(p
       value={value}
       onChange={dropdownOnChange}
       disabled={disabled}
-      multiple={multiple}
+      multiple={!!props.multiple}
       onKeyDown={handleKeyDown}
       button={comboButton}
       className={cn("h-full", className)}

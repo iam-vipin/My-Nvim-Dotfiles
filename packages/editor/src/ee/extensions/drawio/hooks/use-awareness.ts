@@ -76,7 +76,7 @@ export const useDrawioAwareness = (editor: Editor, diagramId: string | null) => 
         const updateInfo: TDrawioUpdate = {
           diagramId,
           timestamp: Date.now(),
-          imageData, // Direct SVG data for instant updates
+          imageData, // Direct PNG data for instant updates
           imageSrc, // S3 URL for persistence
         };
 

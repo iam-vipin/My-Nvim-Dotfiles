@@ -23,15 +23,7 @@ const createDiagramFiles = (
   diagramId: string
 ): { imageFile: File; xmlFile: File } => {
   // Handle image file creation
-  let newImageFile: File;
-
-  if (imageFile.startsWith("data:image/svg+xml;base64,")) {
-    // It's a base64 data URL, convert it to File with error handling
-    newImageFile = base64ToFile(imageFile, `${diagramId}.svg`, "image/svg+xml");
-  } else {
-    // It's raw SVG content, create File directly
-    newImageFile = new File([imageFile], `${diagramId}.svg`, { type: "image/svg+xml" });
-  }
+  const newImageFile: File = base64ToFile(imageFile, `${diagramId}.png`, "image/png");
 
   // Create .drawio file for XML content
   const newXmlFile = new File([xmlContent], `${diagramId}.drawio`, { type: "application/xml" });
@@ -39,7 +31,7 @@ const createDiagramFiles = (
   return { imageFile: newImageFile, xmlFile: newXmlFile };
 };
 
-// Upload SVG and XML files separately
+// Upload PNG and XML files separately
 export const uploadDiagramFiles = async ({
   imageFile,
   xmlContent,

@@ -78,7 +78,7 @@ export const useDrawioMessageHandler = ({
 
           case "save":
             messageSender.sendToDrawio("export", {
-              format: "svg",
+              format: "png",
               spinKey: "saving",
             });
             break;

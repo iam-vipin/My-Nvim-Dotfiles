@@ -18,7 +18,7 @@ import type { TFileHandler } from "@/types";
 // Core Enums
 export enum EDrawioAttributeNames {
   ID = "id",
-  IMAGE_SRC = "data-image-src", // SVG file source/URL
+  IMAGE_SRC = "data-image-src", // PNG file source/URL
   XML_SRC = "data-xml-src", // XML .drawio file source/URL
   MODE = "data-mode", // Mode: "diagram" or "board"
   STATUS = "status", // Status: pending, uploading, uploaded, duplicating, duplication-failed
@@ -40,7 +40,7 @@ export enum EDrawioStatus {
 // Core Types with strict mapping
 export type TDrawioBlockAttributes = {
   [EDrawioAttributeNames.ID]: string | null;
-  [EDrawioAttributeNames.IMAGE_SRC]: string | null; // SVG file source/URL for display
+  [EDrawioAttributeNames.IMAGE_SRC]: string | null; // PNG file source/URL for display
   [EDrawioAttributeNames.XML_SRC]: string | null; // XML .drawio file source/URL for editing
   [EDrawioAttributeNames.MODE]: EDrawioMode; // Mode: diagram or board
   [EDrawioAttributeNames.STATUS]: EDrawioStatus; // Status: pending, uploading, uploaded, duplicating, duplication-failed

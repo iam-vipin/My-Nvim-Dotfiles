@@ -88,7 +88,7 @@ export const DrawioBlock = memo(function DrawioBlock(props: DrawioNodeViewProps)
       return;
     }
 
-    const getSvgSource = async () => {
+    const getImageSource = async () => {
       try {
         const url = await getDiagramSrc?.(imageSrc);
         setResolvedImageSrc(url);
@@ -100,7 +100,7 @@ export const DrawioBlock = memo(function DrawioBlock(props: DrawioNodeViewProps)
       }
     };
     setIsGettingImageSrc(true);
-    getSvgSource();
+    getImageSource();
 
     // Update status to UPLOADED if the diagram is uploaded and the status is PENDING
     if (status === EDrawioStatus.PENDING) {

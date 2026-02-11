@@ -11,7 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./common";
-export * from "./filter";
-export * from "./layout";
-export * from "./modal";
+import { useContext } from "react";
+// mobx store
+import { StoreContext } from "@/lib/store-context";
+import type { IEpicMetaStore } from "@/store/work-items/epic/meta.store";
+
+export const useEpicMeta = (): IEpicMetaStore => {
+  const context = useContext(StoreContext);
+  if (context === undefined) throw new Error("useEpicMeta must be used within StoreProvider");
+  return context.epicBaseStore.epicMetaStore;
+};

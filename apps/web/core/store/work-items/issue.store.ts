@@ -27,7 +27,7 @@ export type IIssueStore = {
   issuesMap: Record<string, TIssue>; // Record defines issue_id as key and TIssue as value
   issuesIdentifierMap: Record<string, string>; // Record defines issue_identifier as key and issue_id as value
   // actions
-  getIssues(workspaceSlug: string, projectId: string, issueIds: string[]): Promise<TIssue[]>;
+  fetchWorkItems(workspaceSlug: string, projectId: string, issueIds: string[]): Promise<TIssue[]>;
   addIssue(issues: TIssue[]): void;
   addIssueIdentifier(issueIdentifier: string, issueId: string): void;
   updateIssue(issueId: string, issue: Partial<TIssue>): void;
@@ -36,6 +36,7 @@ export type IIssueStore = {
   getIssueById(issueId: string): undefined | TIssue;
   getIssueIdByIdentifier(issueIdentifier: string): undefined | string;
   getIssuesByIds(issueIds: string[], type: "archived" | "un-archived"): TIssue[]; // Record defines issue_id as key and TIssue as value
+  getProjectEpicIds(projectId: string): string[];
 };
 
 export class IssueStore implements IIssueStore {
@@ -94,7 +95,7 @@ export class IssueStore implements IIssueStore {
     });
   };
 
-  getIssues = async (workspaceSlug: string, projectId: string, issueIds: string[]) => {
+  fetchWorkItems = async (workspaceSlug: string, projectId: string, issueIds: string[]) => {
     const issues = await this.issueService.retrieveIssues(workspaceSlug, projectId, issueIds);
 
     runInAction(() => {
@@ -173,5 +174,16 @@ export class IssueStore implements IIssueStore {
       }
     });
     return filteredIssues;
+  });
+
+  /**
+   * @description This method will return the epic ids for the project
+   * @param {string} projectId
+   * @returns {string[]}
+   */
+  getProjectEpicIds = computedFn((projectId: string) => {
+    return Object.values(this.issuesMap)
+      .filter((issue) => issue.project_id === projectId && issue.is_epic)
+      .map((issue) => issue.id);
   });
 }

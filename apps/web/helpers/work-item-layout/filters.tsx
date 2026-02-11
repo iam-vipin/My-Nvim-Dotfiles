@@ -24,6 +24,7 @@ import type {
 // store
 import { DEFAULT_DISPLAY_PROPERTIES } from "@/store/work-items/details/sub_issues_filter.store";
 // hooks
+import { useIssueTypes } from "@/plane-web/hooks/store/issue-types/use-issue-types";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 
 /**
@@ -67,6 +68,7 @@ export const useGroupByOptions = (
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { isMilestonesEnabled } = useMilestones();
+  const { isEpicEnabledForProject } = useIssueTypes();
 
   //derived values
   const groupByOptions = ISSUE_GROUP_BY_OPTIONS.filter((option) => options.includes(option.key));
@@ -74,9 +76,11 @@ export const useGroupByOptions = (
   if (!workspaceSlug || !projectId) return groupByOptions;
 
   const isMilestonesFeatureEnabled = isMilestonesEnabled(workspaceSlug.toString(), projectId.toString());
+  const isEpicFeatureEnabled = isEpicEnabledForProject(workspaceSlug.toString(), projectId.toString());
 
   const FEATURES_STATUS_MAP: Record<string, boolean> = {
     milestone: isMilestonesFeatureEnabled,
+    epic: isEpicFeatureEnabled,
   };
 
   // filter out options that are not enabled

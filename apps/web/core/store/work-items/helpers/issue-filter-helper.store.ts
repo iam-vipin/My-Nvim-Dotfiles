@@ -373,11 +373,14 @@ const getGroupBy = (groupBy: TIssueGroupByOptions | undefined) => {
   if (!workspaceSlug || !groupBy) return groupBy;
 
   const { isMilestonesEnabled } = store.milestone;
+  const { isEpicEnabledForProject } = store.issueTypes;
 
   const isMilestonesFeatureEnabled = projectId ? isMilestonesEnabled(workspaceSlug, projectId) : false;
+  const isEpicFeatureEnabled = projectId ? isEpicEnabledForProject(workspaceSlug, projectId) : false;
 
   const FEATURES_STATUS_MAP: Record<string, boolean> = {
     milestone: isMilestonesFeatureEnabled,
+    epic: isEpicFeatureEnabled,
   };
 
   if (Object.keys(FEATURES_STATUS_MAP).includes(groupBy)) {

@@ -13,7 +13,7 @@
 
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import type { EWorkItemConversionType, TEpicAnalytics, TEpicStats } from "@plane/types";
+import type { EWorkItemConversionType, TEpicAnalytics, TEpicMeta, TEpicStats } from "@plane/types";
 // helpers
 // services
 import { APIService } from "@/services/api.service";
@@ -48,6 +48,14 @@ export class EpicService extends APIService {
     sequence_id: string;
   }> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/epics/${epicId}/meta/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async listEpicsMeta(workspaceSlug: string, projectId: string): Promise<TEpicMeta[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/epics/meta/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

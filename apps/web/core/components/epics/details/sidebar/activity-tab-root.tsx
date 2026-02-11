@@ -15,7 +15,7 @@ import { observer } from "mobx-react";
 // plane package imports
 import {
   E_SORT_ORDER,
-  EActivityFilterTypeEE,
+  EActivityFilterType,
   filterActivityOnSelectedFilters,
   BASE_ACTIVITY_FILTER_TYPES,
 } from "@plane/constants";
@@ -59,7 +59,7 @@ export const EpicSidebarActivityRoot = observer(function EpicSidebarActivityRoot
 
   const filteredActivityComments = filterActivityOnSelectedFilters(activityComments ?? [], [
     ...BASE_ACTIVITY_FILTER_TYPES,
-    EActivityFilterTypeEE.ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY,
+    EActivityFilterType.ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY,
   ] as TActivityFilters[]);
 
   return (

@@ -37,6 +37,8 @@ from plane.db.models import (
     DEFAULT_STATES,
     Workspace,
     UserFavorite,
+    IssueType,
+    ProjectIssueType,
 )
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.api.views.base import BaseAPIView
@@ -237,6 +239,7 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
         Create a new project in the workspace with default states and member assignments.
         Automatically adds the creator as admin and sets up default workflow states.
         """
+
         try:
             workspace = Workspace.objects.get(slug=slug)
 
@@ -264,7 +267,50 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                         },
                         status=status.HTTP_409_CONFLICT,
                     )
+
                 serializer.save()
+
+                intake_view = request.data.get("intake_view", None)
+                is_issue_type_enabled = request.data.get("is_issue_type_enabled", False)
+
+                if intake_view:
+                    intake = Intake.objects.filter(project=serializer.instance.id, is_default=True).first()
+
+                    if not intake:
+                        Intake.objects.create(
+                            name=f"{serializer.instance.name} Intake",
+                            project_id=serializer.instance.id,
+                            is_default=True,
+                            workspace_id=serializer.instance.workspace.id,
+                        )
+
+                if is_issue_type_enabled:
+                    issue_type = IssueType.objects.filter(
+                        workspace_id=serializer.instance.workspace.id,
+                        project_issue_types__project_id__in=[serializer.instance.id],
+                        is_default=True,
+                    ).first()
+
+                    if not issue_type:
+                        # Create a new default issue type
+                        issue_type = IssueType.objects.create(
+                            workspace_id=serializer.instance.workspace.id,
+                            name="Task",
+                            is_default=True,
+                            description="Default work item type with the option to add new properties",
+                            logo_props={
+                                "in_use": "icon",
+                                "icon": {"color": "#ffffff", "background_color": "#6695FF"},
+                            },
+                        )
+
+                        ProjectIssueType.objects.create(
+                            issue_type_id=issue_type.id,
+                            is_default=True,
+                            project_id=serializer.instance.id,
+                            workspace_id=serializer.instance.workspace.id,
+                            level=0,
+                        )
 
                 # Add the user as Administrator to the project
                 _ = ProjectMember.objects.create(project_id=serializer.instance.id, member=request.user, role=20)
@@ -488,9 +534,11 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
                         },
                         status=status.HTTP_409_CONFLICT,
                     )
+
                 serializer.save()
                 if serializer.data["intake_view"]:
                     intake = Intake.objects.filter(project=project, is_default=True).first()
+
                     if not intake:
                         Intake.objects.create(
                             name=f"{project.name} Intake",

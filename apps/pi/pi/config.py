@@ -116,7 +116,32 @@ class VectorDB:
 
     # Model Configuration
     ML_MODEL_ID: str = os.getenv("OPENSEARCH_ML_MODEL_ID", "")
-    EMBEDDING_DIMENSION: int = get_env_int("OPENSEARCH_EMBEDDING_DIMENSION", "1536")
+    EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "cohere/embed-v4.0")
+
+    # EMBEDDING_DIMENSION: If explicitly set via env var, use that value.
+    # Otherwise, derive from the configured EMBEDDING_MODEL for consistency.
+    @property
+    def EMBEDDING_DIMENSION(self) -> int:
+        """
+        Get embedding dimension, preferring explicit env var, else deriving from model config.
+        """
+        # Check if explicitly overridden via environment variable
+        explicit_dim = os.getenv("OPENSEARCH_EMBEDDING_DIMENSION")
+        if explicit_dim:
+            try:
+                return int(explicit_dim)
+            except ValueError:
+                pass  # Fall through to model-based lookup
+
+        # Derive from configured embedding model
+        try:
+            from pi.core.embedding_config import get_embedding_model_config
+
+            config = get_embedding_model_config(self.EMBEDDING_MODEL)
+            return config["dimension"]
+        except (ImportError, ValueError):
+            # Fallback if import fails or model not found
+            return 1536
 
     @staticmethod
     def generate_index_name(suffix: str) -> str:
@@ -393,9 +418,10 @@ class Settings:
 
     # AWS Configuration for S3 attachments
     AWS_S3_BUCKET: str = os.getenv("AWS_S3_BUCKET", "")
-    AWS_S3_REGION: str = os.getenv("AWS_S3_REGION", "us-east-2")
+    AWS_S3_REGION: str = os.getenv("AWS_S3_REGION", "")
     AWS_ACCESS_KEY_ID: str = os.getenv("AWS_ACCESS_KEY_ID", "")
     AWS_SECRET_ACCESS_KEY: str = os.getenv("AWS_SECRET_ACCESS_KEY", "")
+    AWS_SESSION_TOKEN: str | None = os.getenv("AWS_SESSION_TOKEN")
     FILE_SIZE_LIMIT: int = 10485760  # 10MB
     AWS_S3_ENV: str = os.getenv("AWS_S3_ENV", "")
 

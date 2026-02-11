@@ -165,9 +165,9 @@ def validate_embedding_model_id(model_id: Optional[str] = None) -> tuple[bool, s
         if state.lower() != "deployed":
             return False, f"Embedding model exists but not deployed: {name} (ID: {ml_model_id}, state: {state})"
 
-        # Test actual embedding generation via OpenSearch ML model
+        # Test actual embedding generation via OpenSearch ML model using correct parameter format
         test_text = "Test document for validating embedding model"
-        test_response = vs.test_ml_model(model_id=ml_model_id, parameters={"texts": [test_text]})
+        test_response = vs.test_ml_model(model_id=ml_model_id, test_input=[test_text])
 
         # Extract embedding from response
         inference_results = test_response.get("inference_results", [])

@@ -15,6 +15,7 @@ python -m pi.manage <command> [options]
 ### Database Commands
 
 **Wait for database:**
+
 ```bash
 # Wait for database to be available (default timeout: 60s)
 python -m pi.manage wait-for-db
@@ -24,12 +25,14 @@ python -m pi.manage wait-for-db --timeout 120
 ```
 
 **Check migrations:**
+
 ```bash
 # Check for pending migrations (shows warning but continues)
 python -m pi.manage check-migrations
 ```
 
 **Apply migrations:**
+
 ```bash
 # Wait for database and apply all pending migrations
 python -m pi.manage wait-for-migrations
@@ -42,6 +45,7 @@ python -m pi.manage migrate --revision abc123
 ```
 
 **Create migrations:**
+
 ```bash
 # Auto-generate migration from model changes
 python -m pi.manage makemigrations
@@ -51,6 +55,7 @@ python -m pi.manage makemigrations --message "add_new_index"
 ```
 
 **Migration history:**
+
 ```bash
 # Show current database revision
 python -m pi.manage alembic-current
@@ -66,12 +71,14 @@ python -m pi.manage alembic-downgrade --revision abc123
 ```
 
 **Bootstrap database:**
+
 ```bash
 # Complete database setup: wait + migrate + sync LLMs + sync pricing
 python -m pi.manage bootstrap-db
 ```
 
 **Sync LLM data:**
+
 ```bash
 # Sync LLM models from fixtures
 python -m pi.manage sync-llms
@@ -85,6 +92,7 @@ python -m pi.manage sync-llm-pricing
 ### Embedding Model Commands
 
 **Check embedding model:**
+
 ```bash
 # Check if embedding model is configured and available
 python -m pi.manage check-embedding-model
@@ -94,6 +102,7 @@ python -m pi.manage check-embedding-model --model-name embed-v4.0
 ```
 
 **Initialize embedding model:**
+
 ```bash
 # Initialize embedding model (auto-creates if needed)
 # This runs automatically during migration
@@ -104,10 +113,21 @@ python -m pi.manage init-embedding-model --model-name embed-v4.0
 ```
 
 **Create embedding model manually:**
+
 ```bash
-# Manually setup embedding model (requires COHERE_API_KEY)
-# Use this for initial setup or to recreate the model
+# List available models
+python -m pi.manage create-embedding-model --list-models
+
+# Create with default model (from EMBEDDING_MODEL env var)
 python -m pi.manage create-embedding-model
+
+# Create with specific model
+python -m pi.manage create-embedding-model --model cohere/embed-v4.0
+python -m pi.manage create-embedding-model --model openai/text-embedding-3-small
+
+# Force recreation of model
+python -m pi.manage create-embedding-model --force
+python -m pi.manage create-embedding-model --model cohere/embed-v4.0 --force
 ```
 
 ---
@@ -130,6 +150,7 @@ python -m pi.manage init-vector-pipelines
 ```
 
 **Legacy pipeline command (deprecated):**
+
 ```bash
 # Create docs embedding pipeline (use create-vector-pipeline instead)
 python -m pi.manage create-docs-embed-pipeline
@@ -160,6 +181,7 @@ python -m pi.manage init-vector-indexes
 ### Celery Commands
 
 **Worker:**
+
 ```bash
 # Start Celery worker with defaults
 python -m pi.manage celery-worker
@@ -170,6 +192,7 @@ python -m pi.manage celery-worker -c 2 -Q celery -l info
 ```
 
 **Beat Scheduler:**
+
 ```bash
 # Start Celery beat scheduler
 python -m pi.manage celery-beat
@@ -180,6 +203,7 @@ python -m pi.manage celery-beat -l debug -s celerybeat-schedule
 ```
 
 **Flower (Monitoring):**
+
 ```bash
 # Start Flower monitoring interface (default: localhost:5555)
 python -m pi.manage celery-flower
@@ -190,6 +214,7 @@ python -m pi.manage celery-flower -p 8080 -a 127.0.0.1
 ```
 
 **Test:**
+
 ```bash
 # Test vector sync task manually
 python -m pi.manage test-vector-sync
@@ -200,6 +225,7 @@ python -m pi.manage test-vector-sync
 ### Vectorization Commands
 
 **Feed documentation:**
+
 ```bash
 # Feed all documentation from configured repositories
 # Fetches and indexes docs into vector database
@@ -209,6 +235,7 @@ python -m pi.manage feed-docs
 > **Note:** Incremental sync runs automatically via Celery beat (once per day).
 
 **Chat search index:**
+
 ```bash
 # Populate index for all workspaces
 python -m pi.manage vectorize-chat-messages-index
@@ -221,6 +248,7 @@ python -m pi.manage vectorize-chat-messages-index -w abc123 -b 100
 > **Note:** Tasks run in background. Check logs for progress.
 
 **Workspace vectorization:**
+
 ```bash
 # Vectorize multiple workspaces
 python -m pi.manage vectorize-workspace --workspace-ids abc123,def456
@@ -236,6 +264,7 @@ python -m pi.manage vectorize-workspace-progress abc123
 ```
 
 **Remove vector data:**
+
 ```bash
 # Remove from all entities (issues + pages)
 python -m pi.manage remove-vectorized-data --workspace-ids abc123,def456
@@ -252,6 +281,7 @@ python -m pi.manage remove-vectorized-data -w abc123,def456 -e pages
 ### LLM Commands
 
 **Add pricing:**
+
 ```bash
 # Add pricing for a model (at least one price must be provided)
 python -m pi.manage add-llm-pricing --model-key gpt-4o --text-input-price 2.50 --text-output-price 10.00
@@ -268,6 +298,7 @@ python -m pi.manage add-llm-pricing -m claude-3 --inp 3.00 --cached 1.50
 ### Validation Commands
 
 **Validate LLM API keys:**
+
 ```bash
 # Validate OpenAI API key
 python -m pi.manage validate-llm-key --provider openai
@@ -285,6 +316,7 @@ python -m pi.manage validate-llm-key --provider cohere
 ```
 
 **Validate embedding model:**
+
 ```bash
 # Validate embedding model ID configuration
 # Checks OPENSEARCH_ML_MODEL_ID env var or database
@@ -296,12 +328,14 @@ python -m pi.manage validate-embedding-model
 ### Server Commands
 
 **Run server:**
+
 ```bash
 # Start FastAPI development server
 python -m pi.manage runserver
 ```
 
 **Legacy command (deprecated):**
+
 ```bash
 # Start with database wait + migration (use separate commands instead)
 python -m pi.manage start-application
@@ -314,6 +348,7 @@ python -m pi.manage start-application
 ### Initial Setup (Development)
 
 **Complete setup:**
+
 ```bash
 # 1. Wait for database
 python -m pi.manage wait-for-db
@@ -339,6 +374,7 @@ python -m pi.manage feed-docs
 ```
 
 **Or use the bootstrap command:**
+
 ```bash
 # Complete bootstrap (steps 1-3 above)
 python -m pi.manage bootstrap-db
@@ -361,6 +397,7 @@ python -m pi.manage feed-docs
 The deployment uses separate entrypoint scripts for different containers:
 
 **Migrator container** (runs once on deployment):
+
 ```bash
 # Automatically runs:
 python -m pi.manage bootstrap-db
@@ -370,6 +407,7 @@ python -m pi.manage init-vector-indexes
 ```
 
 **API container** (long-running service):
+
 ```bash
 # Automatically runs:
 python -m pi.manage wait-for-db
@@ -378,11 +416,13 @@ python -m pi.manage runserver
 ```
 
 **Celery worker container** (background tasks):
+
 ```bash
 python -m pi.manage celery-worker --concurrency 2
 ```
 
 **Celery beat container** (scheduled tasks):
+
 ```bash
 python -m pi.manage celery-beat
 ```
@@ -392,6 +432,7 @@ python -m pi.manage celery-beat
 ### Daily Operations
 
 **Running background services:**
+
 ```bash
 # Start Celery worker (in one terminal)
 python -m pi.manage celery-worker --concurrency 2
@@ -404,6 +445,7 @@ python -m pi.manage celery-flower
 ```
 
 **Manual operations:**
+
 ```bash
 # Feed documentation (force full re-index)
 python -m pi.manage feed-docs
@@ -423,6 +465,7 @@ python -m pi.manage vectorize-job-status <job_id>
 ### OpenSearch Setup Workflow
 
 **Method 1: Using init commands (recommended for production)**
+
 ```bash
 # 1. Initialize embedding model (auto-creates or uses existing)
 python -m pi.manage init-embedding-model
@@ -438,6 +481,7 @@ python -m pi.manage feed-docs
 ```
 
 **Method 2: Manual setup (recommended for development)**
+
 ```bash
 # 1. Create embedding model from scratch (requires COHERE_API_KEY)
 python -m pi.manage create-embedding-model
@@ -454,6 +498,7 @@ python -m pi.manage feed-docs
 ```
 
 **Method 3: Individual index initialization**
+
 ```bash
 # Initialize each index separately (creates pipelines as needed)
 python -m pi.manage init-opensearch-index --index-name docs_semantic
@@ -469,16 +514,16 @@ python -m pi.manage feed-docs
 
 Commands are organized in separate modules by functionality:
 
-| Module | Description | Key Commands |
-|--------|-------------|--------------|
-| `database.py` | Database and migration commands | `wait-for-db`, `migrate`, `bootstrap-db`, `check-migrations`, `makemigrations`, `alembic-current`, `alembic-history`, `alembic-downgrade` |
-| `embedding.py` | OpenSearch embedding model setup commands | `check-embedding-model`, `init-embedding-model`, `create-embedding-model` |
-| `vdb.py` | Vector database index and pipeline setup commands | `create-vector-pipeline`, `check-vector-pipeline`, `init-vector-pipelines`, `create-opensearch-index`, `check-opensearch-index`, `init-opensearch-index`, `init-vector-indexes`, `create-docs-embed-pipeline` (legacy) |
-| `celery.py` | Celery worker and scheduler commands | `celery-worker`, `celery-beat`, `celery-flower`, `test-vector-sync` |
-| `vectorization.py` | Vectorization and data feed commands | `feed-docs`, `vectorize-chat-messages-index`, `vectorize-workspace`, `remove-vectorized-data`, `vectorize-job-status`, `vectorize-workspace-progress` |
-| `llm.py` | LLM model pricing and fixture sync commands | `add-llm-pricing`, `sync-llms`, `sync-llm-pricing` |
-| `validation.py` | API key and model validation commands | `validate-llm-key`, `validate-embedding-model` |
-| `server.py` | Server commands | `runserver`, `start-application` (deprecated) |
+| Module             | Description                                       | Key Commands                                                                                                                                                                                                           |
+| ------------------ | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `database.py`      | Database and migration commands                   | `wait-for-db`, `migrate`, `bootstrap-db`, `check-migrations`, `makemigrations`, `alembic-current`, `alembic-history`, `alembic-downgrade`                                                                              |
+| `embedding.py`     | OpenSearch embedding model setup commands         | `check-embedding-model`, `init-embedding-model`, `create-embedding-model`                                                                                                                                              |
+| `vdb.py`           | Vector database index and pipeline setup commands | `create-vector-pipeline`, `check-vector-pipeline`, `init-vector-pipelines`, `create-opensearch-index`, `check-opensearch-index`, `init-opensearch-index`, `init-vector-indexes`, `create-docs-embed-pipeline` (legacy) |
+| `celery.py`        | Celery worker and scheduler commands              | `celery-worker`, `celery-beat`, `celery-flower`, `test-vector-sync`                                                                                                                                                    |
+| `vectorization.py` | Vectorization and data feed commands              | `feed-docs`, `vectorize-chat-messages-index`, `vectorize-workspace`, `remove-vectorized-data`, `vectorize-job-status`, `vectorize-workspace-progress`                                                                  |
+| `llm.py`           | LLM model pricing and fixture sync commands       | `add-llm-pricing`, `sync-llms`, `sync-llm-pricing`                                                                                                                                                                     |
+| `validation.py`    | API key and model validation commands             | `validate-llm-key`, `validate-embedding-model`                                                                                                                                                                         |
+| `server.py`        | Server commands                                   | `runserver`, `start-application` (deprecated)                                                                                                                                                                          |
 
 ---
 
@@ -534,16 +579,19 @@ Here's a complete list of all available commands organized alphabetically:
 ## Getting Help
 
 **View all available commands:**
+
 ```bash
 python -m pi.manage --help
 ```
 
 **Get help for a specific command:**
+
 ```bash
 python -m pi.manage <command> --help
 ```
 
 **Examples:**
+
 ```bash
 python -m pi.manage vectorize-workspace --help
 python -m pi.manage create-embedding-model --help
@@ -676,4 +724,3 @@ python -m pi.manage validate-embedding-model
 ```
 
 ---
-

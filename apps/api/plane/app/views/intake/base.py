@@ -34,7 +34,6 @@ from plane.db.models import (
     IntakeIssue,
     Issue,
     State,
-    StateGroup,
     IssueLink,
     FileAsset,
     Project,

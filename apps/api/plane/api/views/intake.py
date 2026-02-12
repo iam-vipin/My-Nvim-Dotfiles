@@ -41,7 +41,6 @@ from plane.db.models import (
     Project,
     ProjectMember,
     State,
-    StateGroup,
     IssueType,
 )
 from plane.utils.host import base_host

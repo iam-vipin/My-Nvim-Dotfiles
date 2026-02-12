@@ -16,7 +16,7 @@ from asgiref.sync import sync_to_async
 from strawberry.exceptions import GraphQLError
 
 # Module Imports
-from plane.db.models import State, StateGroup
+from plane.db.models import State
 from plane.graphql.types.state import StateType
 
 

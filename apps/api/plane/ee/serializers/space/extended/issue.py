@@ -13,14 +13,7 @@
 from django.db import IntegrityError
 
 # Module imports
-from plane.db.models import (
-    Issue,
-    IssueAssignee,
-    IssueLabel,
-    IssueType,
-    State,
-    StateGroup,
-)
+from plane.db.models import Issue, IssueAssignee, IssueLabel, IssueType, State
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.ee.models import IntakeResponsibility, IntakeResponsibilityTypeChoices

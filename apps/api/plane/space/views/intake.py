@@ -23,7 +23,7 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseViewSet
-from plane.db.models import IntakeIssue, Issue, IssueLink, FileAsset, DeployBoard, IssueType, State, StateGroup
+from plane.db.models import IntakeIssue, Issue, IssueLink, FileAsset, DeployBoard, IssueType, State
 from plane.app.serializers import (
     IssueSerializer,
     IntakeIssueSerializer,

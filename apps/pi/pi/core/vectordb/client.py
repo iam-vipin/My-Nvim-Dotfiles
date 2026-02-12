@@ -23,6 +23,7 @@ from opensearchpy._async.client import AsyncOpenSearch
 
 from pi import logger
 from pi import settings
+from pi.core.embedding_config import get_embedding_param_from_active_model
 from pi.core.vectordb.utils import build_issue_semantic_query
 from pi.core.vectordb.utils import build_issue_text_search_query
 from pi.core.vectordb.utils import build_pages_semantic_query
@@ -789,15 +790,22 @@ class VectorStore:
         """
         return self.os.transport.perform_request("GET", f"/_plugins/_ml/models/{model_id}")
 
-    def test_ml_model(self, model_id: str, parameters: dict) -> dict:
+    def test_ml_model(self, model_id: str, test_input: list[str] | None = None) -> dict:
         """
-        Test inference with an ML model.
+        Test inference with an ML model using the correct parameter format.
 
         Args:
             model_id: OpenSearch ML model ID
-            parameters: Test parameters (e.g., {"texts": ["hello world"]})
+            test_input: Optional test input texts. If not provided, uses a default test string.
 
         Returns:
             dict: Inference response
         """
-        return self.os.transport.perform_request("POST", f"/_plugins/_ml/models/{model_id}/_predict", body={"parameters": parameters})
+
+        # Get the correct parameter name for the active model
+        param_name = get_embedding_param_from_active_model()
+
+        # Use provided test input or default
+        texts = test_input if test_input is not None else ["Test embedding generation"]
+
+        return self.os.transport.perform_request("POST", f"/_plugins/_ml/models/{model_id}/_predict", body={"parameters": {param_name: texts}})

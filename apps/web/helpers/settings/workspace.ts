@@ -26,6 +26,7 @@ export const shouldRenderSettingLink: TRenderSettingsLink = (workspaceSlug, sett
     E_FEATURE_FLAGS.WORKSPACE_API_TOKEN,
     false
   );
+  const isPlaneRunnerEnabled = store.featureFlags.getFeatureFlag(workspaceSlug, E_FEATURE_FLAGS.PLANE_RUNNER, false);
   // Cloud SSO is enabled if the instance is not self-managed (i.e cloud only)
   const isCloudSSOEnabled = store.instance.config?.is_self_managed === false ? true : false;
   switch (settingKey) {
@@ -35,6 +36,8 @@ export const shouldRenderSettingLink: TRenderSettingsLink = (workspaceSlug, sett
       return isCloudSSOEnabled;
     case "access-tokens":
       return isWorkspaceAccessTokensEnables;
+    case "scripts":
+      return isPlaneRunnerEnabled;
     default:
       return true;
   }

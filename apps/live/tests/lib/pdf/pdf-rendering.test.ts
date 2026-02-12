@@ -802,6 +802,110 @@ describe("PDF Rendering Integration", () => {
       expect(text).toContain("Level 2");
       expect(text).toContain("Level 3");
     });
+
+    it("should render nested list followed by top-level list item without extra spacing", async () => {
+      const doc: TipTapDocument = {
+        type: "doc",
+        content: [
+          {
+            type: "bulletList",
+            content: [
+              {
+                type: "listItem",
+                content: [
+                  {
+                    type: "paragraph",
+                    content: [{ type: "text", text: "First top-level item" }],
+                  },
+                  {
+                    type: "bulletList",
+                    content: [
+                      {
+                        type: "listItem",
+                        content: [
+                          {
+                            type: "paragraph",
+                            content: [{ type: "text", text: "Nested sub-item" }],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                type: "listItem",
+                content: [
+                  {
+                    type: "paragraph",
+                    content: [{ type: "text", text: "Second top-level item" }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+
+      const buffer = await renderPlaneDocToPdfBuffer(doc);
+      const text = await extractPdfText(buffer);
+
+      expect(text).toContain("First top-level item");
+      expect(text).toContain("Nested sub-item");
+      expect(text).toContain("Second top-level item");
+    });
+
+    it("should render ordered nested list followed by ordered top-level list item", async () => {
+      const doc: TipTapDocument = {
+        type: "doc",
+        content: [
+          {
+            type: "orderedList",
+            content: [
+              {
+                type: "listItem",
+                content: [
+                  {
+                    type: "paragraph",
+                    content: [{ type: "text", text: "Main step 1" }],
+                  },
+                  {
+                    type: "orderedList",
+                    content: [
+                      {
+                        type: "listItem",
+                        content: [
+                          {
+                            type: "paragraph",
+                            content: [{ type: "text", text: "Detailed step 1.1" }],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                type: "listItem",
+                content: [
+                  {
+                    type: "paragraph",
+                    content: [{ type: "text", text: "Main step 2" }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+
+      const buffer = await renderPlaneDocToPdfBuffer(doc);
+      const text = await extractPdfText(buffer);
+
+      expect(text).toContain("Main step 1");
+      expect(text).toContain("Detailed step 1.1");
+      expect(text).toContain("Main step 2");
+    });
   });
 
   describe("noAssets option", () => {

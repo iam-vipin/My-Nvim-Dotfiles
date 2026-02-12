@@ -33,7 +33,9 @@ export type HorizontalStackAssetType =
   | "update"
   | "webhook"
   | "work-item"
-  | "worklog";
+  | "worklog"
+  | "runner-scripts"
+  | "runner-functions";
 
 // Vertical Stack Asset Types
 export type VerticalStackAssetType =

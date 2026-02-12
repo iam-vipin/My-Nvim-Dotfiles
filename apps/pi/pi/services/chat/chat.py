@@ -12,8 +12,8 @@
 import asyncio
 import json
 import uuid
-from collections.abc import AsyncIterator
 from typing import Any
+from typing import AsyncGenerator
 from typing import Dict
 from typing import List
 from typing import Literal
@@ -70,7 +70,7 @@ PI_ACTION_EXECUTION = settings.feature_flags.PI_ACTION_EXECUTION
 
 
 class PlaneChatBot(ChatKit):
-    def __init__(self, llm: str = "gpt-4.1", token: str | None = None):
+    def __init__(self, llm: str = settings.llm_model.DEFAULT, token: str | None = None):
         """Initializes PlaneChatBot with specified LLM model."""
         super().__init__(switch_llm=llm, token=token)
         self.chat_title = None
@@ -194,7 +194,7 @@ class PlaneChatBot(ChatKit):
         sidebar_open_url=None,
         source=None,
         websearch_enabled: bool = False,
-    ) -> AsyncIterator[Union[str, Dict[str, Any]]]:
+    ) -> AsyncGenerator[Union[str, Dict[str, Any]], None]:
         """Execute tools for build mode"""
         async for chunk in action_planner.execute_tools_for_build_mode(
             self,
@@ -240,7 +240,7 @@ class PlaneChatBot(ChatKit):
         reasoning_container=None,
         websearch_enabled: bool = False,
         web_search_context: str | None = None,
-    ) -> AsyncIterator[Union[str, Dict[str, Any]]]:
+    ) -> AsyncGenerator[Union[str, Dict[str, Any]], None]:
         """Execute tools for ask mode."""
         async for chunk in askmode_tool_executor.execute_tools_for_ask_mode(
             self,
@@ -316,13 +316,15 @@ class PlaneChatBot(ChatKit):
         async for chunk in response_processor.process_response(base_stream, chat_id, query_id, response_id, switch_llm, db, reasoning, source):
             yield chunk
 
-    async def process_chat_stream(self, data: ChatRequest, db: AsyncSession) -> AsyncIterator[Union[str, Dict[str, Any]]]:
+    async def process_chat_stream(self, data: ChatRequest, db: AsyncSession) -> AsyncGenerator[Union[str, Dict[str, Any]], None]:
         """Unified entry point that routes internally based on data.mode."""
         mode = getattr(data, "mode", "ask") or "ask"
         async for chunk in self._process_chat_stream_core(data, db, mode=mode):
             yield chunk
 
-    async def _process_chat_stream_core(self, data: ChatRequest, db: AsyncSession, mode: str = "ask") -> AsyncIterator[Union[str, Dict[str, Any]]]:
+    async def _process_chat_stream_core(
+        self, data: ChatRequest, db: AsyncSession, mode: str = "ask"
+    ) -> AsyncGenerator[Union[str, Dict[str, Any]], None]:
         """
         This method takes a user query, processes it through various stages (parsing, tool selection, tool execution),
         and streams back the response chunks as they're generated.
@@ -513,6 +515,7 @@ class PlaneChatBot(ChatKit):
             log.info(f"ChatID: {chat_id} - Using preset question flow for: {query}")
             log.info(f"ChatID: {chat_id} - Preset query steps: {preset_query_steps}")
 
+        _title_handled_on_cancel = False
         try:
             # Set token tracking context for this query
             self.set_token_tracking_context(query_id, db, chat_id=str(chat_id))
@@ -763,12 +766,15 @@ class PlaneChatBot(ChatKit):
 
                 # Ensure we always have content to persist (prevent placeholder on refresh)
                 if not final_response or not final_response.strip():
-                    final_response = "I wasn't able to generate a complete response. Please try again."
+                    fallback_message = "I wasn't able to generate a complete response. But, if you are satisfied with the action plan, click `Confirm`, else please try again."  # noqa: E501
+                    final_response = fallback_message
                     log.warning(
                         f"ChatID: {chat_id} - Empty final_response detected. "
                         f"Chunks collected: {len(final_response_chunks)}, "
                         f"Using fallback message to prevent placeholder on refresh."
                     )
+                    # Yield the fallback message to prevent frontend hanging
+                    yield fallback_message
 
                 # Save assistant message with reasoning blocks (always persist to avoid placeholder)
                 assistant_message_result = await upsert_message(
@@ -799,25 +805,65 @@ class PlaneChatBot(ChatKit):
             query_flow_store["rewritten_query"] = parsed_query
 
         except asyncio.CancelledError:
-            # Client disconnected - save a timeout message before propagating
-            log.warning(f"ChatID: {chat_id} - Stream cancelled by client, persisting timeout message")
-            final_response = "Your request timed out. Please try again."
-            try:
-                await asyncio.shield(
-                    upsert_message(
-                        message_id=response_id,
-                        chat_id=chat_id,
-                        content=final_response,
-                        user_type=UserTypeChoices.ASSISTANT,
-                        parent_id=query_id,
-                        llm_model=switch_llm,
-                        reasoning=reasoning,
-                        source=getattr(data, "source", None) or None,
-                        db=db,
-                    )
-                )
-            except Exception as e:
-                log.error(f"ChatID: {chat_id} - Failed to persist timeout message: {e}")
+            # Client disconnected - save any partial content accumulated so far
+            log.warning(f"ChatID: {chat_id} - Stream cancelled by client, persisting partial response")
+
+            # Build partial response from chunks collected during streaming
+            if final_response_chunks:
+                string_chunks = [c for c in final_response_chunks if isinstance(c, str)]
+                partial = "".join(string_chunks).strip()
+                if partial:
+                    final_response = partial
+
+            # Use reasoning from the container if available
+            if reasoning_container and reasoning_container.get("content"):
+                reasoning = reasoning_container["content"]
+
+            # Fallback only if nothing was collected at all
+            if not final_response or not final_response.strip():
+                final_response = "Your request timed out. Please try again."
+
+            # The existing db session is likely corrupted by the task
+            # cancellation (asyncpg protocol state error).  Schedule a
+            # fire-and-forget task with a fresh DB session instead.
+            _cancel_content = final_response
+            _cancel_reasoning = reasoning
+            _cancel_chatbot = self  # capture for background task
+
+            async def _persist_on_cancel() -> None:
+                try:
+                    from pi.core.db.plane_pi.lifecycle import get_streaming_db_session
+
+                    async with get_streaming_db_session() as cancel_db:
+                        await upsert_message(
+                            message_id=response_id,
+                            chat_id=chat_id,
+                            content=_cancel_content,
+                            user_type=UserTypeChoices.ASSISTANT,
+                            parent_id=query_id,
+                            llm_model=switch_llm,
+                            reasoning=_cancel_reasoning,
+                            source=getattr(data, "source", None) or None,
+                            db=cancel_db,
+                        )
+                        log.info(f"ChatID: {chat_id} - Successfully persisted partial response on disconnect")
+
+                        # Generate title with the fresh session (the original
+                        # session is corrupted so the finally-block can't do it)
+                        await ask_mode_helpers.generate_chat_title_if_needed(
+                            chatbot_instance=_cancel_chatbot,
+                            chat_id=chat_id,
+                            query_id=query_id,
+                            db=cancel_db,
+                            final_response=_cancel_content,
+                            parsed_query=parsed_query,
+                            query=query,
+                        )
+                except Exception as e:
+                    log.error(f"ChatID: {chat_id} - Failed to persist partial response on disconnect: {e}")
+
+            asyncio.create_task(_persist_on_cancel())
+            _title_handled_on_cancel = True
             # Re-raise so the endpoint handler can log and clean up
             raise
 
@@ -843,15 +889,17 @@ class PlaneChatBot(ChatKit):
 
         finally:
             # Generate chat title for new chats BEFORE clearing token tracking context
-            await ask_mode_helpers.generate_chat_title_if_needed(
-                chatbot_instance=self,
-                chat_id=chat_id,
-                query_id=query_id,
-                db=db,
-                final_response=final_response,
-                parsed_query=parsed_query,
-                query=query,
-            )
+            # Skip if already handled in _persist_on_cancel (CancelledError path)
+            if not _title_handled_on_cancel:
+                await ask_mode_helpers.generate_chat_title_if_needed(
+                    chatbot_instance=self,
+                    chat_id=chat_id,
+                    query_id=query_id,
+                    db=db,
+                    final_response=final_response,
+                    parsed_query=parsed_query,
+                    query=query,
+                )
 
             # Clear token tracking context and attachment blocks
             self.clear_token_tracking_context()

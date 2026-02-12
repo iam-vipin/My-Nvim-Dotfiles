@@ -24,12 +24,14 @@ import type {
   TChangePropertyActionFormConfig,
   TAddCommentActionConfig,
   TAutomationActionNodeConfig,
+  TRunScriptActionConfig,
 } from "@plane/types";
 import { EActionNodeHandlerName } from "@plane/types";
 import { isCommentEmpty } from "@plane/utils";
 // plane web imports
 import { AutomationDetailsSidebarActionButtons } from "@/components/automations/details/sidebar/action-buttons";
 import { AutomationDetailsSidebarSectionWrapper } from "@/components/automations/details/sidebar/section-wrapper";
+import { useRunners } from "@/plane-web/hooks/store";
 // local imports
 import { AutomationActionConfigurationRoot } from "./configuration/root";
 import { AutomationActionHandlerDropdown } from "./handler/root";
@@ -37,7 +39,7 @@ import { AutomationDetailsSidebarActionFormHeaderButton } from "./header-button"
 
 export type TAutomationActionFormData = {
   handler_name: EActionNodeHandlerName | undefined;
-  config: TAutomationActionNodeConfig | TChangePropertyActionFormConfig | undefined;
+  config: TAutomationActionNodeConfig | TChangePropertyActionFormConfig | TRunScriptActionConfig | undefined;
 };
 
 const DEFAULT_AUTOMATION_ACTION_FORM_DATA: TAutomationActionFormData = {
@@ -53,6 +55,11 @@ const DEFAULT_CHANGE_PROPERTY_CONFIG: TChangePropertyActionFormConfig = {
   change_type: undefined,
   property_name: undefined,
   property_value: [],
+};
+
+const DEFAULT_RUN_SCRIPT_CONFIG: TRunScriptActionConfig = {
+  script_id: "",
+  execution_variables: {},
 };
 
 export enum EAutomationActionFormType {
@@ -101,6 +108,7 @@ const AutomationDetailsSidebarActionsFormRootComponent = React.forwardRef(
     } = props;
     // plane hooks
     const { t } = useTranslation();
+    const { getScriptById } = useRunners();
     // editor ref
     const editorRef = useRef<EditorRefApi>(null);
     // form state
@@ -132,6 +140,19 @@ const AutomationDetailsSidebarActionsFormRootComponent = React.forwardRef(
         const addCommentConfig = selectedConfig as TAddCommentActionConfig | undefined;
         return !addCommentConfig?.comment_text || isCommentEmpty(addCommentConfig?.comment_text);
       }
+      if (selectedHandlerName === EActionNodeHandlerName.RUN_SCRIPT) {
+        const runScriptConfig = selectedConfig as TRunScriptActionConfig | undefined;
+        if (!runScriptConfig?.script_id) return true;
+        // Check if all required variables have values
+        const script = getScriptById(runScriptConfig.script_id);
+        if (script?.variables) {
+          const requiredVariables = script.variables.filter((v) => v.required);
+          const executionVariables = runScriptConfig.execution_variables || {};
+          const missingRequired = requiredVariables.some((v) => !executionVariables[v.key]);
+          if (missingRequired) return true;
+        }
+        return false;
+      }
       return false;
     };
 
@@ -149,6 +170,11 @@ const AutomationDetailsSidebarActionsFormRootComponent = React.forwardRef(
           shouldDirty: true,
         });
       }
+      if (value === EActionNodeHandlerName.RUN_SCRIPT) {
+        methods.setValue("config", DEFAULT_RUN_SCRIPT_CONFIG, {
+          shouldDirty: true,
+        });
+      }
     };
 
     const handleSubmit = async (data: TAutomationActionFormData): Promise<void> => {
@@ -162,7 +188,6 @@ const AutomationDetailsSidebarActionsFormRootComponent = React.forwardRef(
       editorRef.current?.setEditorValue(config?.comment_text || "<p></p>", true);
       onCancel?.();
     };
-
     return (
       <FormProvider {...methods}>
         <form ref={ref} onSubmit={methods.handleSubmit(handleSubmit)} className="space-y-4">

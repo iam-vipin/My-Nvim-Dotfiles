@@ -402,7 +402,7 @@ def workspace_member_check(slug, requested_invite_list, requested_role, current_
         workspace_license = WorkspaceLicense.objects.filter(workspace__slug=slug).first()
 
     # Get the workspace license
-    if settings.IS_MULTI_TENANT:
+    if not settings.IS_SELF_MANAGED:
         return handle_cloud_payments(
             slug=slug,
             requested_invite_list=requested_invite_list,

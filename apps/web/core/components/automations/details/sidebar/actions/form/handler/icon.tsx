@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { CircleChevronDown, MessageCircle } from "lucide-react";
+import { CircleChevronDown, FileCode, MessageCircle } from "lucide-react";
 // plane imports
 import type { TAutomationActionHandlerIconKey } from "@plane/constants";
 
@@ -27,6 +27,8 @@ export function AutomationActionHandlerIcon(props: Props) {
       return <MessageCircle className={COMMON_ICON_CLASSNAME} />;
     case "circle-chevron-down":
       return <CircleChevronDown className={COMMON_ICON_CLASSNAME} />;
+    case "file-code":
+      return <FileCode className={COMMON_ICON_CLASSNAME} />;
     default:
       return null;
   }

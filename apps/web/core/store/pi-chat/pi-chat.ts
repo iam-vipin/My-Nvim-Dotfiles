@@ -71,6 +71,7 @@ export interface IPiChatStore {
   getChatFocus: (chatId: string | undefined) => TFocus | undefined;
   getChatMode: (chatId: string) => string;
   getChatWebSearch: (chatId: string) => boolean;
+  getModelById: (modelId: string) => TAiModels | undefined;
   // actions
   initPiChat: (chatId?: string) => void;
   fetchChatById: (chatId: string, workspaceId: string | undefined) => Promise<void>;
@@ -289,6 +290,8 @@ export class PiChatStore implements IPiChatStore {
     }
     return "ask";
   });
+
+  getModelById = computedFn((modelId: string) => this.models.find((model) => model.id === modelId));
 
   getChatWebSearch = computedFn((chatId: string) => {
     const chat = this.chatMap[chatId];

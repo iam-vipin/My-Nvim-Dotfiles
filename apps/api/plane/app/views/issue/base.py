@@ -420,6 +420,7 @@ class IssueViewSet(BaseViewSet):
 
         # Group by
         group_by = request.GET.get("group_by", False)
+
         sub_group_by = request.GET.get("sub_group_by", False)
 
         # issue queryset

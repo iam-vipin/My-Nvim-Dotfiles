@@ -218,3 +218,6 @@ export const WORK_ITEM_TYPES_PROPERTIES_AND_OPTIONS = (projectId: string, projec
 
 export const PROJECT_MILESTONES = (projectId: string, projectRole: EUserPermissions | undefined) =>
   `PROJECT_MILESTONES_${projectId.toString().toUpperCase()}_${projectRole}`;
+
+export const PROJECT_EPICS_META = (projectId: string, projectRole: EUserPermissions | undefined) =>
+  `PROJECT_EPICS_META_${projectId.toString().toUpperCase()}_${projectRole}`;

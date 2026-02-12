@@ -18,7 +18,7 @@ import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";
-import { EInboxIssueCurrentTab, EIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 import { Loader } from "@plane/ui";
 // assets
 import emptyIssueDark from "@/app/assets/empty-state/search/issues-dark.webp?url";
@@ -27,8 +27,8 @@ import emptyIssueLight from "@/app/assets/empty-state/search/issues-light.webp?u
 import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
 import { WorkItemDetailRoot } from "@/components/browse/workItem-detail";
+import { IntakeDetailViewRoot } from "@/components/intake/detail-root";
 import { useWorkItemCommentOperations } from "@/components/issues/issue-detail/issue-activity/helper";
-import { InboxIssueRoot } from "@/components/intake/root";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -181,12 +181,10 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
       {workspaceSlug && projectId && workItemId && (
         <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
           {data?.is_intake ? (
-            <InboxIssueRoot
+            <IntakeDetailViewRoot
               workspaceSlug={workspaceSlug}
               projectId={projectId}
               inboxIssueId={workItemId || undefined}
-              inboxAccessible={true}
-              navigationTab={EInboxIssueCurrentTab.OPEN}
             />
           ) : (
             <WorkItemDetailRoot

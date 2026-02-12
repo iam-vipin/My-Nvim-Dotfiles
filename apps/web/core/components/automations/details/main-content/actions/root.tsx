@@ -15,7 +15,7 @@ import { observer } from "mobx-react";
 import { Workflow } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import type { TAddCommentActionConfig, TChangePropertyActionConfig } from "@plane/types";
+import type { TAddCommentActionConfig, TChangePropertyActionConfig, TRunScriptActionConfig } from "@plane/types";
 import { EActionNodeHandlerName, EAutomationSidebarTab } from "@plane/types";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
@@ -26,6 +26,7 @@ import { ConjunctionLabel } from "../common/conjunction-label";
 import { AutomationDetailsMainContentSectionWrapper } from "../common/section-wrapper";
 import { AutomationDetailsMainContentChangePropertyBlock } from "./change-property";
 import { AutomationDetailsMainContentAddCommentBlock } from "./comment-block";
+import { AutomationDetailsMainContentRunScriptBlock } from "./run-script";
 
 type TProps = {
   automationId: string;
@@ -78,6 +79,14 @@ export const AutomationDetailsMainContentActionsRoot = observer(function Automat
                   <AutomationDetailsMainContentChangePropertyBlock
                     config={actionNode.config as TChangePropertyActionConfig} // TODO: Check if we can avoid this type assertion
                     projectId={automation.project}
+                  />
+                )}
+                {actionNode.handler_name === EActionNodeHandlerName.RUN_SCRIPT && (
+                  <AutomationDetailsMainContentRunScriptBlock
+                    actionId={actionNode.id}
+                    config={actionNode.config as TRunScriptActionConfig} // TODO: Check if we can avoid this type assertion
+                    workspaceId={workspaceId}
+                    workspaceSlug={workspaceSlug}
                   />
                 )}
               </div>

@@ -47,6 +47,7 @@ jobs:
       dh_img_email: ${{ steps.set_env_variables.outputs.DH_IMG_EMAIL }}
       dh_img_pi: ${{ steps.set_env_variables.outputs.dh_img_pi }}
       dh_img_flux: ${{ steps.set_env_variables.outputs.DH_IMG_FLUX }}
+      dh_img_node_runner: ${{ steps.set_env_variables.outputs.DH_IMG_NODE_RUNNER }}
 
       build_type: ${{steps.set_env_variables.outputs.BUILD_TYPE}}
       build_release: ${{ steps.set_env_variables.outputs.BUILD_RELEASE }}
@@ -73,6 +74,7 @@ jobs:
           echo "DH_IMG_EMAIL=email-cloud" >> $GITHUB_OUTPUT
           echo "dh_img_pi=plane-pi-cloud" >> $GITHUB_OUTPUT
           echo "DH_IMG_FLUX=flux-cloud" >> $GITHUB_OUTPUT
+          echo "DH_IMG_NODE_RUNNER=node-runner-cloud" >> $GITHUB_OUTPUT
 
           echo "BUILD_TYPE=${{env.BUILD_TYPE}}" >> $GITHUB_OUTPUT
           BUILD_RELEASE=false
@@ -305,6 +307,28 @@ jobs:
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
+  branch_build_push_node_runner:
+    name: Build-Push Node Runner Docker Image
+    runs-on: ubuntu-22.04-4core
+    needs: [branch_build_setup]
+    steps:
+      - name: Node Runner Build and Push
+        uses: makeplane/actions/build-push@v1.0.0
+        with:
+          build-release: ${{ needs.branch_build_setup.outputs.build_release }}
+          build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
+          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          docker-image-owner: makeplane
+          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_node_runner }}
+          build-context: .
+          dockerfile-path: ./apps/runners/node-runner/Dockerfile.runner
+          buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+          buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+          buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+          buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+
   publish_release:
     if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
     name: Build Release
@@ -321,6 +345,7 @@ jobs:
         branch_build_push_email,
         branch_build_push_plane_pi,
         branch_build_push_flux,
+        branch_build_push_node_runner,
       ]
     env:
       REL_VERSION: ${{ needs.branch_build_setup.outputs.release_version }}

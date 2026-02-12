@@ -17,6 +17,7 @@ import { Logo } from "@plane/propel/emoji-icon-picker";
 import {
   CycleGroupIcon,
   CycleIcon,
+  EpicIcon,
   MilestoneIcon,
   ModuleIcon,
   PriorityIcon,
@@ -71,6 +72,7 @@ export const getGroupByColumns = ({
     created_by: getCreatedByColumns,
     team_project: getTeamProjectColumns,
     milestone: getMilestoneColumns,
+    epic: getEpicColumns,
   };
 
   // Get and return the columns for the specified group by option
@@ -360,4 +362,42 @@ export const getMilestoneColumns = (): IGroupByColumn[] | undefined => {
   });
 
   return milestoneColumns;
+};
+
+export const getEpicColumns = (): IGroupByColumn[] | undefined => {
+  const { projectId, workspaceSlug } = store.router;
+  const { isEpicEnabledForProject } = store.issueTypes;
+
+  if (!projectId || !workspaceSlug) return;
+
+  const isEpicFeatureEnabled = isEpicEnabledForProject(workspaceSlug, projectId);
+
+  if (!isEpicFeatureEnabled) return;
+
+  const { getProjectEpicIds, getEpicMetaById } = store.epicBaseStore.epicMetaStore;
+  const projectEpicIds = getProjectEpicIds(projectId);
+
+  if (!projectEpicIds) return;
+
+  const epicColumns: IGroupByColumn[] = [
+    {
+      id: "None",
+      name: "None",
+      icon: <EpicIcon className="size-4 text-primary" />,
+      payload: {},
+    },
+  ];
+
+  projectEpicIds.forEach((epicId) => {
+    const epicMeta = getEpicMetaById(projectId, epicId);
+    if (!epicMeta) return;
+    epicColumns.push({
+      id: epicMeta.id,
+      name: `${epicMeta.project_identifier}-${epicMeta.sequence_id} ${epicMeta.name}`,
+      icon: <EpicIcon className="size-4 text-primary" />,
+      payload: { parent_id: epicMeta.id },
+    });
+  });
+
+  return epicColumns;
 };

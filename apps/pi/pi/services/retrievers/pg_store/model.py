@@ -91,12 +91,13 @@ async def get_active_models(db: AsyncSession, user_id: str, workspace_slug: str)
             # Only include models that should be visible to users and have API keys
             if db_model.model_key not in models_to_include:
                 continue
-            # Map database model to frontend format
+            # Map database model to frontend format (vendor models support web search)
             model_entry = {
                 "id": db_model.model_key,
                 "name": db_model.name,
                 "description": db_model.description or "",
                 "type": "language_model",
+                "supports_web_search": True,
                 # Set default model based on availability
                 "is_default": bool(default_model_key and db_model.model_key == default_model_key and not default_found),
             }
@@ -104,6 +105,27 @@ async def get_active_models(db: AsyncSession, user_id: str, workspace_slug: str)
                 default_found = True
 
             models_list.append(model_entry)
+
+        # Add custom self-hosted model if enabled
+        if settings.llm_config.CUSTOM_LLM_ENABLED and settings.llm_config.CUSTOM_LLM_BASE_URL:
+            custom_key = settings.llm_config.CUSTOM_LLM_MODEL_KEY
+            # Don't duplicate if already in list
+            if custom_key and custom_key not in seen:
+                has_any_vendor_model = bool(models_to_include)
+                custom_entry = {
+                    "id": custom_key,
+                    "name": settings.llm_config.CUSTOM_LLM_NAME,
+                    "description": settings.llm_config.CUSTOM_LLM_DESCRIPTION,
+                    "type": "language_model",
+                    "supports_web_search": False,
+                    # Default if no vendor models are available
+                    "is_default": not has_any_vendor_model,
+                }
+                # Insert at the top for custom-only, or append for hybrid
+                if not has_any_vendor_model:
+                    models_list.insert(0, custom_entry)
+                else:
+                    models_list.append(custom_entry)
 
         # If the configured default model isn't available/visible, fall back to first model.
         if models_list and not any(m.get("is_default") for m in models_list):

@@ -42,8 +42,9 @@ export function CustomCalloutBlock(props: CustomCalloutNodeViewProps) {
     editor,
     selector: (ctx) => {
       const calloutStorage = ctx.editor.storage[CORE_EXTENSIONS.CALLOUT];
-      const isOpen = calloutStorage?.openedLogoPickerId === node.attrs.id;
-      return isOpen;
+      const id = node.attrs.id;
+      if (!id) return false;
+      return calloutStorage?.openedLogoPickerId === id;
     },
   });
 
@@ -54,12 +55,13 @@ export function CustomCalloutBlock(props: CustomCalloutNodeViewProps) {
   const handleEmojiPickerOpen = useCallback(
     (val: boolean) => {
       const calloutStorage = editor.storage[CORE_EXTENSIONS.CALLOUT];
-      if (calloutStorage) {
-        calloutStorage.openedLogoPickerId = val ? node.attrs.id : null;
-        editor.view.dispatch(editor.state.tr);
-      }
+      const id = node.attrs.id;
+      if (!calloutStorage) return;
+      if (val && !id) return;
+      calloutStorage.openedLogoPickerId = val ? id : null;
+      editor.view.dispatch(editor.state.tr);
     },
-    [node.attrs.id]
+    [editor, node.attrs.id]
   );
 
   // derived values

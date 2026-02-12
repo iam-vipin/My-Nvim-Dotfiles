@@ -31,6 +31,7 @@ import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import useEvent from "@/plane-web/hooks/use-event";
 import type { TChatContextData, TFocus, TPiAttachment, TPiLoaders } from "@/types";
 // local imports
+import { Tooltip } from "@plane/propel/tooltip";
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import AudioRecorder, { SPEECH_LOADERS } from "../converse/voice-input";
 import { formatSearchQuery } from "../helper";
@@ -82,6 +83,8 @@ export const InputBox = observer(function InputBox(props: TProps) {
     abortStream,
     getChatMode,
     getChatWebSearch,
+    activeModel,
+    getModelById,
     attachmentStore: { getAttachmentsUploadStatusByChatId },
   } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
@@ -100,6 +103,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
   const chatMode = getChatMode(activeChatId || "");
   const chatWebSearch = getChatWebSearch(activeChatId || "");
   const attachmentsUploadStatus = getAttachmentsUploadStatusByChatId(activeChatId || "");
+  const activeModelSupportsWebSearch = getModelById(activeModel ?? "")?.supports_web_search ?? false;
   // state
   const [focus, setFocus] = useState<TFocus>(
     chatFocus || {
@@ -124,6 +128,12 @@ export const InputBox = observer(function InputBox(props: TProps) {
     revalidateIfStale: false,
     errorRetryCount: 0,
   });
+
+  useEffect(() => {
+    if (!activeModelSupportsWebSearch && isWebSerachEnabled) {
+      setIsWebSerachEnabled(false);
+    }
+  }, [activeModelSupportsWebSearch, isWebSerachEnabled]);
 
   const setEditorCommands = (command: TEditCommands) => {
     editorCommands.current = command;
@@ -289,6 +299,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
   }, [setAiMode, isFullScreen, isProjectLevel, router, initPiChat, workspaceSlug]);
 
   if (!workspaceId) return;
+
   return (
     <>
       {isNewChat && !onlyInput && !isFullScreen && (
@@ -385,22 +396,32 @@ export const InputBox = observer(function InputBox(props: TProps) {
                   {/* Focus */}
                   {!SPEECH_LOADERS.includes(loader) && <AiMode aiMode={aiMode} setAiMode={setAiMode} />}
                   {!SPEECH_LOADERS.includes(loader) && (
-                    <button
-                      type="button"
-                      className={cn(
-                        "size-7 flex items-center justify-center rounded-lg transition-all duration-300 shrink-0",
-                        {
-                          "text-icon-accent-primary bg-accent-subtle hover:text-secondary hover:bg-layer-1 ":
-                            isWebSerachEnabled,
-                          "text-secondary bg-layer-1 hover:bg-accent-subtle hover:text-icon-accent-primary ":
-                            !isWebSerachEnabled,
-                        }
-                      )}
-                      color={isWebSerachEnabled ? "primary" : "secondary"}
-                      onClick={() => setIsWebSerachEnabled(!isWebSerachEnabled)}
+                    <Tooltip
+                      tooltipContent={
+                        activeModelSupportsWebSearch
+                          ? "Enable web search"
+                          : "Web search is not available for this model"
+                      }
+                      position="top"
                     >
-                      <Globe className="size-4" />
-                    </button>
+                      <button
+                        type="button"
+                        className={cn(
+                          "size-7 flex items-center justify-center rounded-lg transition-all duration-300 shrink-0",
+                          {
+                            "text-icon-accent-primary bg-accent-subtle hover:text-secondary hover:bg-layer-1 ":
+                              isWebSerachEnabled && activeModelSupportsWebSearch,
+                            "text-secondary bg-layer-1 hover:bg-accent-subtle hover:text-icon-accent-primary ":
+                              (!isWebSerachEnabled && activeModelSupportsWebSearch) || !activeModelSupportsWebSearch,
+                            "cursor-not-allowed opacity-50": !activeModelSupportsWebSearch,
+                          }
+                        )}
+                        color={isWebSerachEnabled ? "primary" : "secondary"}
+                        onClick={() => activeModelSupportsWebSearch && setIsWebSerachEnabled(!isWebSerachEnabled)}
+                      >
+                        <Globe className="size-4" />
+                      </button>
+                    </Tooltip>
                   )}
                   <div className="flex items-center w-full justify-end gap-2">
                     <div className="flex w-full justify-end">

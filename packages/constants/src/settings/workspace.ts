@@ -70,6 +70,13 @@ export const WORKSPACE_SETTINGS: Record<TWorkspaceSettingsTabs, TWorkspaceSettin
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/settings/integrations/`),
   },
+  scripts: {
+    key: "scripts",
+    i18n_label: "workspace_settings.settings.runners.title",
+    href: `/settings/runner`,
+    access: [EUserWorkspaceRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/runner/`,
+  },
   connections: {
     key: "connections",
     i18n_label: "profile.actions.connections",
@@ -166,6 +173,7 @@ export const GROUPED_WORKSPACE_SETTINGS: Record<WORKSPACE_SETTINGS_CATEGORY, TWo
   [WORKSPACE_SETTINGS_CATEGORY.FEATURES]: [
     WORKSPACE_SETTINGS["project_states"],
     WORKSPACE_SETTINGS["integrations"],
+    WORKSPACE_SETTINGS["scripts"],
     WORKSPACE_SETTINGS["connections"],
     WORKSPACE_SETTINGS["teamspaces"],
     WORKSPACE_SETTINGS["initiatives"],

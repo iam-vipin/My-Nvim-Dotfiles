@@ -57,7 +57,7 @@ Located at `/apps/api/plane/celery.py`:
 | -------------------------- | ------------------------------- |
 | `issue_activities_task.py` | Activity tracking (1700+ lines) |
 | `issue_automation_task.py` | Auto-archive/close              |
-| `work_item_link_task.py`   | URL crawling for links          |
+| `link_crawler_task.py`     | URL crawling for links          |
 
 ### Version Control
 

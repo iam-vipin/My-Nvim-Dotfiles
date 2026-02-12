@@ -11,6 +11,8 @@
 
 # Python imports
 import asyncio
+import os
+import uuid
 
 import typer
 
@@ -36,6 +38,7 @@ llm_id_map = {
     "gpt-5-mini": "5e5d7fa1-0a75-4318-87c6-7595c7b7133d",
     "gpt-5-nano": "0394e887-8140-4505-b4f9-5e9c59b40396",
     "claude-sonnet-4-5": "6a14a494-dc87-42cc-9d7c-1f82faa3d018",
+    "claude-haiku-4-5": "b7c25e8f-9d41-4a3b-8e6f-2c7d4a5b6e3f",
 }
 
 # Data for sync.
@@ -144,7 +147,31 @@ LLMS_DATA = [
         "model_key": "claude-sonnet-4-5",
         "max_tokens": 200000,
     },
+    {
+        "id": llm_id_map["claude-haiku-4-5"],
+        "name": "Claude Haiku 4.5",
+        "description": "Anthropic's Claude Haiku 4.5 model - fast and cost-efficient.",
+        "provider": "Anthropic",
+        "model_key": "claude-haiku-4-5",
+        "max_tokens": 200000,
+    },
 ]
+
+# Dynamically add custom model if configured
+
+if os.getenv("CUSTOM_LLM_ENABLED", "false").lower() == "true" and os.getenv("CUSTOM_LLM_MODEL_KEY"):
+    _custom_key = os.getenv("CUSTOM_LLM_MODEL_KEY")
+    if _custom_key and _custom_key not in llm_id_map:
+        # Deterministic UUID from model key for idempotent sync
+        llm_id_map[_custom_key] = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"plane-custom-llm-{_custom_key}"))
+        LLMS_DATA.append({
+            "id": llm_id_map[_custom_key],
+            "name": os.getenv("CUSTOM_LLM_NAME", "Self-Hosted LLM"),
+            "description": os.getenv("CUSTOM_LLM_DESCRIPTION", "Custom self-hosted OpenAI-compatible model"),
+            "provider": "OpenAI-Compatible",
+            "model_key": _custom_key,
+            "max_tokens": int(os.getenv("CUSTOM_LLM_MAX_TOKENS", "128000")),
+        })
 
 tracked_fields = ["name", "description", "provider", "model_key", "max_tokens"]
 

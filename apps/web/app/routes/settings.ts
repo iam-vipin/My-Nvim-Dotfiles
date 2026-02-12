@@ -97,6 +97,28 @@ export const settingsRoutes: RouteConfigEntry[] = [
         "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/worklogs/page.tsx"
       ),
 
+      // Scripts / Runners
+      route(
+        ":workspaceSlug/settings/runner",
+        "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/runners/page.tsx"
+      ),
+      route(
+        ":workspaceSlug/settings/runner/scripts/new",
+        "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/runners/runner-scripts/new/page.tsx"
+      ),
+      route(
+        ":workspaceSlug/settings/runner/scripts/:scriptId",
+        "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/runners/runner-scripts/[scriptId]/page.tsx"
+      ),
+      route(
+        ":workspaceSlug/settings/runner/functions/new",
+        "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/runners/functions/new/page.tsx"
+      ),
+      route(
+        ":workspaceSlug/settings/runner/functions/:functionId",
+        "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/runners/functions/[functionId]/page.tsx"
+      ),
+
       // Templates
       route(
         ":workspaceSlug/settings/templates",

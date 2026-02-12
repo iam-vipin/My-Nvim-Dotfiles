@@ -201,6 +201,8 @@ export type TAiModels = {
   description: string;
   type: string;
   is_default: boolean;
+  /** False for custom/self-hosted models that cannot use web search. Omitted or true for vendor models. */
+  supports_web_search?: boolean;
 };
 
 export type TPiLoaders = "recording" | "transcribing" | "submitting" | "";

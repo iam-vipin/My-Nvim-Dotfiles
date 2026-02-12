@@ -15,6 +15,9 @@ const viteEnv = Object.keys(process.env)
     return a;
   }, {});
 
+// Fall back to VERCEL_GIT_COMMIT_SHA so Sentry release tracking works on Vercel
+viteEnv.VITE_APP_VERSION ||= process.env.VERCEL_GIT_COMMIT_SHA ?? "";
+
 const plugins = [reactRouter(), tsconfigPaths({ projects: [path.resolve(__dirname, "tsconfig.json")] })];
 
 if (process.env.SENTRY_AUTH_TOKEN) {
@@ -23,6 +26,10 @@ if (process.env.SENTRY_AUTH_TOKEN) {
       authToken: process.env.SENTRY_AUTH_TOKEN,
       org: "plane-hq",
       project: "plane-web",
+      release: {
+        name: viteEnv.VITE_APP_VERSION || undefined,
+        deploy: viteEnv.VITE_SENTRY_ENVIRONMENT ? { env: viteEnv.VITE_SENTRY_ENVIRONMENT } : undefined,
+      },
       sourcemaps: {
         filesToDeleteAfterUpload: ["build/client/**/*.map", "build/server/**/*.map"],
       },

@@ -14,7 +14,12 @@
 import type { AxiosInstance } from "axios";
 import axios from "axios";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
+import type { TExtensions } from "@plane/editor";
 import type { E_INTEGRATION_KEYS } from "@plane/types";
+
+interface IEnabledIntegration {
+  connection_provider: TExtensions;
+}
 
 export class SiloAppService {
   protected baseURL: string;
@@ -33,7 +38,7 @@ export class SiloAppService {
         throw error?.response?.data;
       });
   }
-  async getEnabledIntegrations(workspaceId: string) {
+  async getEnabledIntegrations(workspaceId: string): Promise<IEnabledIntegration[]> {
     return this.axiosInstance
       .get(`/api/apps/${workspaceId}/enabled-integrations/`)
       .then((res) => res.data)

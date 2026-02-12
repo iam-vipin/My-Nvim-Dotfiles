@@ -36,6 +36,7 @@ import {
   EPICS_PROPERTIES_AND_OPTIONS,
   PROJECT_WORKFLOWS,
   PROJECT_MILESTONES,
+  PROJECT_EPICS_META,
 } from "@/constants/fetch-keys";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
@@ -49,6 +50,7 @@ import { useProjectView } from "@/hooks/store/use-project-view";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 // plane web imports
+import { useEpicMeta } from "@/hooks/store/use-epic-meta";
 import { useIssueTypes } from "@/plane-web/hooks/store/issue-types/use-issue-types";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
@@ -85,6 +87,7 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
     fetchAllEpicPropertiesAndOptions,
   } = useIssueTypes();
   const { fetchMilestones, isMilestonesEnabled } = useMilestones();
+  const { fetchEpicsMeta } = useEpicMeta();
   // derived values
   const hasPermissionToCurrentProject = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
@@ -189,6 +192,17 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   useSWR(
     isMilestonesFeatureEnabled ? PROJECT_MILESTONES(projectId, currentProjectRole) : null,
     isMilestonesFeatureEnabled ? () => fetchMilestones(workspaceSlug, projectId) : null,
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+
+  // fetching project level epic meta
+  useSWR(
+    isEpicEnabled ? PROJECT_EPICS_META(projectId, currentProjectRole) : null,
+    isEpicEnabled ? () => fetchEpicsMeta(workspaceSlug, projectId) : null,
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,

@@ -582,6 +582,18 @@ class EpicViewSet(BaseViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class EpicMetaListEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @check_feature_flag(FeatureFlag.EPICS)
+    def get(self, request, slug, project_id):
+        epics = (
+            Issue.objects.filter(project_id=project_id, workspace__slug=slug)
+            .filter(Q(type__isnull=False) & Q(type__is_epic=True))
+            .values("id", "name", "sequence_id", project_identifier=F("project__identifier"))
+        )
+        return Response(epics, status=status.HTTP_200_OK)
+
+
 class EpicUserDisplayPropertyEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     @check_feature_flag(FeatureFlag.EPICS)

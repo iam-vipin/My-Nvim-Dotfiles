@@ -107,12 +107,10 @@ export class FeatureFlagsStore implements IFeatureFlagsStore {
 
       const apiResponse = await siloAppService.getEnabledIntegrations(workspaceId);
 
-      const integrationKeys: E_INTEGRATION_KEYS[] = apiResponse.map(
-        (integration: { connection_provider: TExtensions }) => {
-          const provider = integration.connection_provider;
-          return provider.toUpperCase() as E_INTEGRATION_KEYS;
-        }
-      );
+      const integrationKeys = apiResponse.map((integration: { connection_provider: TExtensions }) => {
+        const provider = integration.connection_provider;
+        return provider.toUpperCase() as E_INTEGRATION_KEYS;
+      });
 
       runInAction(() => {
         this.integrations.set(workspaceSlug, integrationKeys);

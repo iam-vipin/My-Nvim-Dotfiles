@@ -119,6 +119,7 @@ def validate_llm_key(provider: str = typer.Option(..., "--provider", "-p", help=
     """
     from pi.services.llm.validators import validate_anthropic_key
     from pi.services.llm.validators import validate_cohere_key
+    from pi.services.llm.validators import validate_custom_llm
     from pi.services.llm.validators import validate_groq_key
     from pi.services.llm.validators import validate_openai_key
 
@@ -150,6 +151,12 @@ def validate_llm_key(provider: str = typer.Option(..., "--provider", "-p", help=
             "base_url": settings.llm_config.COHERE_BASE_URL,
             "env_var": "COHERE_API_KEY",
         },
+        "custom": {
+            "validator": validate_custom_llm,
+            "api_key": settings.llm_config.CUSTOM_LLM_API_KEY,
+            "base_url": settings.llm_config.CUSTOM_LLM_BASE_URL,
+            "env_var": "CUSTOM_LLM_API_KEY",
+        },
     }
 
     if provider not in provider_map:
@@ -162,9 +169,9 @@ def validate_llm_key(provider: str = typer.Option(..., "--provider", "-p", help=
     typer.echo(f"Validating {provider.upper()} API key...")
     typer.echo(f"Environment variable: {config["env_var"]}")
 
-    # Check if API key is configured
+    # Check if API key is configured (skip for custom provider — key is optional)
     api_key = str(config["api_key"]) if config["api_key"] else ""
-    if not api_key or not api_key.strip():
+    if provider != "custom" and (not api_key or not api_key.strip()):
         typer.echo(f"❌ {provider.upper()} API key not configured")
         typer.echo(f"   Please set {config["env_var"]} environment variable")
         raise typer.Exit(code=1)

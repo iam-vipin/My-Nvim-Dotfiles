@@ -29,8 +29,10 @@ def get_env_bool(k: str, d: str = "") -> bool:
 
 
 def get_env_int(k: str, d: str) -> int:
-    """Get integer env var."""
-    return int(os.getenv(k, d))
+    """Get integer env var. Returns default if env var is missing or empty."""
+    value = os.getenv(k, d)
+    # Handle empty string - use default instead
+    return int(value if value and value.strip() else d)
 
 
 @dataclass
@@ -114,7 +116,32 @@ class VectorDB:
 
     # Model Configuration
     ML_MODEL_ID: str = os.getenv("OPENSEARCH_ML_MODEL_ID", "")
-    EMBEDDING_DIMENSION: int = get_env_int("OPENSEARCH_EMBEDDING_DIMENSION", "1536")
+    EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "cohere/embed-v4.0")
+
+    # EMBEDDING_DIMENSION: If explicitly set via env var, use that value.
+    # Otherwise, derive from the configured EMBEDDING_MODEL for consistency.
+    @property
+    def EMBEDDING_DIMENSION(self) -> int:
+        """
+        Get embedding dimension, preferring explicit env var, else deriving from model config.
+        """
+        # Check if explicitly overridden via environment variable
+        explicit_dim = os.getenv("OPENSEARCH_EMBEDDING_DIMENSION")
+        if explicit_dim:
+            try:
+                return int(explicit_dim)
+            except ValueError:
+                pass  # Fall through to model-based lookup
+
+        # Derive from configured embedding model
+        try:
+            from pi.core.embedding_config import get_embedding_model_config
+
+            config = get_embedding_model_config(self.EMBEDDING_MODEL)
+            return config["dimension"]
+        except (ImportError, ValueError):
+            # Fallback if import fails or model not found
+            return 1536
 
     @staticmethod
     def generate_index_name(suffix: str) -> str:
@@ -171,6 +198,17 @@ class LLMModels:
     DEFAULT: str = GPT_5_2
     CLAUDE_SONNET_4_0: str = "claude-sonnet-4-0"
     CLAUDE_SONNET_4_5: str = "claude-sonnet-4-5"
+    CLAUDE_HAIKU_4_5: str = "claude-haiku-4-5"  # Lightweight Claude model for fast/cheap tasks
+    CUSTOM: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_MODEL_KEY", ""))
+
+    def __post_init__(self):
+        custom_enabled = os.getenv("CUSTOM_LLM_ENABLED", "false").lower() == "true"
+        has_openai = bool(os.getenv("OPENAI_API_KEY", "").strip())
+        has_anthropic = bool(os.getenv("CLAUDE_API_KEY", "").strip())
+        if custom_enabled and not has_openai and not has_anthropic:
+            # Custom-only deployment: override DEFAULT to custom model
+            if self.CUSTOM:
+                self.DEFAULT = self.CUSTOM
 
 
 @dataclass
@@ -208,6 +246,13 @@ class LLMConfig:
         }
     )
 
+    PROVIDER_DEFAULT_MODELS_LIGHTWEIGHT: dict[str, str] = field(
+        default_factory=lambda: {
+            "openai": LLMModels.GPT_4_1_NANO,
+            "anthropic": LLMModels.CLAUDE_HAIKU_4_5,
+        }
+    )
+
     # Model Names
     TESTED_FOR_WORKSPACE: list = field(
         default_factory=lambda: [
@@ -238,6 +283,15 @@ class LLMConfig:
     ANTHROPIC_WEB_SEARCH_TOOL_TYPE: str = "web_search_20250305"
     # Maximum number of web search results to return
     WEB_SEARCH_MAX_RESULTS: int = 5
+
+    # Custom Self-Hosted LLM Configuration
+    CUSTOM_LLM_ENABLED: bool = field(default_factory=lambda: os.getenv("CUSTOM_LLM_ENABLED", "false").lower() == "true")
+    CUSTOM_LLM_MODEL_KEY: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_MODEL_KEY", ""))
+    CUSTOM_LLM_BASE_URL: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_BASE_URL", ""))
+    CUSTOM_LLM_API_KEY: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_API_KEY", "not-needed"))
+    CUSTOM_LLM_NAME: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_NAME", "Self-Hosted LLM"))
+    CUSTOM_LLM_DESCRIPTION: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_DESCRIPTION", "Custom self-hosted OpenAI-compatible model"))
+    CUSTOM_LLM_MAX_TOKENS: int = field(default_factory=lambda: int(os.getenv("CUSTOM_LLM_MAX_TOKENS", "128000")))
 
 
 @dataclass
@@ -364,9 +418,10 @@ class Settings:
 
     # AWS Configuration for S3 attachments
     AWS_S3_BUCKET: str = os.getenv("AWS_S3_BUCKET", "")
-    AWS_S3_REGION: str = os.getenv("AWS_S3_REGION", "us-east-2")
+    AWS_S3_REGION: str = os.getenv("AWS_S3_REGION", "")
     AWS_ACCESS_KEY_ID: str = os.getenv("AWS_ACCESS_KEY_ID", "")
     AWS_SECRET_ACCESS_KEY: str = os.getenv("AWS_SECRET_ACCESS_KEY", "")
+    AWS_SESSION_TOKEN: str | None = os.getenv("AWS_SESSION_TOKEN")
     FILE_SIZE_LIMIT: int = 10485760  # 10MB
     AWS_S3_ENV: str = os.getenv("AWS_S3_ENV", "")
 

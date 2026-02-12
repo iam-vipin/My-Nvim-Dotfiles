@@ -2014,6 +2014,12 @@ Create a new project instead`,
         description:
           "See your work get smarter and faster with AI that is natively connected to your work and knowledge base. ",
       },
+      runners: {
+        title: "Plane Runner",
+        heading: "Scripts",
+        new_script: "New Script",
+        description: "Automate your workflows with custom scripts and automation rules.",
+      },
     },
     empty_state: {
       api_tokens: {
@@ -6238,6 +6244,7 @@ the way you want to from the sources you specify.`,
       handler_name: {
         add_comment: "Add comment",
         change_property: "Change property",
+        run_script: "Run Script",
       },
       configuration: {
         label: "Configuration",
@@ -6257,6 +6264,9 @@ the way you want to from the sources you specify.`,
       },
       comment_block: {
         title: "Add comment",
+      },
+      run_script_block: {
+        title: "Run script",
       },
       change_property_block: {
         title: "Change property",

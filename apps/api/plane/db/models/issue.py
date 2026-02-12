@@ -397,17 +397,30 @@ class IssueAssignee(ProjectBaseModel):
         return f"{self.issue.name} {self.assignee.email}"
 
 
-class IssueLink(ProjectBaseModel):
+class IssueLink(ChangeTrackerMixin, ProjectBaseModel):
     title = models.CharField(max_length=255, null=True, blank=True)
     url = models.TextField()
     issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="issue_link")
     metadata = models.JSONField(default=dict)
+
+    TRACKED_FIELDS = ["url"]
 
     class Meta:
         verbose_name = "Issue Link"
         verbose_name_plural = "Issue Links"
         db_table = "issue_links"
         ordering = ("-created_at",)
+
+    def save(self, *args, **kwargs):
+        is_new = self._state.adding
+        url_changed = self.has_changed("url") if not is_new else False
+
+        super().save(*args, **kwargs)
+
+        if (is_new or url_changed) and self.url:
+            from plane.bgtasks.link_crawler_task import link_crawler
+
+            link_crawler.delay(str(self.id), self.url, "issue")
 
     def __str__(self):
         return f"{self.issue.name} {self.url}"

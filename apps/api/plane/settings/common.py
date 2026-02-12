@@ -13,22 +13,18 @@
 
 # Python imports
 import os
-from urllib.parse import urlparse
-from urllib.parse import urljoin
 from datetime import timedelta
-
+from urllib.parse import urljoin, urlparse
 
 # Third party imports
 import dj_database_url
+from corsheaders.defaults import default_headers
 
 # Django imports
 from django.core.management.utils import get_random_secret_key
-from corsheaders.defaults import default_headers
-
 
 # Module imports
 from plane.utils.url import is_valid_url
-
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -41,7 +37,8 @@ AES_SALT = os.environ.get("AES_SALT", "aes-salt")
 DEBUG = int(os.environ.get("DEBUG", "0"))
 
 # Self-hosted mode
-IS_SELF_MANAGED = True
+IS_SELF_MANAGED = os.environ.get("IS_SELF_MANAGED", "1") == "1"
+
 
 # Allowed Hosts
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
@@ -72,6 +69,7 @@ INSTALLED_APPS = [
     "plane.event_stream",
     "plane.agents",
     "plane.webhook",
+    "plane.runnerctl",
     # Third-party things
     "strawberry.django",
     "rest_framework",
@@ -336,6 +334,7 @@ CELERY_IMPORTS = (
     "plane.bgtasks.issue_description_version_sync",
     "plane.bgtasks.silo_data_migration_task",
     "plane.bgtasks.silo_credentials_update_task",
+    "plane.bgtasks.project_subscriber_task",
     # ee tasks
     "plane.ee.bgtasks.entity_issue_state_progress_task",
     "plane.ee.bgtasks.app_bot_task",
@@ -393,7 +392,7 @@ SESSION_COOKIE_NAME = os.environ.get("SESSION_COOKIE_NAME", "session-id")
 SESSION_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
 SESSION_SAVE_EVERY_REQUEST = os.environ.get("SESSION_SAVE_EVERY_REQUEST", "0") == "1"
 # If on cloud, set the session cookie domain to the cloud domain else None
-if os.environ.get("IS_MULTI_TENANT", "0") == "1":
+if not IS_SELF_MANAGED:
     SESSION_COOKIE_DOMAIN = os.environ.get("SESSION_COOKIE_DOMAIN", ".plane.so")
 else:
     SESSION_COOKIE_DOMAIN = None
@@ -456,6 +455,8 @@ if not SILO_BASE_URL:
     SILO_BASE_URL = WEB_URL or APP_BASE_URL
 SILO_BASE_PATH = os.environ.get("SILO_BASE_PATH", "/silo")
 SILO_URL = urljoin(SILO_BASE_URL, SILO_BASE_PATH)
+
+RUNNER_BASE_URL = os.environ.get("RUNNER_BASE_URL", "")
 
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
 
@@ -567,9 +568,6 @@ PAYMENT_SERVER_AUTH_TOKEN = os.environ.get("PAYMENT_SERVER_AUTH_TOKEN", "")
 FEATURE_FLAG_SERVER_BASE_URL = os.environ.get("FEATURE_FLAG_SERVER_BASE_URL", False)
 FEATURE_FLAG_SERVER_AUTH_TOKEN = os.environ.get("FEATURE_FLAG_SERVER_AUTH_TOKEN", "")
 
-# Check if multi tenant
-IS_MULTI_TENANT = os.environ.get("IS_MULTI_TENANT", "0") == "1"
-
 # Instance Changelog URL
 INSTANCE_CHANGELOG_URL = os.environ.get("INSTANCE_CHANGELOG_URL", "")
 
@@ -593,6 +591,7 @@ SIMPLE_JWT = {
 
 # silo hmac secret key
 SILO_HMAC_SECRET_KEY = os.environ.get("SILO_HMAC_SECRET_KEY", "")
+RUNNER_HMAC_SECRET_KEY = os.environ.get("RUNNER_HMAC_SECRET_KEY", "")
 
 
 # firebase settings

@@ -15,20 +15,25 @@ import { makeObservable } from "mobx";
 import type { CoreRootStore } from "@/store/root.store";
 import type { IUpdateStore } from "./updates/base.store";
 import { UpdateStore } from "./updates/base.store";
+import { EpicMetaStore } from "./meta.store";
+import type { IEpicMetaStore } from "./meta.store";
 
 export interface IEpicBaseStore {
   updatesStore: IUpdateStore;
+  epicMetaStore: IEpicMetaStore;
 }
 
 export class EpicBaseStore implements IEpicBaseStore {
   //store
   rootStore: CoreRootStore;
   updatesStore: IUpdateStore;
+  epicMetaStore: IEpicMetaStore;
 
   constructor(public store: CoreRootStore) {
     makeObservable(this, {});
     // services
     this.rootStore = store;
     this.updatesStore = new UpdateStore();
+    this.epicMetaStore = new EpicMetaStore();
   }
 }

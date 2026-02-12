@@ -54,6 +54,7 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   // check integrations
   const integrations = getIntegrations(workspaceSlug);
   const hasDrawioIntegration = integrations.includes(E_INTEGRATION_KEYS.DRAWIO);
+  const hasMermaidIntegration = integrations.includes(E_INTEGRATION_KEYS.MERMAID);
 
   // disabled and flagged in the document editor
   const document = useMemo(
@@ -129,6 +130,12 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   // check for drawio integration
   if (!hasDrawioIntegration) {
     document.flagged.add("drawio");
+  }
+
+  // check for mermaid integration
+  if (!hasMermaidIntegration) {
+    document.flagged.add("mermaid-diagrams");
+    richText.flagged.add("mermaid-diagrams");
   }
 
   if (pageId && isEditorSelectionConversionEnabled) {

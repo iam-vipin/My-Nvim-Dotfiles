@@ -14,7 +14,7 @@
 import { observer } from "mobx-react";
 // plane constants
 import type { TActivityFilters, TActivityFilterOption } from "@plane/constants";
-import { ACTIVITY_FILTER_TYPE_OPTIONS, EActivityFilterTypeEE } from "@plane/constants";
+import { ACTIVITY_FILTER_TYPE_OPTIONS, EActivityFilterType } from "@plane/constants";
 // components
 import { ActivityFilter } from "@/components/issues/issue-detail/issue-activity";
 // hooks
@@ -41,8 +41,8 @@ export const ActivityFilterRoot = observer(function ActivityFilterRoot(props: TA
   const filterOptions = { ...ACTIVITY_FILTER_TYPE_OPTIONS };
 
   if (!workspaceId || !projectId) return <></>;
-  if ((!isFeatureFlagged || isIntakeIssue) && filterOptions?.[EActivityFilterTypeEE.WORKLOG]) {
-    delete filterOptions?.[EActivityFilterTypeEE.WORKLOG as keyof typeof filterOptions];
+  if ((!isFeatureFlagged || isIntakeIssue) && filterOptions?.[EActivityFilterType.WORKLOG]) {
+    delete filterOptions?.[EActivityFilterType.WORKLOG as keyof typeof filterOptions];
   }
 
   const filters: TActivityFilterOption[] = Object.entries(filterOptions).map(([key, value]) => {
@@ -56,7 +56,7 @@ export const ActivityFilterRoot = observer(function ActivityFilterRoot(props: TA
   });
 
   const filteredSelectedFilters = selectedFilters.filter((filter) => {
-    if (!isFeatureFlagged && filter === EActivityFilterTypeEE.WORKLOG) return false;
+    if (!isFeatureFlagged && filter === EActivityFilterType.WORKLOG) return false;
     return true;
   });
 

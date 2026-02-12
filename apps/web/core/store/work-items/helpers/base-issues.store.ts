@@ -131,6 +131,7 @@ export const ISSUE_GROUP_BY_KEY: Record<TIssueDisplayFilterOptions, keyof TIssue
   module: "module_ids",
   team_project: "project_id",
   milestone: "milestone_id",
+  epic: "parent_id",
 };
 
 export const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof TIssue> = {
@@ -146,6 +147,7 @@ export const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof
   target_date: "target_date",
   team_project: "project_id",
   milestone: "milestone_id",
+  epic: "parent_id",
 };
 
 // This constant maps the order by keys to the respective issue property that the key relies on
@@ -838,7 +840,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     if (this.cycleId === cycleId) this.fetchParentStats(workspaceSlug, projectId);
 
     // if true, fetch the issue data for all the issueIds
-    if (fetchAddedIssues) await this.rootIssueStore.issues.getIssues(workspaceSlug, projectId, issueIds);
+    if (fetchAddedIssues) await this.rootIssueStore.issues.fetchWorkItems(workspaceSlug, projectId, issueIds);
 
     // Update issueIds from current store
     runInAction(() => {
@@ -998,7 +1000,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     });
 
     // if true, fetch the issue data for all the issueIds
-    if (fetchAddedIssues) await this.rootIssueStore.issues.getIssues(workspaceSlug, projectId, issueIds);
+    if (fetchAddedIssues) await this.rootIssueStore.issues.fetchWorkItems(workspaceSlug, projectId, issueIds);
 
     // if module Id is the current Module Id then call fetch parent stats
     if (this.moduleId === moduleId) this.fetchParentStats(workspaceSlug, projectId);

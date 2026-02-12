@@ -394,6 +394,26 @@ def create_anthropic_llm(config: LLMConfig, track_tokens: bool = True, **overrid
         return llm
 
 
+def _is_custom_model(model_key: str) -> bool:
+    """Check if the model_key refers to the custom self-hosted model."""
+    return (
+        settings.llm_config.CUSTOM_LLM_ENABLED
+        and bool(settings.llm_config.CUSTOM_LLM_MODEL_KEY)
+        and model_key == settings.llm_config.CUSTOM_LLM_MODEL_KEY
+    )
+
+
+def _create_custom_llm_config(*, streaming: bool = False, temperature: float = 0.2) -> LLMConfig:
+    """Build an LLMConfig for the custom self-hosted model."""
+    return LLMConfig(
+        model=settings.llm_config.CUSTOM_LLM_MODEL_KEY,
+        base_url=settings.llm_config.CUSTOM_LLM_BASE_URL,
+        api_key=settings.llm_config.CUSTOM_LLM_API_KEY or "not-needed",
+        streaming=streaming,
+        temperature=temperature,
+    )
+
+
 # Pre-configured LLM instances
 _DEFAULT_CONFIGS = {
     "default": LLMConfig.openai(settings.llm_model.GPT_4_1, streaming=False, temperature=0.2),
@@ -427,14 +447,8 @@ _DEFAULT_CONFIGS = {
     ),
     "gpt5_1_default": LLMConfig.openai("gpt-5.1", streaming=False),
     "gpt5_1_stream": LLMConfig.openai("gpt-5.1", streaming=True),
-    "gpt5_2_default": LLMConfig(
-        model="gpt-5.2",
-        streaming=False,
-    ),
-    "gpt5_2_stream": LLMConfig(
-        model="gpt-5.2",
-        streaming=True,
-    ),
+    "gpt5_2_default": LLMConfig.openai("gpt-5.2", streaming=False),
+    "gpt5_2_stream": LLMConfig.openai("gpt-5.2", streaming=True),
 }
 
 _ANTHROPIC_CONFIGS = {
@@ -462,6 +476,9 @@ def _get_config_name_for_model(model_name: Optional[str], config_type: str) -> O
         Internal config name to lookup in _DEFAULT_CONFIGS, _ANTHROPIC_CONFIGS, etc.
         Returns None if no mapping exists (will use global defaults).
     """
+    if _is_custom_model(model_name or ""):
+        return "__custom__"  # Sentinel handled by LLMFactory methods
+
     if not model_name:
         return config_type  # Use base config type: "default", "stream", etc.
 
@@ -534,7 +551,9 @@ class LLMFactory:
         # Map user-facing model name to config name
         config_name = _get_config_name_for_model(model_name, "default")
 
-        if config_name and config_name in _ANTHROPIC_CONFIGS:
+        if config_name == "__custom__":
+            return create_openai_llm(_create_custom_llm_config(streaming=False, temperature=0.2))
+        elif config_name and config_name in _ANTHROPIC_CONFIGS:
             return create_anthropic_llm(_ANTHROPIC_CONFIGS[config_name])
         elif config_name and config_name in _DEFAULT_CONFIGS:
             return create_openai_llm(_DEFAULT_CONFIGS[config_name])
@@ -546,7 +565,9 @@ class LLMFactory:
         # Map user-facing model name to config name
         config_name = _get_config_name_for_model(model_name, "stream")
 
-        if config_name and config_name in _ANTHROPIC_CONFIGS:
+        if config_name == "__custom__":
+            return create_openai_llm(_create_custom_llm_config(streaming=True, temperature=0.2))
+        elif config_name and config_name in _ANTHROPIC_CONFIGS:
             return create_anthropic_llm(_ANTHROPIC_CONFIGS[config_name])
         elif config_name and config_name in _DEFAULT_CONFIGS:
             return create_openai_llm(_DEFAULT_CONFIGS[config_name])
@@ -558,7 +579,9 @@ class LLMFactory:
         # Map user-facing model name to config name
         config_name = _get_config_name_for_model(model_name, "decomposer")
 
-        if config_name and config_name in _ANTHROPIC_CONFIGS:
+        if config_name == "__custom__":
+            return create_openai_llm(_create_custom_llm_config(streaming=False, temperature=0.0))
+        elif config_name and config_name in _ANTHROPIC_CONFIGS:
             return create_anthropic_llm(_ANTHROPIC_CONFIGS[config_name])
         elif config_name and config_name in _DEFAULT_CONFIGS:
             return create_openai_llm(_DEFAULT_CONFIGS[config_name])
@@ -567,16 +590,28 @@ class LLMFactory:
 
     @classmethod
     def get_fast_llm(cls, streaming: bool = False, model_name: Optional[str] = None) -> Any:
-        # Map user-facing model name to config name
-        config_name = _get_config_name_for_model(model_name, "fast")
+        """Return the fast-tier LLM for tool calling, SQL generation, etc.
 
-        if config_name and config_name in _ANTHROPIC_CONFIGS:
-            return create_anthropic_llm(_ANTHROPIC_CONFIGS[config_name])
-        elif config_name and config_name in _DEFAULT_CONFIGS:
-            return create_openai_llm(_DEFAULT_CONFIGS[config_name])
+        Uses PROVIDER_DEFAULT_MODELS_FAST: OpenAI → gpt-4.1, Claude → sonnet-4.0.
+        Falls back to user's chat model if custom model is selected.
+        """
+        # Custom model selected: use it for fast_llm too
+        if _get_config_name_for_model(model_name, "fast") == "__custom__":
+            return create_openai_llm(_create_custom_llm_config(streaming=streaming, temperature=0.2))
+
+        # Use provider's fast-tier model
+        has_openai_key = bool(settings.llm_config.OPENAI_API_KEY and settings.llm_config.OPENAI_API_KEY.strip())
+        has_claude_key = bool(settings.llm_config.CLAUDE_API_KEY and settings.llm_config.CLAUDE_API_KEY.strip())
+
+        if has_openai_key:
+            config = LLMConfig.openai(settings.llm_config.PROVIDER_DEFAULT_MODELS_FAST["openai"], streaming=streaming, temperature=0.2)
+            return create_openai_llm(config)
+        elif has_claude_key:
+            config = LLMConfig.anthropic(settings.llm_config.PROVIDER_DEFAULT_MODELS_FAST["anthropic"], streaming=streaming, temperature=0.2)
+            return create_anthropic_llm(config)
         else:
-            config_key = "fast_stream" if streaming else "fast"
-            return create_openai_llm(_DEFAULT_CONFIGS[config_key])
+            # Fallback to default
+            return cls.get_default_llm(settings.llm_model.DEFAULT)
 
     @classmethod
     def create_openai(cls, **kwargs: Any) -> Any:
@@ -616,38 +651,34 @@ def get_chat_llm(llm_name: str) -> Any:
             )
         elif llm_name.lower() == "gpt-5.1":
             config = LLMConfig.openai("gpt-5.1", streaming=True)
-            config = LLMConfig(
-                model="gpt-5.1",
-                streaming=True,
-            )
         elif llm_name.lower() == "gpt-5.2":
-            config = LLMConfig(
-                model="gpt-5.2",
-                streaming=True,
-            )
+            config = LLMConfig.openai("gpt-5.2", streaming=True)
         elif llm_name.lower() == "gpt-5-mini":
-            config = LLMConfig(
-                model="gpt-5-mini",
-                streaming=True,
-            )
+            config = LLMConfig.openai("gpt-5-mini", streaming=True)
         elif llm_name.lower() == "gpt-5-nano":
-            config = LLMConfig(
-                model="gpt-5-nano",
-                streaming=True,
-            )
+            config = LLMConfig.openai("gpt-5-nano", streaming=True)
         elif llm_name.lower() == "claude-sonnet-4-0":
             config = LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_0, streaming=True)
         elif llm_name.lower() == "claude-sonnet-4-5":
             config = LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_5, streaming=True)
+        elif _is_custom_model(llm_name):
+            config = _create_custom_llm_config(streaming=True)
         else:
-            # Fallback to default (GPT-4.1)
-            config = LLMConfig.openai(settings.llm_model.GPT_4_1, streaming=True, temperature=0.2)
+            # Fallback: use custom model if custom-only deployment, otherwise GPT-4.1
+            if settings.llm_config.CUSTOM_LLM_ENABLED and settings.llm_config.CUSTOM_LLM_MODEL_KEY:
+                config = _create_custom_llm_config(streaming=True)
+            else:
+                config = LLMConfig.openai(settings.llm_model.GPT_4_1, streaming=True, temperature=0.2)
 
         return create_openai_llm(config)
 
     except Exception as e:
         log.error(f"Failed to create LLM client ({llm_name!r}): {e}")
-        fallback_config = LLMConfig.openai(settings.llm_model.GPT_4_1, streaming=True, temperature=0.2)
+        # Fallback: use custom model if custom-only deployment, otherwise GPT-4.1
+        if settings.llm_config.CUSTOM_LLM_ENABLED and settings.llm_config.CUSTOM_LLM_MODEL_KEY:
+            fallback_config = _create_custom_llm_config(streaming=True)
+        else:
+            fallback_config = LLMConfig.openai(settings.llm_model.GPT_4_1, streaming=True, temperature=0.2)
         return create_openai_llm(fallback_config)
 
 
@@ -660,6 +691,12 @@ def get_sql_agent_llm(operation_type: str, llm_model: str = settings.llm_model.G
         }
 
         model = model_map.get(operation_type.lower(), llm_model)
+
+        # Custom self-hosted model takes priority
+        if _is_custom_model(model):
+            config = _create_custom_llm_config(streaming=False, temperature=0.2)
+            return create_openai_llm(config, max_completion_tokens=4096)
+
         # Create a base config and pass SQL-specific parameters via overrides. This keeps the
         # specialised settings local to this helper without extending the generic LLMConfig.
         if model == "claude-sonnet-4-0":
@@ -705,10 +742,7 @@ def get_sql_agent_llm(operation_type: str, llm_model: str = settings.llm_model.G
             return create_openai_llm(config, max_completion_tokens=4096)
         elif model == "gpt-5.2":
             # GPT-5.2 config for SQL generation with extended context
-            config = LLMConfig(
-                model="gpt-5.2",
-                streaming=False,
-            )
+            config = LLMConfig.openai("gpt-5.2", streaming=False)
             return create_openai_llm(config, max_completion_tokens=4096)
         else:
             config = LLMConfig.openai(model, temperature=0.2, streaming=False)
@@ -724,17 +758,64 @@ def get_sql_agent_llm(operation_type: str, llm_model: str = settings.llm_model.G
         return create_openai_llm(fallback_config)
 
 
-def get_dupes_llm() -> BaseLanguageModel:
-    """Get specialized LLM for duplicate detection using GPT-4.1 nano for speed and cost efficiency."""
-    try:
-        config = LLMConfig.openai(settings.llm_model.GPT_4_1_NANO, temperature=0.0, streaming=False)
+def get_lightweight_llm(*, streaming: bool = False, temperature: float = 0.0) -> BaseLanguageModel:
+    """Get the cheapest available LLM for lightweight tasks (title gen, dedupe, etc.).
+
+    Priority: GPT-4.1 nano (OpenAI) > Claude Haiku 4.5 > custom model > DEFAULT.
+
+    Args:
+        streaming: Whether to enable streaming
+        temperature: Temperature for generation (default 0.0 for deterministic output)
+
+    Returns:
+        Lightweight LLM instance (TrackedLLM)
+    """
+    has_openai_key = bool(settings.llm_config.OPENAI_API_KEY and settings.llm_config.OPENAI_API_KEY.strip())
+    has_claude_key = bool(settings.llm_config.CLAUDE_API_KEY and settings.llm_config.CLAUDE_API_KEY.strip())
+
+    # Prefer GPT-4.1 nano when OpenAI is available (cheapest OpenAI option)
+    if has_openai_key:
+        config = LLMConfig.openai(settings.llm_model.GPT_4_1_NANO, temperature=temperature, streaming=streaming)
         return create_openai_llm(config)
 
+    # Use Claude Haiku 4.5 when only Claude is available (cheapest Anthropic option)
+    if has_claude_key:
+        config = LLMConfig.anthropic(settings.llm_model.CLAUDE_HAIKU_4_5, temperature=temperature, streaming=streaming)
+        return create_anthropic_llm(config)
+
+    # Custom deployment: use the custom model
+    if settings.llm_config.CUSTOM_LLM_ENABLED and settings.llm_config.CUSTOM_LLM_MODEL_KEY:
+        config = _create_custom_llm_config(streaming=streaming, temperature=temperature)
+        return create_openai_llm(config)
+
+    # Fall back to DEFAULT model
+    return LLMFactory.get_default_llm(settings.llm_model.DEFAULT)
+
+
+def get_dupes_llm() -> BaseLanguageModel:
+    """Get specialized LLM for duplicate detection — uses cheapest available model."""
+    try:
+        return get_lightweight_llm(streaming=False, temperature=0.0)
     except Exception as e:
         log.error(f"Failed to create dupes LLM: {e}")
-        # Fallback to fast LLM if nano is not available
-        fallback_config = LLMConfig.openai(settings.llm_model.GPT_4O_MINI, temperature=0.0, streaming=False)
-        return create_openai_llm(fallback_config)
+        return LLMFactory.get_default_llm(settings.llm_model.DEFAULT)
+
+
+def get_fallback_model_name() -> str:
+    """Get the best available fallback model name for error recovery.
+
+    Returns the model name (string) to use when the current model fails.
+    Prioritizes fast, reliable models: OpenAI nano → Claude Sonnet → custom/default.
+    """
+    has_openai_key = bool(settings.llm_config.OPENAI_API_KEY and settings.llm_config.OPENAI_API_KEY.strip())
+    has_claude_key = bool(settings.llm_config.CLAUDE_API_KEY and settings.llm_config.CLAUDE_API_KEY.strip())
+
+    if has_openai_key:
+        return settings.llm_model.GPT_4_1
+    elif has_claude_key:
+        return settings.llm_model.CLAUDE_SONNET_4_0
+    else:
+        return settings.llm_model.DEFAULT
 
 
 class LazyLLM(Runnable):
@@ -768,6 +849,14 @@ class LazyLLM(Runnable):
 
     def with_structured_output(self, *args: Any, **kwargs: Any) -> Any:
         return self._target.with_structured_output(*args, **kwargs)
+
+    def set_tracking_context(self, message_id: UUID, db: AsyncSession, step_type: MessageMetaStepType, chat_id: Optional[str] = None) -> None:
+        """Delegate tracking context to the underlying TrackedLLM."""
+        return self._target.set_tracking_context(message_id, db, step_type, chat_id)
+
+    def clear_tracking_context(self) -> None:
+        """Delegate tracking context clearing to the underlying TrackedLLM."""
+        return self._target.clear_tracking_context()
 
     def __getattr__(self, name: str) -> Any:
         return getattr(self._target, name)

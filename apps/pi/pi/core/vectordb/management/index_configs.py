@@ -10,6 +10,7 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 from pi import settings
+from pi.core.embedding_config import get_embedding_param_from_active_model
 
 # Index configurations
 # Each key is the index name, value is a dict with:
@@ -91,7 +92,7 @@ INDEX_CONFIGS = {
 
 def get_pipeline_body(ml_model_id: str) -> dict:
     """
-    Get the pipeline body for docs embedding.
+    Get the pipeline body for docs embedding with dynamic parameter support.
 
     Args:
         ml_model_id: OpenSearch ML model ID
@@ -99,6 +100,10 @@ def get_pipeline_body(ml_model_id: str) -> dict:
     Returns:
         Pipeline body configuration
     """
+
+    # Get the correct parameter name for the active model (input, texts, or inputText)
+    param_name = get_embedding_param_from_active_model()
+
     return {
         "description": "Content embedding for docs",
         "processors": [
@@ -106,7 +111,7 @@ def get_pipeline_body(ml_model_id: str) -> dict:
                 "ml_inference": {
                     "model_id": ml_model_id,
                     "input_map": [{"input": "content"}],
-                    "model_input": '{ "parameters": { "texts": [ "${input_map.input}" ] } }',
+                    "model_input": f'{{ "parameters": {{ "{param_name}": [ "${{input_map.input}}" ] }} }}',
                     "output_map": [{"content_semantic": "$.inference_results[0].output[0].data"}],
                     "if": "ctx.content != null && ctx.content != '' && ctx.content.trim() != ''",
                 }

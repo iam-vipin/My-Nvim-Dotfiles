@@ -16,7 +16,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane package imports
 import type { E_SORT_ORDER } from "@plane/constants";
-import { EActivityFilterType, EActivityFilterTypeEE } from "@plane/constants";
+import { EActivityFilterType } from "@plane/constants";
 import type {
   TIssueActivityComment,
   TIssueActivity,
@@ -162,7 +162,7 @@ export class IssueActivityStore implements IIssueActivityStore {
       if (!worklog || !worklog.id) return;
       activityComments.push({
         id: worklog.id,
-        activity_type: EActivityFilterTypeEE.WORKLOG,
+        activity_type: EActivityFilterType.WORKLOG,
         created_at: worklog.created_at,
       });
     });
@@ -172,7 +172,7 @@ export class IssueActivityStore implements IIssueActivityStore {
       if (!activity || !activity.id) return;
       activityComments.push({
         id: activity.id,
-        activity_type: EActivityFilterTypeEE.ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY,
+        activity_type: EActivityFilterType.ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY,
         created_at: activity.created_at,
       });
     });

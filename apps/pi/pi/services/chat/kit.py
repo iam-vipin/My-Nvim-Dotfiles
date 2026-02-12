@@ -34,6 +34,8 @@ from pi.services.chat.utils import get_current_timestamp_context
 from pi.services.llm import llms
 from pi.services.llm.error_handling import llm_error_handler
 from pi.services.llm.error_handling import streaming_error_handler
+from pi.services.llm.llms import _is_custom_model
+from pi.services.llm.llms import get_lightweight_llm
 
 # from pi.services.retrievers import thread_store
 from pi.services.retrievers import pg_store
@@ -112,6 +114,16 @@ class ChatKit(AttachmentMixin):
                 # This is GPT-5.1
                 TOOL_LLM = "gpt-5.1"
                 tool_config = LLMConfig.openai(TOOL_LLM, streaming=False)
+            elif _is_custom_model(switch_llm):
+                # Custom self-hosted model
+                TOOL_LLM = settings.llm_config.CUSTOM_LLM_MODEL_KEY
+                tool_config = LLMConfig(
+                    model=TOOL_LLM,
+                    base_url=settings.llm_config.CUSTOM_LLM_BASE_URL,
+                    api_key=settings.llm_config.CUSTOM_LLM_API_KEY or "not-needed",
+                    temperature=0.2,
+                    streaming=tool_llm_streaming,
+                )
             else:
                 # This is a regular OpenAI model
                 TOOL_LLM = switch_llm
@@ -209,10 +221,14 @@ class ChatKit(AttachmentMixin):
             from pi import settings
             from pi.app.models.enums import MessageMetaStepType
             from pi.services.llm.llms import LLMConfig
+            from pi.services.llm.llms import _create_custom_llm_config
             from pi.services.llm.llms import create_openai_llm
 
             # Create a lightweight LLM for context extraction
-            context_llm_config = LLMConfig.openai(settings.llm_model.GPT_4_1, temperature=0.1, streaming=False)
+            if _is_custom_model(self.switch_llm):
+                context_llm_config = _create_custom_llm_config(streaming=False, temperature=0.1)
+            else:
+                context_llm_config = LLMConfig.openai(settings.llm_model.GPT_4_1, temperature=0.1, streaming=False)
             context_llm = create_openai_llm(context_llm_config)
             context_llm.set_tracking_context(message_id, db, MessageMetaStepType.ATTACHMENT_CONTEXT_EXTRACTION)
 
@@ -1333,9 +1349,10 @@ Provide concise, relevant context from the attachment(s):"""
     async def title_generation(self, chat_history: list[str]) -> str:
         import time
 
-        # Set tracking context for title generation
+        # Use dedicated lightweight LLM (nano/mini/haiku) for title generation, not the chat model
+        title_llm = get_lightweight_llm(streaming=False, temperature=0.2)
         if self._token_tracking_context:
-            self.fast_llm.set_tracking_context(
+            title_llm.set_tracking_context(  # type: ignore[attr-defined]
                 self._token_tracking_context["message_id"],
                 self._token_tracking_context["db"],
                 MessageMetaStepType.TITLE_GENERATION,
@@ -1351,7 +1368,7 @@ Provide concise, relevant context from the attachment(s):"""
         # Get title from LLM
         title_gen_start = time.time()
         log.info("Starting title generation LLM call")
-        llm_response = await self.fast_llm.ainvoke(prompt_value)
+        llm_response = await title_llm.ainvoke(prompt_value)
         title_gen_elapsed = time.time() - title_gen_start
         log.info(f"Title generation LLM call completed in {title_gen_elapsed:.2f}s")
         title = llm_response.content if hasattr(llm_response, "content") else str(llm_response)

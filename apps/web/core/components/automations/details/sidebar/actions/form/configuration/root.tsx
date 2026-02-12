@@ -18,6 +18,7 @@ import { EActionNodeHandlerName } from "@plane/types";
 // local imports
 import { AutomationActionAddCommentConfiguration } from "./add_comment/root";
 import { AutomationActionChangePropertyConfiguration } from "./change-property/root";
+import { AutomationActionRunScriptConfiguration } from "./run-script/root";
 
 type TProps = {
   automationId: string;
@@ -48,6 +49,9 @@ export function AutomationActionConfigurationRoot(props: TProps) {
       )}
       {selectedHandlerName === EActionNodeHandlerName.CHANGE_PROPERTY && (
         <AutomationActionChangePropertyConfiguration isDisabled={isDisabled} projectId={projectId} />
+      )}
+      {selectedHandlerName === EActionNodeHandlerName.RUN_SCRIPT && (
+        <AutomationActionRunScriptConfiguration workspaceSlug={workspaceSlug} />
       )}
     </div>
   );

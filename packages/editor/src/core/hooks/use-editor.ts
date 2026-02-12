@@ -22,6 +22,9 @@ import { getEditorRefHelpers } from "@/helpers/editor-ref";
 import { CoreEditorProps } from "@/props";
 // types
 import type { TEditorHookProps } from "@/types";
+// utils
+import { normalizeCodeBlockHTML } from "@/utils/normalize-code-blocks";
+import { parseHTMLToJSON } from "@/utils/parse-html-to-doc";
 
 declare module "@tiptap/core" {
   interface Storage {
@@ -153,8 +156,14 @@ export const useEditor = (props: TEditorHookProps) => {
         }),
         ...extensions,
       ],
-      content: initialValue,
-      onCreate: () => handleEditorReady?.(true),
+      content: typeof initialValue === "string" ? undefined : initialValue,
+      onCreate: ({ editor: newEditor }) => {
+        if (typeof initialValue === "string") {
+          const json = parseHTMLToJSON(normalizeCodeBlockHTML(initialValue), newEditor.schema);
+          newEditor.commands.setContent(json);
+        }
+        handleEditorReady?.(true);
+      },
       onTransaction: () => {
         onTransaction?.();
       },
@@ -188,9 +197,9 @@ export const useEditor = (props: TEditorHookProps) => {
       const { uploadInProgress: isUploadInProgress } = editor.storage.utility;
       if (!editor.isDestroyed && !isUploadInProgress) {
         try {
-          editor.commands.setContent(value, false, {
-            preserveWhitespace: true,
-          });
+          const contentToSet =
+            typeof value === "string" ? parseHTMLToJSON(normalizeCodeBlockHTML(value), editor.schema) : value;
+          editor.commands.setContent(contentToSet);
           if (editor.state.selection) {
             const docLength = editor.state.doc.content.size;
             const relativePosition = Math.min(editor.state.selection.from, docLength - 1);

@@ -15,7 +15,7 @@ import type { ReactNode } from "react";
 import * as Sentry from "@sentry/react-router";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 import type { LinksFunction } from "react-router";
-import { ThemeProvider, useTheme } from "next-themes";
+import { ThemeProvider } from "next-themes";
 // plane imports
 import { SITE_DESCRIPTION, SITE_NAME, IOS_APP_ID } from "@plane/constants";
 import { cn } from "@plane/utils";
@@ -27,6 +27,8 @@ import faviconIco from "@/app/assets/favicon/favicon.ico?url";
 import icon180 from "@/app/assets/icons/icon-180x180.png?url";
 import icon512 from "@/app/assets/icons/icon-512x512.png?url";
 import ogImage from "@/app/assets/og-image.png?url";
+import clarityTrackingScript from "@/app/assets/runtime/clarity-tracking.js?url";
+import themeInitScript from "@/app/assets/runtime/theme-init.js?url";
 import globalStyles from "@/styles/globals.css?url";
 import type { Route } from "./+types/root";
 // components
@@ -72,6 +74,7 @@ export function Layout({ children }: { children: ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script id="theme-init" src={themeInitScript} />
         <meta name="theme-color" content="#fff" />
         {/* Meta info for PWA */}
         <meta name="application-name" content="Plane" />
@@ -86,19 +89,27 @@ export function Layout({ children }: { children: ReactNode }) {
         <Links />
       </head>
       <body suppressHydrationWarning>
-        <div id="context-menu-portal" />
-        <div id="editor-portal" />
-        {children}
-        <Scripts />
-        {!!isSessionRecorderEnabled && process.env.VITE_SESSION_RECORDER_KEY && (
-          <script id="clarity-tracking">
-            {`(function(c,l,a,r,i,t,y){
-              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-              y=l.getElementsByTagName(r)[0];if(y){y.parentNode.insertBefore(t,y);}
-          })(window, document, "clarity", "script", "${process.env.VITE_SESSION_RECORDER_KEY}");`}
-          </script>
-        )}
+        <ThemeProvider
+          attribute="data-theme"
+          storageKey="theme"
+          themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]}
+          defaultTheme="system"
+          enableSystem
+          enableColorScheme
+          disableTransitionOnChange
+        >
+          <div id="context-menu-portal" />
+          <div id="editor-portal" />
+          {children}
+          <Scripts />
+          {!!isSessionRecorderEnabled && process.env.VITE_SESSION_RECORDER_KEY && (
+            <script
+              id="clarity-tracking"
+              src={clarityTrackingScript}
+              data-clarity-key={process.env.VITE_SESSION_RECORDER_KEY}
+            />
+          )}
+        </ThemeProvider>
       </body>
     </html>
   );
@@ -132,43 +143,24 @@ export const meta: Route.MetaFunction = () => [
 
 export default function Root() {
   return (
-    <ThemeProvider
-      attribute="data-theme"
-      themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]}
-      defaultTheme="system"
-    >
-      <AppProvider>
-        <div
-          className={cn("h-screen w-full overflow-hidden bg-canvas relative flex flex-col", "desktop-app-container")}
-        >
-          <GetMobileApp />
-          {/* free trial banner */}
-          <TrialBanner />
-          <main className="w-full h-full overflow-hidden relative">
-            <Outlet />
-          </main>
-        </div>
-      </AppProvider>
-    </ThemeProvider>
+    <AppProvider>
+      <div className={cn("h-screen w-full overflow-hidden bg-canvas relative flex flex-col", "desktop-app-container")}>
+        <GetMobileApp />
+        {/* free trial banner */}
+        <TrialBanner />
+        <main className="w-full h-full overflow-hidden relative">
+          <Outlet />
+        </main>
+      </div>
+    </AppProvider>
   );
 }
 
 export function HydrateFallback() {
-  const { resolvedTheme } = useTheme();
-
-  // if we are on the server or the theme is not resolved, return an empty div
-  if (typeof window === "undefined" || resolvedTheme === undefined) return <div />;
-
   return (
-    <ThemeProvider
-      attribute="data-theme"
-      themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]}
-      defaultTheme="system"
-    >
-      <div className="relative flex bg-canvas h-screen w-full items-center justify-center">
-        <LogoSpinner />
-      </div>
-    </ThemeProvider>
+    <div className="relative flex bg-canvas h-screen w-full items-center justify-center">
+      <LogoSpinner />
+    </div>
   );
 }
 

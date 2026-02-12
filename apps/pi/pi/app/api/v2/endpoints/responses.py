@@ -30,6 +30,7 @@ from sqlalchemy import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
+from pi import settings
 from pi.app.api.dependencies import get_current_user
 from pi.app.api.dependencies import validate_plane_token
 from pi.app.api.v1.endpoints._sse import normalize_error_chunk
@@ -186,7 +187,7 @@ async def create_response_slack(data: ChatRequest, request: Request, db: AsyncSe
             )
 
         # Execute batch actions using the service
-        service = BuildModeToolExecutor(chatbot=PlaneChatBot("gpt-4.1"), db=db)
+        service = BuildModeToolExecutor(chatbot=PlaneChatBot(settings.llm_model.DEFAULT), db=db)
 
         result = await service.execute(
             ActionBatchExecutionRequest(
@@ -383,6 +384,17 @@ async def create_response_stream(
                         heartbeat_task.cancel()
                         with contextlib.suppress(asyncio.CancelledError):
                             await heartbeat_task
+                    # Cancel the in-flight chunk task so the inner generator
+                    # receives CancelledError and can persist partial content
+                    # while the DB session is still open.
+                    if next_chunk_task and not next_chunk_task.done():
+                        next_chunk_task.cancel()
+                        with contextlib.suppress(asyncio.CancelledError, StopAsyncIteration):
+                            await next_chunk_task
+                    # Throw CancelledError into the generator so
+                    # _process_chat_stream_core's except block can save partial state.
+                    with contextlib.suppress(asyncio.CancelledError, StopAsyncIteration, GeneratorExit):
+                        await base_iter.athrow(asyncio.CancelledError())
 
             # Handle any remaining pending backticks at the end of stream
             if pending_backticks:

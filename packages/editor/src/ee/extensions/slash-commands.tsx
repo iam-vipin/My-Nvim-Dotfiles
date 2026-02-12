@@ -13,8 +13,7 @@
 
 import type { Editor } from "@tiptap/core";
 // extensions
-
-import { Columns2, Columns3, Columns4, FileCode2, Paperclip, Sigma, SquareRadical } from "lucide-react";
+import { Columns2, Columns3, Columns4, FileCode2, Paperclip, Sigma, SquareRadical, Workflow } from "lucide-react";
 import { VideoIcon } from "@plane/propel/icons";
 import type { TSlashCommandAdditionalOption } from "@/extensions";
 // types
@@ -123,6 +122,26 @@ const coreSlashCommandRegistry: {
         section: "general",
         pushAfter: "block-equation",
         badge: flaggedExtensions?.includes("mathematics") ? <ProBadge /> : undefined,
+      },
+    ],
+  },
+  {
+    // Mermaid diagram slash command
+    isEnabled: (disabledExtensions, flaggedExtensions) =>
+      !flaggedExtensions?.includes("mermaid-diagrams") && !disabledExtensions?.includes("mermaid-diagrams"),
+    getOptions: () => [
+      {
+        commandKey: "code",
+        key: "mermaid-diagram",
+        title: "Mermaid diagram",
+        description: "Insert a Mermaid diagram code block.",
+        searchTerms: ["mermaid", "diagram", "flowchart", "sequence", "graph"],
+        icon: <Workflow className="size-3.5" />,
+        command: ({ editor, range }) => {
+          editor.chain().focus().deleteRange(range).setCodeBlock({ language: "mermaid" }).run();
+        },
+        section: "general",
+        pushAfter: "code",
       },
     ],
   },

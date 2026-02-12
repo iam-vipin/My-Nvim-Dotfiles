@@ -29,4 +29,5 @@ export type TExtensions =
   | "drawio"
   | "copy-block-link"
   | "selection-conversion"
+  | "mermaid-diagrams"
   | "multi-column";

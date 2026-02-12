@@ -11,7 +11,6 @@ import reactPlugin from "eslint-plugin-react";
 import reactHooksPlugin from "eslint-plugin-react-hooks";
 import reactRefreshPlugin from "eslint-plugin-react-refresh";
 import turboPlugin from "eslint-plugin-turbo";
-import vitestPlugin from "@vitest/eslint-plugin";
 // import storybookPlugin from "eslint-plugin-storybook";
 
 import prettierConfig from "eslint-config-prettier/flat";
@@ -46,7 +45,6 @@ export default defineConfig([
   reactRefreshPlugin.configs.vite,
   turboPlugin.configs["flat/recommended"],
   tseslint.configs.recommendedTypeChecked,
-  vitestPlugin.configs.recommended,
   // TODO: enable storybook linting once issues are resolved
   // storybookPlugin.configs["flat/recommended"],
   {

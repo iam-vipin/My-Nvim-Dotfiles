@@ -413,7 +413,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         ]:
             size_limit = min(size, settings.FILE_SIZE_LIMIT)
         else:
-            if settings.IS_MULTI_TENANT and check_workspace_feature_flag(
+            if not settings.IS_SELF_MANAGED and check_workspace_feature_flag(
                 feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
                 slug=slug,
                 user_id=str(request.user.id),

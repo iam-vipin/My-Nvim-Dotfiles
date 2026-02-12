@@ -41,7 +41,8 @@ AES_SALT = os.environ.get("AES_SALT", "aes-salt")
 DEBUG = int(os.environ.get("DEBUG", "0"))
 
 # Self-hosted mode
-IS_SELF_MANAGED = True
+IS_SELF_MANAGED = os.environ.get("IS_SELF_MANAGED", "1") == "1"
+
 
 # Allowed Hosts
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
@@ -394,7 +395,7 @@ SESSION_COOKIE_NAME = os.environ.get("SESSION_COOKIE_NAME", "session-id")
 SESSION_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
 SESSION_SAVE_EVERY_REQUEST = os.environ.get("SESSION_SAVE_EVERY_REQUEST", "0") == "1"
 # If on cloud, set the session cookie domain to the cloud domain else None
-if os.environ.get("IS_MULTI_TENANT", "0") == "1":
+if not IS_SELF_MANAGED:
     SESSION_COOKIE_DOMAIN = os.environ.get("SESSION_COOKIE_DOMAIN", ".plane.so")
 else:
     SESSION_COOKIE_DOMAIN = None
@@ -567,9 +568,6 @@ PAYMENT_SERVER_AUTH_TOKEN = os.environ.get("PAYMENT_SERVER_AUTH_TOKEN", "")
 # feature flag server base urls
 FEATURE_FLAG_SERVER_BASE_URL = os.environ.get("FEATURE_FLAG_SERVER_BASE_URL", False)
 FEATURE_FLAG_SERVER_AUTH_TOKEN = os.environ.get("FEATURE_FLAG_SERVER_AUTH_TOKEN", "")
-
-# Check if multi tenant
-IS_MULTI_TENANT = os.environ.get("IS_MULTI_TENANT", "0") == "1"
 
 # Instance Changelog URL
 INSTANCE_CHANGELOG_URL = os.environ.get("INSTANCE_CHANGELOG_URL", "")

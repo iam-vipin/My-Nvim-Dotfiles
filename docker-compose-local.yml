@@ -82,6 +82,8 @@ services:
     command: ./bin/docker-entrypoint-api-local.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      IS_SELF_MANAGED: "1"
     depends_on:
       - plane-db
       - plane-redis
@@ -103,6 +105,8 @@ services:
     command: ./bin/docker-entrypoint-worker.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      IS_SELF_MANAGED: "1"
     depends_on:
       - api
       - plane-db
@@ -122,6 +126,8 @@ services:
     command: ./bin/docker-entrypoint-beat.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      IS_SELF_MANAGED: "1"
     depends_on:
       - api
       - plane-db
@@ -141,6 +147,8 @@ services:
     command: ./bin/docker-entrypoint-migrator.sh --settings=plane.settings.local
     env_file:
       - ./apps/api/.env
+    environment:
+      IS_SELF_MANAGED: "1"
     depends_on:
       - plane-db
       - plane-redis
@@ -159,6 +167,8 @@ services:
     command: ./bin/docker-entrypoint-outbox-poller.sh --settings=plane.settings.local
     env_file:
       - ./apps/api/.env
+    environment:
+      IS_SELF_MANAGED: "1"
     depends_on:
       - plane-db
       - plane-mq
@@ -177,6 +187,8 @@ services:
     command: ./bin/docker-entrypoint-automation-consumer.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      IS_SELF_MANAGED: "1"
     depends_on:
       - plane-db
       - plane-mq
@@ -195,6 +207,8 @@ services:
     command: ./bin/docker-entrypoint-webhook-consumer.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      IS_SELF_MANAGED: "1"
     depends_on:
       - plane-db
       - plane-redis

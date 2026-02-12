@@ -142,8 +142,8 @@ class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
         )
 
     def post(self, request, slug):
-        # On the multi-tenant version, the workspace license is synced from the payment server
-        if settings.IS_MULTI_TENANT:
+        # On the cloud version, the workspace license is synced from the payment server
+        if not settings.IS_SELF_MANAGED:
             # Resync the workspace license
             _ = resync_workspace_license(workspace_slug=slug, force=True)
 

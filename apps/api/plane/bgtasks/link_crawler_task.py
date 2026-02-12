@@ -10,30 +10,27 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Python imports
-import logging
-import socket
-
-# Third party imports
-from celery import shared_task
-import requests
-from bs4 import BeautifulSoup
-from urllib.parse import urlparse, urljoin
 import base64
 import ipaddress
-from typing import Dict, Any
-from typing import Optional
-from plane.db.models import IssueLink, ModuleLink
+import logging
+import socket
+from typing import Any, Dict, Optional
+from urllib.parse import urljoin, urlparse
+
+# Third party imports
+import requests
+from bs4 import BeautifulSoup
+from celery import shared_task
+
+# Module imports
 from plane.utils.exception_logger import log_exception
-from plane.ee.models import InitiativeLink, ProjectLink
-from typing import Literal
-
-
-# Django imports
+from plane.utils.link_crawler import LinkCrawlerEntity, LinkCrawlerInput
 
 logger = logging.getLogger("plane.worker")
 
-
 DEFAULT_FAVICON = "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWxpbmstaWNvbiBsdWNpZGUtbGluayI+PHBhdGggZD0iTTEwIDEzYTUgNSAwIDAgMCA3LjU0LjU0bDMtM2E1IDUgMCAwIDAtNy4wNy03LjA3bC0xLjcyIDEuNzEiLz48cGF0aCBkPSJNMTQgMTFhNSA1IDAgMCAwLTcuNTQtLjU0bC0zIDNhNSA1IDAgMCAwIDcuMDcgNy4wN2wxLjcxLTEuNzEiLz48L3N2Zz4="  # noqa: E501
+
+MAX_REDIRECTS = 5
 
 
 def validate_url_ip(url: str) -> None:
@@ -47,19 +44,15 @@ def validate_url_ip(url: str) -> None:
     Raises:
         ValueError: If the URL points to a private/internal IP
     """
-    # Parse and extract the hostname from the URL
     parsed = urlparse(url)
     hostname = parsed.hostname
 
     if not hostname:
         raise ValueError("Invalid URL: No hostname found")
 
-    # Only allow HTTP and HTTPS to prevent file://, gopher://, etc.
     if parsed.scheme not in ("http", "https"):
         raise ValueError("Invalid URL scheme. Only HTTP and HTTPS are allowed")
 
-    # Resolve hostname to IP addresses — this catches domain names that
-    # point to internal IPs (e.g. attacker.com -> 169.254.169.254)
     try:
         addr_info = socket.getaddrinfo(hostname, None)
     except socket.gaierror:
@@ -68,85 +61,10 @@ def validate_url_ip(url: str) -> None:
     if not addr_info:
         raise ValueError("No IP addresses found for the hostname")
 
-    # Check every resolved IP against blocked ranges to prevent SSRF
     for addr in addr_info:
         ip = ipaddress.ip_address(addr[4][0])
         if ip.is_private or ip.is_loopback or ip.is_reserved or ip.is_link_local:
             raise ValueError("Access to private/internal networks is not allowed")
-
-
-MAX_REDIRECTS = 5
-
-
-def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
-    """
-    Crawls a URL to extract the title and favicon.
-
-    Args:
-        url (str): The URL to crawl
-
-    Returns:
-        str: JSON string containing title and base64-encoded favicon
-    """
-    try:
-        # Set up headers to mimic a real browser
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"  # noqa: E501
-        }
-
-        soup = None
-        title = None
-        final_url = url
-
-        validate_url_ip(final_url)
-
-        try:
-            # Manually follow redirects to validate each URL before requesting
-            redirect_count = 0
-            response = requests.get(final_url, headers=headers, timeout=1, allow_redirects=False)
-
-            while response.is_redirect and redirect_count < MAX_REDIRECTS:
-                redirect_url = response.headers.get("Location")
-                if not redirect_url:
-                    break
-                # Resolve relative redirects against current URL
-                final_url = urljoin(final_url, redirect_url)
-                # Validate the redirect target BEFORE making the request
-                validate_url_ip(final_url)
-                redirect_count += 1
-                response = requests.get(final_url, headers=headers, timeout=1, allow_redirects=False)
-
-            if redirect_count >= MAX_REDIRECTS:
-                logger.warning(f"Too many redirects for URL: {url}")
-
-            soup = BeautifulSoup(response.content, "html.parser")
-            title_tag = soup.find("title")
-            title = title_tag.get_text().strip() if title_tag else None
-
-        except requests.RequestException as e:
-            logger.warning(f"Failed to fetch HTML for title: {str(e)}")
-
-        # Fetch and encode favicon using final URL (after redirects)
-        favicon_base64 = fetch_and_encode_favicon(headers, soup, final_url)
-
-        # Prepare result
-        result = {
-            "title": title,
-            "favicon": favicon_base64["favicon_base64"],
-            "url": url,
-            "favicon_url": favicon_base64["favicon_url"],
-        }
-
-        return result
-
-    except Exception as e:
-        log_exception(e)
-        return {
-            "error": f"Unexpected error: {str(e)}",
-            "title": None,
-            "favicon": None,
-            "url": url,
-        }
 
 
 def find_favicon_url(soup: Optional[BeautifulSoup], base_url: str) -> Optional[str]:
@@ -160,9 +78,7 @@ def find_favicon_url(soup: Optional[BeautifulSoup], base_url: str) -> Optional[s
     Returns:
         str: Absolute URL to favicon or None
     """
-
     if soup is not None:
-        # Look for various favicon link tags
         favicon_selectors = [
             'link[rel="icon"]',
             'link[rel="shortcut icon"]',
@@ -177,11 +93,9 @@ def find_favicon_url(soup: Optional[BeautifulSoup], base_url: str) -> Optional[s
                 validate_url_ip(favicon_href)
                 return favicon_href
 
-    # Fallback to /favicon.ico
     parsed_url = urlparse(base_url)
     fallback_url = f"{parsed_url.scheme}://{parsed_url.netloc}/favicon.ico"
 
-    # Check if fallback exists
     try:
         validate_url_ip(fallback_url)
         response = requests.head(fallback_url, timeout=2, allow_redirects=False)
@@ -201,11 +115,12 @@ def fetch_and_encode_favicon(
     Fetch favicon and encode it as base64.
 
     Args:
-        favicon_url: URL to the favicon
         headers: Request headers
+        soup: BeautifulSoup object
+        url: Base URL for resolving relative paths
 
     Returns:
-        str: Base64 encoded favicon with data URI prefix or None
+        dict: favicon_url and favicon_base64
     """
     try:
         favicon_url = find_favicon_url(soup, url)
@@ -218,13 +133,9 @@ def fetch_and_encode_favicon(
         validate_url_ip(favicon_url)
         response = requests.get(favicon_url, headers=headers, timeout=1)
 
-        # Get content type
         content_type = response.headers.get("content-type", "image/x-icon")
-
-        # Convert to base64
         favicon_base64 = base64.b64encode(response.content).decode("utf-8")
 
-        # Return as data URI
         return {
             "favicon_url": favicon_url,
             "favicon_base64": f"data:{content_type};base64,{favicon_base64}",
@@ -238,20 +149,103 @@ def fetch_and_encode_favicon(
         }
 
 
-LINK_MODEL_MAPPER = {
-    "initiative": InitiativeLink,
-    "project": ProjectLink,
-    "module": ModuleLink,
-    "issue": IssueLink,
-}
+def crawl_link_metadata(url: str) -> Dict[str, Any]:
+    """
+    Crawls a URL to extract the title and favicon.
+
+    Args:
+        url: The URL to crawl
+
+    Returns:
+        dict: title, favicon (base64), favicon_url, url, and optionally error
+    """
+    try:
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"  # noqa: E501
+        }
+
+        soup = None
+        title = None
+        final_url = url
+
+        validate_url_ip(final_url)
+
+        try:
+            redirect_count = 0
+            response = requests.get(final_url, headers=headers, timeout=1, allow_redirects=False)
+
+            while response.is_redirect and redirect_count < MAX_REDIRECTS:
+                redirect_url = response.headers.get("Location")
+                if not redirect_url:
+                    break
+                final_url = urljoin(final_url, redirect_url)
+                validate_url_ip(final_url)
+                redirect_count += 1
+                response = requests.get(final_url, headers=headers, timeout=1, allow_redirects=False)
+
+            if redirect_count >= MAX_REDIRECTS:
+                logger.warning(f"Too many redirects for URL: {url}")
+
+            soup = BeautifulSoup(response.content, "html.parser")
+            title_tag = soup.find("title")
+            title = title_tag.get_text().strip() if title_tag else None
+
+        except requests.RequestException as e:
+            logger.warning(f"Failed to fetch HTML for title: {str(e)}")
+
+        favicon_base64 = fetch_and_encode_favicon(headers, soup, final_url)
+
+        result = {
+            "title": title,
+            "favicon": favicon_base64["favicon_base64"],
+            "url": url,
+            "favicon_url": favicon_base64["favicon_url"],
+        }
+
+        return result
+
+    except Exception as e:
+        log_exception(e)
+        return {
+            "error": f"Unexpected error: {str(e)}",
+            "title": None,
+            "favicon": None,
+            "url": url,
+        }
+
+
+def _get_model_and_field(entity: LinkCrawlerEntity):
+    """Returns (model_class, metadata_field_name) for the given entity type."""
+    from plane.db.models import IssueLink, ModuleLink
+    from plane.ee.models import Customer, InitiativeLink, ProjectLink
+
+    ENTITY_CONFIG = {
+        LinkCrawlerEntity.ISSUE: (IssueLink, "metadata"),
+        LinkCrawlerEntity.MODULE: (ModuleLink, "metadata"),
+        LinkCrawlerEntity.PROJECT: (ProjectLink, "metadata"),
+        LinkCrawlerEntity.INITIATIVE: (InitiativeLink, "metadata"),
+        LinkCrawlerEntity.CUSTOMER: (Customer, "logo_props"),
+    }
+    return ENTITY_CONFIG[entity]
 
 
 @shared_task
-def crawl_work_item_link_title(id: str, url: str, entity: Literal[*LINK_MODEL_MAPPER.keys()]) -> None:
-    meta_data = crawl_work_item_link_title_and_favicon(url)
+def link_crawler(id: str, url: str, entity: str) -> None:
+    """
+    Common Celery task to crawl a URL and store metadata on the given entity.
 
-    model = LINK_MODEL_MAPPER.get(entity).objects.get(id=id)
+    Args:
+        id: Primary key of the model instance
+        url: URL to crawl
+        entity: Entity type (issue, module, project, initiative, customer)
+    """
+    validated = LinkCrawlerInput(id=id, url=url, entity=entity)
 
-    model.metadata = meta_data
+    model_class, field_name = _get_model_and_field(
+        LinkCrawlerEntity(validated.entity)
+    )
+    meta_data = crawl_link_metadata(validated.url)
 
-    model.save()
+    instance = model_class.objects.get(id=validated.id)
+    setattr(instance, field_name, meta_data)
+    instance.save(update_fields=[field_name])

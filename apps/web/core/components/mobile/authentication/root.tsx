@@ -11,14 +11,14 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import type { TMobileAuthSteps, TMobileAuthModes, TMobileAuthErrorInfo, TMobileAuthErrorCodes } from "@plane/constants";
+import type { TMobileAuthSteps, TMobileAuthModes, TMobileAuthErrorInfo } from "@plane/constants";
 import { EMobileAuthSteps, EMobileAuthModes, EMobileErrorAlertType, EMobileAuthErrorCodes } from "@plane/constants";
 import type { TInstanceConfig, TMobileWorkspaceInvitation } from "@plane/types";
 import { mobileAuthErrorHandler } from "@plane/utils";
 // plane web components
+import { decodeEmailFromUrl } from "@/helpers/authentication.helper";
 import {
   MobileAuthBanner,
   MobileTermsAndConditions,
@@ -66,7 +66,8 @@ export function AuthRoot(props: TAuthRoot) {
   const searchParams = useSearchParams();
   // query params
   const invitationIdParam = searchParams.get("invitation_id") || undefined;
-  const emailParam = searchParams.get("email");
+  const encodedEmail = searchParams.get("ctx");
+  const emailParam = decodeEmailFromUrl(encodedEmail);
   const errorCodeParam = searchParams.get("error_code");
   const errorMessageParam = searchParams.get("error_message");
   const sessionToken = searchParams.get("token");

@@ -52,14 +52,8 @@ def create_intake_issue(intake_email_obj, message, intake):
         project_id=intake_email_obj.project_id, workspace_id=intake_email_obj.workspace_id
     ).first()
     if not triage_state:
-        triage_state = State.objects.create(
-            name="Triage",
-            group=StateGroup.TRIAGE.value,
-            project_id=intake_email_obj.project_id,
-            workspace_id=intake_email_obj.workspace_id,
-            color="#4E5355",
-            sequence=65000,
-            default=False,
+        triage_state = State.create_triage_state(
+            workspace_id=intake_email_obj.workspace_id, project_id=intake_email_obj.project_id
         )
 
     issue = Issue.objects.create(

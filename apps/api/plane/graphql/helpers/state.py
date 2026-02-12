@@ -16,7 +16,7 @@ from asgiref.sync import sync_to_async
 from strawberry.exceptions import GraphQLError
 
 # Module Imports
-from plane.db.models import State
+from plane.db.models import State, StateGroup
 from plane.graphql.types.state import StateType
 
 
@@ -94,5 +94,27 @@ def get_triage_state_async(workspace_slug: str, project_id: str, state_id: str) 
     Get the triage state for the given project and state id
     """
     triage_state = get_triage_state(workspace_slug=workspace_slug, project_id=project_id, state_id=state_id)
+
+    return triage_state
+
+
+def create_triage_state(workspace_id: str, project_id: str) -> StateType:
+    """
+    Create a triage state for the given project
+    """
+    try:
+        return State.create_triage_state(workspace_id=workspace_id, project_id=project_id)
+    except Exception as e:
+        message = f"Failed to create triage state {str(e)}"
+        error_extensions = {"code": "FAILED_TO_CREATE_TRIAGE_STATE", "statusCode": 500}
+        raise GraphQLError(message, extensions=error_extensions)
+
+
+@sync_to_async
+def create_triage_state_async(workspace_id: str, project_id: str) -> StateType:
+    """
+    Create a triage state for the given project
+    """
+    triage_state = create_triage_state(workspace_id=workspace_id, project_id=project_id)
 
     return triage_state

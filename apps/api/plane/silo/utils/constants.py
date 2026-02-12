@@ -88,4 +88,14 @@ APPLICATIONS = {
         "redirect_uris": f"{settings.PI_URL}/api/v1/oauth/callback/",
         "skip_authorization": True,
     },
+    "runner": {
+        "key": "runner",
+        "name": "Runner",
+        "slug": "runner",
+        "short_description": "Runner",
+        "description_html": "<p>Runner</p>",
+        "setup_url": f"{settings.SILO_URL}/api/apps/runner/auth/consent-url/",
+        "redirect_uris": f"{settings.SILO_URL}/api/apps/runner/auth/callback",
+        "skip_authorization": False,
+    },
 }

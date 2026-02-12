@@ -13,22 +13,18 @@
 
 # Python imports
 import os
-from urllib.parse import urlparse
-from urllib.parse import urljoin
 from datetime import timedelta
-
+from urllib.parse import urljoin, urlparse
 
 # Third party imports
 import dj_database_url
+from corsheaders.defaults import default_headers
 
 # Django imports
 from django.core.management.utils import get_random_secret_key
-from corsheaders.defaults import default_headers
-
 
 # Module imports
 from plane.utils.url import is_valid_url
-
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -73,6 +69,7 @@ INSTALLED_APPS = [
     "plane.event_stream",
     "plane.agents",
     "plane.webhook",
+    "plane.runnerctl",
     # Third-party things
     "strawberry.django",
     "rest_framework",
@@ -459,6 +456,8 @@ if not SILO_BASE_URL:
 SILO_BASE_PATH = os.environ.get("SILO_BASE_PATH", "/silo")
 SILO_URL = urljoin(SILO_BASE_URL, SILO_BASE_PATH)
 
+RUNNER_BASE_URL = os.environ.get("RUNNER_BASE_URL", "")
+
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
 
 # Instance Changelog URL
@@ -592,6 +591,7 @@ SIMPLE_JWT = {
 
 # silo hmac secret key
 SILO_HMAC_SECRET_KEY = os.environ.get("SILO_HMAC_SECRET_KEY", "")
+RUNNER_HMAC_SECRET_KEY = os.environ.get("RUNNER_HMAC_SECRET_KEY", "")
 
 
 # firebase settings

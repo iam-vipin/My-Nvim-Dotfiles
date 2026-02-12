@@ -10,6 +10,7 @@ export default defineConfig({
     "src/button/index.ts",
     "src/calendar/index.ts",
     "src/card/index.ts",
+    "src/code-editor/index.ts",
     "src/charts/*/index.ts",
     "src/collapsible/index.ts",
     "src/combobox/index.ts",

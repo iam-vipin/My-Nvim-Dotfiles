@@ -78,6 +78,10 @@ import type { IUserStore } from "./user";
 import { UserStore } from "./user";
 import type { IWorkspaceRootStore } from "./workspace";
 import { WorkspaceRootStore } from "./workspace";
+import type { IFunctionsStore } from "./runners/functions.store";
+import { FunctionsStore } from "./runners/functions.store";
+import type { IRunnersStore } from "./runners/runners.store";
+import { RunnersStore } from "./runners/runners.store";
 // dashboards
 import type { IBaseDashboardsStore } from "./dashboards/base-dashboards.store";
 import { BaseDashboardsStore } from "./dashboards/base-dashboards.store";
@@ -221,6 +225,8 @@ export class CoreRootStore {
   editorAssetStore: IEditorAssetStore;
   workItemFilters: IWorkItemFilterStore;
   powerK: IPowerKStore;
+  runners: IRunnersStore;
+  functions: IFunctionsStore;
   baseDashboards: IBaseDashboardsStore;
   automationsRoot: IAutomationsRootStore;
   applicationStore: IApplicationStore;
@@ -300,6 +306,9 @@ export class CoreRootStore {
     this.analytics = new AnalyticsStore();
     this.workItemFilters = new WorkItemFilterStore();
     this.powerK = new PowerKStore();
+    // runners
+    this.runners = new RunnersStore(this);
+    this.functions = new FunctionsStore(this);
     this.baseDashboards = new BaseDashboardsStore(this as unknown as RootStore);
     this.automationsRoot = new AutomationsRootStore(this as unknown as RootStore);
     this.applicationStore = new ApplicationStore(this as unknown as RootStore);
@@ -381,6 +390,9 @@ export class CoreRootStore {
     this.editorAssetStore = new EditorAssetStore();
     this.workItemFilters = new WorkItemFilterStore();
     this.powerK = new PowerKStore();
+    // runners
+    this.runners = new RunnersStore(this);
+    this.functions = new FunctionsStore(this);
     this.baseDashboards = new BaseDashboardsStore(this as unknown as RootStore);
     this.automationsRoot = new AutomationsRootStore(this as unknown as RootStore);
     this.applicationStore = new ApplicationStore(this as unknown as RootStore);

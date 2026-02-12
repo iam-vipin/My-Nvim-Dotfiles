@@ -19,6 +19,7 @@ import {
   Building,
   Cable,
   CreditCard,
+  FileCode,
   KeyRound,
   Shapes,
   Timer,
@@ -48,4 +49,5 @@ export const WORKSPACE_SETTINGS_ICONS: Record<TWorkspaceSettingsTabs, LucideIcon
   project_states: ProjectStatesIcon,
   "plane-intelligence": PiIcon,
   "access-tokens": KeyRound,
+  scripts: FileCode,
 };

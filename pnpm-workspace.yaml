@@ -1,6 +1,7 @@
 packages:
 - apps/*
 - packages/*
+- apps/runners/*
 - "!apps/api"
 - "!apps/proxy"
 

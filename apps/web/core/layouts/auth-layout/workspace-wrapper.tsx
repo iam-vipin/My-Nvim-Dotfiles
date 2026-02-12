@@ -60,6 +60,7 @@ import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import type { TFeatureFlagsResponse } from "@/services/feature-flag.service";
+import { useRunners } from "@/plane-web/hooks/store";
 
 type WorkspaceAuthWrapper = {
   children: ReactNode;
@@ -97,6 +98,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const { initiative } = useInitiatives();
   const { getWorkspaceBySlug } = useWorkspace();
   const { getInstance } = usePiChat();
+  const { fetchScripts } = useRunners();
   // derived values
   const canPerformWorkspaceMemberActions = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -302,11 +304,19 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
+  // fetching pi auth instance
   useSWR(workspaceId ? `PI_STARTER_${workspaceId}` : null, workspaceId ? () => getInstance(workspaceId) : null, {
     revalidateOnFocus: false,
     revalidateIfStale: false,
     errorRetryCount: 0,
   });
+
+  // fetching runners scripts
+  useSWR(
+    workspaceSlug ? `RUNNERS_SCRIPTS_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchScripts(workspaceSlug ?? "") : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
 
   const flagsLoader = featureFlagsResponse.isLoading || aiFeatureFlagsResponse.isLoading;
   const flagsError = featureFlagsResponse.error || aiFeatureFlagsResponse.error;

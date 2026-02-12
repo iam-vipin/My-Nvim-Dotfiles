@@ -141,6 +141,8 @@ export enum E_FEATURE_FLAGS {
   RECURRING_WORKITEMS = "RECURRING_WORKITEMS",
   // automations
   PROJECT_AUTOMATIONS = "PROJECT_AUTOMATIONS",
+  // runners
+  PLANE_RUNNER = "PLANE_RUNNER",
   // rich filters
   RICH_FILTERS = "RICH_FILTERS",
   // intake type form

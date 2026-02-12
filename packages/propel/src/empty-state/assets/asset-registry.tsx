@@ -41,6 +41,8 @@ import {
   WebhookHorizontalStackIllustration,
   WorkItemHorizontalStackIllustration,
   WorklogHorizontalStackIllustration,
+  RunnerScriptsHorizontalStackIllustration,
+  RunnerFunctionsHorizontalStackIllustration,
 } from "./horizontal-stack";
 import { InboxIllustration, SearchIllustration } from "./illustration";
 import {
@@ -90,6 +92,8 @@ export const HORIZONTAL_STACK_ASSETS: Record<HorizontalStackAssetType, React.Com
   webhook: WebhookHorizontalStackIllustration,
   "work-item": WorkItemHorizontalStackIllustration,
   worklog: WorklogHorizontalStackIllustration,
+  "runner-scripts": RunnerScriptsHorizontalStackIllustration,
+  "runner-functions": RunnerFunctionsHorizontalStackIllustration,
 };
 
 // Vertical Stack Asset Registry

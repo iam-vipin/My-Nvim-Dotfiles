@@ -34,6 +34,7 @@ export type TWorkspaceSettingsTabs =
   | "templates"
   | "plane-intelligence"
   | "connections"
+  | "scripts"
   | "access-tokens";
 export type TWorkspaceSettingsItem = {
   key: TWorkspaceSettingsTabs;

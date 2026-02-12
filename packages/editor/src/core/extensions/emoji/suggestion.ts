@@ -62,7 +62,9 @@ export const emojiSuggestion: EmojiOptions["suggestion"] = {
       component = null;
       (editor || editorRef)?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.EMOJI);
       const emojiStorage = editor?.storage.emoji as ExtendedEmojiStorage;
-      emojiStorage.forceOpen = false;
+      if (emojiStorage) {
+        emojiStorage.forceOpen = false;
+      }
       cleanup();
     };
 

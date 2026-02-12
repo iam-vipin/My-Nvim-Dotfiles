@@ -82,7 +82,7 @@ ENV VITE_PI_BASE_PATH=$VITE_PI_BASE_PATH
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV TURBO_TELEMETRY_DISABLED=1
 
-RUN NODE_OPTIONS="--max-old-space-size=4096" pnpm turbo run build --filter=web
+RUN NODE_OPTIONS="--max-old-space-size=6144" pnpm turbo run build --filter=web
 
 # *****************************************************************************
 # STAGE 3: Serve with nginx

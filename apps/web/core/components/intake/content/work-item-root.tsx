@@ -253,9 +253,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
       </div>
 
       {/* Additional Information */}
-      <div className="py-4">
-        {inboxIssue.issue && <IntakeAdditionalInformation workItemDetails={inboxIssue.issue} />}
-      </div>
+      {inboxIssue.issue && <IntakeAdditionalInformation workItemDetails={inboxIssue.issue} />}
 
       <div className="pt-4">
         <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issue.id} isIntakeIssue />

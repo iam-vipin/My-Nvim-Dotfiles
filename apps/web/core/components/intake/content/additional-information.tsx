@@ -37,7 +37,7 @@ export const IntakeAdditionalInformation = observer(function IntakeAdditionalInf
   if (!additionalInformation || !workItemTypeId) return null;
 
   return (
-    <div className="flex w-full flex-col divide-y-2 divide-subtle-1">
+    <div className="flex w-full flex-col divide-y-2 divide-subtle-1 py-4">
       <div className="w-full overflow-y-auto">
         <h5 className="text-13 font-medium my-4">Additional Information</h5>
         <div className="space-y-3">

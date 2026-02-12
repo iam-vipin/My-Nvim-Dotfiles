@@ -19,13 +19,14 @@ import { Header, Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { AppHeader } from "@/components/core/app-header";
+import { ProjectIntakeDetailHeader } from "@/components/intake/detail-header-root";
 import { TabNavigationRoot } from "@/components/navigation";
 import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
-import { ProjectInboxHeader } from "@/components/projects/settings/intake/header/root";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
+// plane web imports
 // local components
 import { ProjectArchivedIssueDetailsHeader } from "../../projects/(detail)/[projectId]/archives/issues/(detail)/header";
 import { EpicItemDetailsHeader } from "./epic-header";
@@ -54,7 +55,7 @@ export const ProjectWorkItemDetailsHeader = observer(function ProjectWorkItemDet
     }
 
     if (issueDetails.is_intake) {
-      return <ProjectInboxHeader />;
+      return <ProjectIntakeDetailHeader />;
     }
 
     if (issueDetails.is_epic) {

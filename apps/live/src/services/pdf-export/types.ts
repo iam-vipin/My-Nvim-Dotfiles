@@ -11,6 +11,33 @@ import type {
   TUserMention,
 } from "@/services/page/core.service";
 
+export type TJobStage = "queued" | "fetching-content" | "processing-images" | "rendering-pdf" | "complete" | "failed";
+
+export type TJobStatus = "pending" | "running" | "complete" | "failed";
+
+export type TProgressEvent = {
+  readonly jobId: string;
+  readonly stage: TJobStage;
+  readonly progress: number;
+  readonly message: string;
+  readonly timestamp: number;
+};
+
+export type PdfExportJob = {
+  id: string;
+  status: TJobStatus;
+  stage: TJobStage;
+  progress: number;
+  message: string;
+  pdfBuffer: Buffer | null;
+  outputFileName: string;
+  error: string | null;
+  createdAt: number;
+  completedAt: number | null;
+};
+
+export type TProgressCallback = (event: TProgressEvent) => void;
+
 export type PdfExportInput = {
   readonly pageId: string;
   readonly workspaceSlug: string;
@@ -25,6 +52,7 @@ export type PdfExportInput = {
   readonly noAssets?: boolean;
   readonly cookie: string;
   readonly requestId: string;
+  readonly onProgress?: TProgressCallback;
 };
 
 export type PdfExportResult = {

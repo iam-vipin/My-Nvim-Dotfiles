@@ -135,6 +135,7 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
   return (
     <>
       <ExportPageModal
+        key={page.id}
         editorRef={editorRef}
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}

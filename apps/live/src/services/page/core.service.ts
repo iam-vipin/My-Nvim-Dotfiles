@@ -65,6 +65,7 @@ export type TPageEmbed = {
   id: string;
   name: string;
   project_id?: string;
+  teamspace_id?: string;
 };
 
 export type TPageFetchMetadata = {

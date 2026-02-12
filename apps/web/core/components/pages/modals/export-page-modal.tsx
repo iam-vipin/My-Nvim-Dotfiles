@@ -11,9 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useParams } from "react-router";
+import { LoaderCircle } from "lucide-react";
 // plane editor
 import type { EditorRefApi } from "@plane/editor";
 // plane ui
@@ -22,6 +23,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { CustomSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // services
 import { liveService } from "@/services/live.service";
+
 // hooks
 import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 
@@ -43,6 +45,8 @@ type TFormValues = {
   page_format: TPageFormats;
   content_variety: TContentVariety;
 };
+
+type TExportState = "idle" | "exporting" | "cancelling" | "complete" | "error";
 
 const EXPORT_FORMATS: {
   key: TExportFormats;
@@ -111,7 +115,11 @@ const defaultValues: TFormValues = {
 export function ExportPageModal(props: Props) {
   const { editorRef, isOpen, onClose, pageTitle, pageId, teamspaceId } = props;
   // states
-  const [isExporting, setIsExporting] = useState(false);
+  const [exportState, setExportState] = useState<TExportState>("idle");
+
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  // refs
+  const abortRef = useRef<(() => void) | null>(null);
   // params
   const { workspaceSlug, projectId } = useParams();
   // form info
@@ -128,17 +136,37 @@ export function ExportPageModal(props: Props) {
   const selectedPageFormat = watch("page_format");
   const selectedContentVariety = watch("content_variety");
   const isPDFSelected = selectedExportFormat === "pdf";
+  const isExporting = exportState === "exporting";
+  const isCancelling = exportState === "cancelling";
   const fileName = pageTitle
     ?.toLowerCase()
     ?.replace(/[^a-z0-9-_]/g, "-")
     .replace(/-+/g, "-");
   // handle modal close
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
+    if (isExporting || isCancelling) return;
     onClose();
     setTimeout(() => {
       reset();
+      setExportState("idle");
+      setErrorMessage("");
     }, 300);
-  };
+  }, [isExporting, isCancelling, onClose, reset]);
+
+  // handle cancel during export
+  const handleCancel = useCallback(() => {
+    setExportState("cancelling");
+    abortRef.current?.();
+    abortRef.current = null;
+    setTimeout(() => {
+      onClose();
+      setTimeout(() => {
+        reset();
+        setExportState("idle");
+        setErrorMessage("");
+      }, 300);
+    }, 300);
+  }, [onClose, reset]);
 
   const initiateDownload = (blob: Blob, filename: string) => {
     const url = URL.createObjectURL(blob);
@@ -151,25 +179,65 @@ export function ExportPageModal(props: Props) {
     }, 1000);
   };
 
-  // handle export as a PDF via live server
-  const handleExportAsPDF = async () => {
+  // handle export as a PDF via SSE
+  const handleExportAsPDF = () => {
     if (!workspaceSlug) throw new Error("Workspace slug is required");
 
-    const blob = await liveService.exportToPdf({
-      pageId,
-      workspaceSlug: workspaceSlug.toString(),
-      projectId: projectId?.toString(),
-      teamspaceId,
-      title: pageTitle,
-      pageSize: selectedPageFormat,
-      fileName: `${fileName}-${selectedPageFormat.toString().toLowerCase()}.pdf`,
-      noAssets: selectedContentVariety === "no-assets",
-    });
+    setExportState("exporting");
 
-    initiateDownload(blob, `${fileName}-${selectedPageFormat.toString().toLowerCase()}.pdf`);
+    const pdfFileName = `${fileName}-${selectedPageFormat.toString().toLowerCase()}.pdf`;
+
+    try {
+      const abort = liveService.exportToPdfWithProgress(
+        {
+          pageId,
+          workspaceSlug: workspaceSlug.toString(),
+          projectId: projectId?.toString(),
+          teamspaceId,
+          title: pageTitle,
+          pageSize: selectedPageFormat,
+          fileName: pdfFileName,
+          noAssets: selectedContentVariety === "no-assets",
+        },
+        {
+          onProgress: () => {},
+          onComplete: (blob) => {
+            initiateDownload(blob, pdfFileName);
+            setExportState("complete");
+            setToast({
+              type: TOAST_TYPE.SUCCESS,
+              title: "Success!",
+              message: "Page exported successfully.",
+            });
+            handleClose();
+          },
+          onError: (error) => {
+            setExportState("error");
+            setErrorMessage(error.message || "Export failed. Please try again.");
+            setToast({
+              type: TOAST_TYPE.ERROR,
+              title: "Export failed",
+              message: error.message || "Page could not be exported. Please try again.",
+            });
+          },
+        }
+      );
+
+      abortRef.current = abort;
+    } catch {
+      setExportState("error");
+      setErrorMessage("Could not start export. Please check your connection and try again.");
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Export failed",
+        message: "Could not start export. Please try again.",
+      });
+    }
   };
+
   // handle export as markdown
-  const handleExportAsMarkdown = async () => {
+  const handleExportAsMarkdown = () => {
+    setExportState("exporting");
     try {
       const markdownContent = editorRef?.getMarkDown() ?? "";
       const parsedMarkdownContent = replaceCustomComponentsFromMarkdownContent({
@@ -179,36 +247,37 @@ export function ExportPageModal(props: Props) {
 
       const blob = new Blob([parsedMarkdownContent], { type: "text/markdown" });
       initiateDownload(blob, `${fileName}.md`);
-    } catch (error) {
-      throw new Error(`Error in exporting as markdown: ${error}`);
-    }
-  };
-  // handle export
-  const handleExport = async () => {
-    setIsExporting(true);
-    try {
-      if (selectedExportFormat === "pdf") {
-        await handleExportAsPDF();
-      }
-      if (selectedExportFormat === "markdown") {
-        await handleExportAsMarkdown();
-      }
+      setExportState("complete");
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
         message: "Page exported successfully.",
       });
       handleClose();
-    } catch (error) {
-      console.error("Error in exporting page:", error);
+    } catch {
+      setExportState("error");
+      setErrorMessage("Failed to export as Markdown. Please try again.");
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Page could not be exported. Please try again later.",
+        title: "Export failed",
+        message: "Page could not be exported as Markdown.",
       });
-    } finally {
-      setIsExporting(false);
     }
+  };
+
+  // handle export
+  const handleExport = () => {
+    if (selectedExportFormat === "pdf") {
+      handleExportAsPDF();
+    }
+    if (selectedExportFormat === "markdown") {
+      handleExportAsMarkdown();
+    }
+  };
+
+  const handleRetry = () => {
+    setExportState("idle");
+    setErrorMessage("");
   };
 
   return (
@@ -216,6 +285,13 @@ export function ExportPageModal(props: Props) {
       <div>
         <div className="p-5 space-y-5">
           <h3 className="text-18 font-medium text-secondary">Export page</h3>
+
+          {exportState === "error" && (
+            <div className="rounded-md bg-red-500/10 border border-red-500/20 p-3">
+              <p className="text-13 text-red-500">{errorMessage}</p>
+            </div>
+          )}
+
           <div className="space-y-3">
             <div className="flex items-center justify-between gap-2">
               <h6 className="flex-shrink-0 text-13 text-secondary">Export format</h6>
@@ -230,6 +306,7 @@ export function ExportPageModal(props: Props) {
                     onChange={(val: TExportFormats) => onChange(val)}
                     className="flex-shrink-0"
                     placement="bottom-end"
+                    disabled={isExporting || isCancelling}
                   >
                     {EXPORT_FORMATS.map((format) => (
                       <CustomSelect.Option key={format.key} value={format.key}>
@@ -253,6 +330,7 @@ export function ExportPageModal(props: Props) {
                     onChange={(val: TContentVariety) => onChange(val)}
                     className="flex-shrink-0"
                     placement="bottom-end"
+                    disabled={isExporting || isCancelling}
                   >
                     {CONTENT_VARIETY.map((variety) => (
                       <CustomSelect.Option key={variety.key} value={variety.key}>
@@ -277,6 +355,7 @@ export function ExportPageModal(props: Props) {
                       onChange={(val: TPageFormats) => onChange(val)}
                       className="flex-shrink-0"
                       placement="bottom-end"
+                      disabled={isExporting || isCancelling}
                     >
                       {PAGE_FORMATS.map((format) => (
                         <CustomSelect.Option key={format.key.toString()} value={format.key}>
@@ -291,12 +370,24 @@ export function ExportPageModal(props: Props) {
           </div>
         </div>
         <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
-          <Button variant="secondary" size="lg" onClick={handleClose}>
-            Cancel
+          <Button
+            variant="secondary"
+            size="lg"
+            onClick={isExporting || isCancelling ? handleCancel : handleClose}
+            disabled={isCancelling}
+          >
+            {isCancelling ? "Cancelling..." : isExporting ? "Cancel" : "Close"}
           </Button>
-          <Button variant="primary" size="lg" loading={isExporting} onClick={handleExport}>
-            {isExporting ? "Exporting" : "Export"}
-          </Button>
+          {exportState === "error" ? (
+            <Button variant="primary" size="lg" onClick={handleRetry}>
+              Try again
+            </Button>
+          ) : (
+            <Button variant="primary" size="lg" disabled={isExporting || isCancelling} onClick={handleExport}>
+              {isExporting && <LoaderCircle className="size-3.5 animate-spin" />}
+              {isExporting ? "Exporting..." : "Export"}
+            </Button>
+          )}
         </div>
       </div>
     </ModalCore>

@@ -117,6 +117,7 @@ export type PDFPageEmbed = {
   id: string;
   name: string;
   project_id?: string;
+  teamspace_id?: string;
 };
 
 export type PDFFileAsset = {

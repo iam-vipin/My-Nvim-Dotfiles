@@ -171,20 +171,22 @@ export const nodeRenderers: NodeRendererRegistry = {
   },
 
   bulletList: (node: TipTapNode, children: ReactElement[], ctx: PDFRenderContext): ReactElement => {
-    const nestingLevel = (node.attrs?._nestingLevel as number) || 0;
-    const indentStyle = nestingLevel > 0 ? { marginLeft: 18 } : {};
+    const isNested = node.attrs?._parentType === "listItem";
+    const indentStyle = isNested ? { marginLeft: 18 } : {};
+    const nestedMarginStyle = isNested ? { marginVertical: 0 } : {};
     return (
-      <View key={ctx.getKey()} style={[pdfStyles.bulletList, indentStyle]}>
+      <View key={ctx.getKey()} style={[pdfStyles.bulletList, indentStyle, nestedMarginStyle]}>
         {children}
       </View>
     );
   },
 
   orderedList: (node: TipTapNode, children: ReactElement[], ctx: PDFRenderContext): ReactElement => {
-    const nestingLevel = (node.attrs?._nestingLevel as number) || 0;
-    const indentStyle = nestingLevel > 0 ? { marginLeft: 18 } : {};
+    const isNested = node.attrs?._parentType === "listItem";
+    const indentStyle = isNested ? { marginLeft: 18 } : {};
+    const nestedMarginStyle = isNested ? { marginVertical: 0 } : {};
     return (
-      <View key={ctx.getKey()} style={[pdfStyles.orderedList, indentStyle]}>
+      <View key={ctx.getKey()} style={[pdfStyles.orderedList, indentStyle, nestedMarginStyle]}>
         {children}
       </View>
     );
@@ -193,14 +195,16 @@ export const nodeRenderers: NodeRendererRegistry = {
   listItem: (node: TipTapNode, children: ReactElement[], ctx: PDFRenderContext): ReactElement => {
     const isOrdered = node.attrs?._parentType === "orderedList";
     const index = (node.attrs?._listItemIndex as number) || 0;
+    const hasNestedList = node.content?.some((child) => child.type === "bulletList" || child.type === "orderedList");
 
     const bullet = isOrdered ? `${index}.` : "•";
 
     const textAlign = node.attrs?._textAlign as string | null;
     const flexStyle = getFlexAlignStyle(textAlign);
+    const nestedStyle = hasNestedList ? { marginBottom: 0 } : {};
 
     return (
-      <View key={ctx.getKey()} style={[pdfStyles.listItem, flexStyle]} wrap={false}>
+      <View key={ctx.getKey()} style={[pdfStyles.listItem, flexStyle, nestedStyle]} wrap={false}>
         <View style={pdfStyles.listItemBullet}>
           <Text>{bullet}</Text>
         </View>
@@ -481,9 +485,16 @@ export const nodeRenderers: NodeRendererRegistry = {
 
     const baseUrl = ctx.metadata?.baseUrl || "";
     const workspaceSlug = ctx.metadata?.workspaceSlug || "";
-    const href = pageEmbed?.project_id
-      ? `${baseUrl}/${workspaceSlug}/projects/${pageEmbed.project_id}/pages/${pageEmbed.id}`
-      : null;
+    let href: string | null = null;
+    if (pageEmbed) {
+      if (pageEmbed.project_id) {
+        href = `${baseUrl}/${workspaceSlug}/projects/${pageEmbed.project_id}/pages/${pageEmbed.id}`;
+      } else if (pageEmbed.teamspace_id) {
+        href = `${baseUrl}/${workspaceSlug}/teamspaces/${pageEmbed.teamspace_id}/pages/${pageEmbed.id}`;
+      } else {
+        href = `${baseUrl}/${workspaceSlug}/wiki/${pageEmbed.id}`;
+      }
+    }
 
     return (
       <View key={ctx.getKey()} style={pdfStyles.pageEmbed}>
@@ -509,10 +520,14 @@ export const nodeRenderers: NodeRendererRegistry = {
     const displayText = entityIdentifier || entityName;
     const baseUrl = ctx.metadata?.baseUrl || "";
     const workspaceSlug = ctx.metadata?.workspaceSlug || "";
-    const href =
-      projectId && entityIdentifier
-        ? `${baseUrl}/${workspaceSlug}/projects/${projectId}/pages/${entityIdentifier}`
-        : null;
+    let href: string | null = null;
+    if (entityIdentifier && workspaceSlug) {
+      if (projectId) {
+        href = `${baseUrl}/${workspaceSlug}/projects/${projectId}/pages/${entityIdentifier}`;
+      } else {
+        href = `${baseUrl}/${workspaceSlug}/wiki/${entityIdentifier}`;
+      }
+    }
 
     return (
       <View key={ctx.getKey()} style={pdfStyles.pageLink}>

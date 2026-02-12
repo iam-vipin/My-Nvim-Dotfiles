@@ -2,34 +2,28 @@
  * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
  * SPDX-License-Identifier: LicenseRef-Plane-Commercial
  *
- * PDF Export Controller - Lean controller pattern
- * Handles HTTP concerns only: request parsing, error mapping to HTTP status codes
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
 import type { Request, Response } from "express";
-import { Effect, Layer, Schema, Cause } from "effect";
+import { Effect, Layer, Schema, Cause, Fiber } from "effect";
 import { Controller, Post } from "@plane/decorators";
 import { logger } from "@plane/logger";
 import { serverAgentManager } from "@/agents/server-agent";
-import { AppError } from "@/lib/errors";
-import {
-  PdfExportRequestBody,
-  PdfValidationError,
-  PdfAuthenticationError,
-  PdfContentFetchError,
-  PdfGenerationError,
-  PdfTimeoutError,
-} from "@/schema/pdf-export";
+import { PdfExportRequestBody, PdfValidationError, PdfAuthenticationError } from "@/schema/pdf-export";
 import { PdfExportService, makeLiveDocumentLayer, exportToPdf } from "@/services/pdf-export";
 import type { PdfExportInput } from "@/services/pdf-export";
 
-type HttpErrorResponse = { status: number; error: string };
+const KEEPALIVE_INTERVAL_MS = 15_000;
 
 @Controller("/pdf-export")
 export class PdfExportController {
-  /**
-   * Parses and validates the request, returning a typed input object
-   */
   private parseRequest(
     req: Request,
     requestId: string
@@ -73,67 +67,123 @@ export class PdfExportController {
   }
 
   @Post("/")
-  async exportToPdf(req: Request, res: Response) {
+  async startExport(req: Request, res: Response) {
     const requestId = crypto.randomUUID();
 
-    const effect = Effect.gen(this, function* () {
-      // Parse request
-      const input = yield* this.parseRequest(req, requestId);
+    const parseEffect = this.parseRequest(req, requestId).pipe(
+      Effect.catchTags({
+        PdfValidationError: (e: PdfValidationError) => Effect.fail({ code: "VALIDATION_ERROR", message: e.message }),
+        PdfAuthenticationError: (e: PdfAuthenticationError) =>
+          Effect.fail({ code: "AUTHENTICATION_ERROR", message: e.message }),
+      })
+    );
 
-      // Delegate to service (fat model)
-      return yield* exportToPdf(input);
-    }).pipe(
-      // Log errors before catching them - serialize error properly
+    const parseResult = await Effect.runPromise(
+      parseEffect.pipe(
+        Effect.match({
+          onSuccess: (v) => ({ ok: true as const, value: v }),
+          onFailure: (e) => ({ ok: false as const, error: e }),
+        })
+      )
+    );
+
+    if (!parseResult.ok) {
+      res.writeHead(200, {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache, no-store, no-transform",
+        Connection: "keep-alive",
+        "X-Accel-Buffering": "no",
+      });
+      res.write(`event: error\ndata: ${JSON.stringify(parseResult.error)}\n\n`);
+      res.end();
+      return;
+    }
+
+    const input = parseResult.value;
+
+    res.writeHead(200, {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache, no-store, no-transform",
+      Connection: "keep-alive",
+      "X-Accel-Buffering": "no",
+    });
+
+    const keepAlive = setInterval(() => {
+      if (res.writableEnded) {
+        clearInterval(keepAlive);
+        return;
+      }
+      res.write(":keepalive\n\n");
+    }, KEEPALIVE_INTERVAL_MS);
+
+    const sendEvent = (event: string, data: Record<string, unknown>) => {
+      if (res.writableEnded) return;
+      res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    };
+
+    const inputWithProgress: PdfExportInput = {
+      ...input,
+      onProgress: (event) => {
+        sendEvent("progress", {
+          stage: event.stage,
+          progress: event.progress,
+          message: event.message,
+        });
+      },
+    };
+
+    const appLayer = Layer.merge(PdfExportService.Default, makeLiveDocumentLayer(serverAgentManager));
+
+    const effect = exportToPdf(inputWithProgress).pipe(
       Effect.tapError((error) => {
         const errorInfo =
           error instanceof Error ? { name: error.name, message: error.message, stack: error.stack } : error;
         return Effect.logError("PDF_EXPORT: Export failed", { requestId, error: errorInfo });
       }),
-      // Map tagged errors to HTTP responses using catchTags
       Effect.catchTags({
-        PdfValidationError: (e: PdfValidationError): Effect.Effect<HttpErrorResponse> =>
-          Effect.succeed({ status: 400, error: e.message }),
-        PdfAuthenticationError: (e: PdfAuthenticationError): Effect.Effect<HttpErrorResponse> =>
-          Effect.succeed({ status: 401, error: e.message }),
-        PdfContentFetchError: (e: PdfContentFetchError): Effect.Effect<HttpErrorResponse> =>
-          Effect.succeed({ status: e.message.includes("not found") ? 404 : 502, error: e.message }),
-        PdfTimeoutError: (e: PdfTimeoutError): Effect.Effect<HttpErrorResponse> =>
-          Effect.succeed({ status: 504, error: e.message }),
-        PdfGenerationError: (e: PdfGenerationError): Effect.Effect<HttpErrorResponse> =>
-          Effect.succeed({ status: 500, error: e.message }),
+        PdfContentFetchError: (e) => Effect.fail(e.message),
+        PdfTimeoutError: (e) => Effect.fail(e.message),
+        PdfGenerationError: (e) => Effect.fail(e.message),
       }),
-      // Handle unexpected defects
       Effect.catchAllDefect((defect) => {
-        const appError = new AppError(Cause.pretty(Cause.die(defect)), {
-          context: { requestId, operation: "exportToPdf" },
-        });
-        logger.error("PDF_EXPORT: Unexpected failure", appError);
-        return Effect.succeed({ status: 500, error: "Failed to generate PDF" });
+        logger.error("PDF_EXPORT: Unexpected failure", { requestId, error: Cause.pretty(Cause.die(defect)) });
+        return Effect.fail("Failed to generate PDF");
       })
     );
 
-    const appLayer = Layer.merge(PdfExportService.Default, makeLiveDocumentLayer(serverAgentManager));
-    const result = await Effect.runPromise(Effect.provide(effect, appLayer));
-
-    // Check if result is an error response
-    if ("error" in result && "status" in result) {
-      return res.status(result.status).json({ message: result.error });
-    }
-
-    // Success - send PDF
-    const { pdfBuffer, outputFileName } = result;
-
-    // Sanitize filename for Content-Disposition header to prevent header injection
-    const sanitizedFileName = outputFileName
-      .replace(/["\\\r\n]/g, "") // Remove quotes, backslashes, and CRLF
-      .replace(/[^\x20-\x7E]/g, "_"); // Replace non-ASCII with underscore
-
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename="${sanitizedFileName}"; filename*=UTF-8''${encodeURIComponent(outputFileName)}`
+    const fiber = Effect.runFork(
+      Effect.provide(effect, appLayer).pipe(
+        Effect.match({
+          onSuccess: (result) => {
+            sendEvent("complete", {
+              fileName: result.outputFileName,
+              data: result.pdfBuffer.toString("base64"),
+            });
+            clearInterval(keepAlive);
+            res.end();
+          },
+          onFailure: (error) => {
+            sendEvent("error", {
+              code: "EXPORT_FAILED",
+              message: typeof error === "string" ? error : "Failed to generate PDF",
+            });
+            clearInterval(keepAlive);
+            res.end();
+          },
+        })
+      )
     );
-    res.setHeader("Content-Length", pdfBuffer.length);
-    return res.send(pdfBuffer);
+
+    res.on("close", () => {
+      clearInterval(keepAlive);
+      if (!res.writableFinished) {
+        logger.info("PDF_EXPORT: Client disconnected, cancelling export", { requestId });
+        Effect.runFork(Fiber.interrupt(fiber));
+      } else {
+        logger.info("PDF_EXPORT: Connection closed after export completed", { requestId });
+      }
+    });
+
+    await Effect.runPromise(Fiber.await(fiber));
   }
 }

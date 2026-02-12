@@ -23,7 +23,7 @@ import {
   PdfTimeoutError,
 } from "@/schema/pdf-export";
 import { withTimeoutAndRetry, recoverWithDefault, tryAsync } from "./effect-utils";
-import type { PdfExportInput, PdfExportResult, PageContent, MetadataResult } from "./types";
+import type { PdfExportInput, PdfExportResult, PageContent, MetadataResult, TJobStage } from "./types";
 
 export class LiveDocumentProvider extends Context.Tag("LiveDocumentProvider")<
   LiveDocumentProvider,
@@ -422,6 +422,17 @@ export const exportToPdf = (
     const service = yield* PdfExportService;
     const { pageId, workspaceSlug, projectId, teamspaceId, noAssets } = input;
 
+    const reportProgress = (stage: TJobStage, progress: number, message: string) =>
+      Effect.sync(() => {
+        input.onProgress?.({
+          jobId: input.requestId,
+          stage,
+          progress,
+          message,
+          timestamp: Date.now(),
+        });
+      });
+
     // Create page service
     const documentType = service.getDocumentType(input);
     const pageService = getPageService(documentType, {
@@ -433,6 +444,8 @@ export const exportToPdf = (
       userId: "",
       parentId: null,
     });
+
+    yield* reportProgress("fetching-content", 10, "Fetching page content...");
 
     // Fetch content (tries live in-memory doc first, then API fallback)
     const content = yield* service.fetchPageContent(pageService, pageId, workspaceSlug);
@@ -449,6 +462,7 @@ export const exportToPdf = (
 
       // Process images (download and convert to base64)
       if (imageIds.length > 0) {
+        yield* reportProgress("processing-images", 30, "Processing images...");
         const resolvedImages = yield* service.processImages(pageService, workspaceSlug, projectId, imageIds);
         resolvedUrls = { ...resolvedUrls, ...resolvedImages };
       }
@@ -472,6 +486,8 @@ export const exportToPdf = (
     const resolvedBaseURL = baseURL[baseURL.length - 1] === "/" ? baseURL.slice(0, -1) : baseURL;
     metadata = { ...metadata, baseUrl: resolvedBaseURL, workspaceSlug };
 
+    yield* reportProgress("rendering-pdf", 70, "Rendering PDF...");
+
     // Render PDF
     const documentTitle = input.title || content.titleHTML || "Untitled";
     const pdfBuffer = yield* service.renderPdf(content.contentJSON, metadata, {
@@ -487,6 +503,8 @@ export const exportToPdf = (
       pageId,
       size: pdfBuffer.length,
     });
+
+    yield* reportProgress("complete", 100, "Export complete");
 
     return {
       pdfBuffer,

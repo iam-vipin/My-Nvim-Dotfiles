@@ -18,3 +18,5 @@ export const DRAWIO_BOARD_URL =
   "https://embed.diagrams.net/?embed=1&ui=sketch&spin=1&modified=unsavedChanges&proto=json&sketch=1&rough=1&lib=general;basic;mockup;infographic&freehand=1&saveAndExit=0&noExitBtn=0";
 
 export const DRAWIO_EMPTY_CONTENT_LENGTH = 142;
+
+export const DRAWIO_VIEWER_URL = "https://viewer.diagrams.net/?lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1";

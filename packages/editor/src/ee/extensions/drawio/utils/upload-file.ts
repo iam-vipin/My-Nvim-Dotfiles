@@ -14,32 +14,13 @@
 import type { DrawioNodeViewProps } from "../components/node-view";
 import type { TDrawioExtension } from "../types";
 import { EDrawioAttributeNames } from "../types";
-import { base64ToFile } from "./base64-to-file";
 
-// Helper function to create diagram files with error handling
-const createDiagramFiles = (
-  imageFile: string,
-  xmlContent: string,
-  diagramId: string
-): { imageFile: File; xmlFile: File } => {
-  // Handle image file creation
-  const newImageFile: File = base64ToFile(imageFile, `${diagramId}.png`, "image/png");
-
-  // Create .drawio file for XML content
-  const newXmlFile = new File([xmlContent], `${diagramId}.drawio`, { type: "application/xml" });
-
-  return { imageFile: newImageFile, xmlFile: newXmlFile };
-};
-
-// Upload PNG and XML files separately
-export const uploadDiagramFiles = async ({
-  imageFile,
+export const uploadDiagramXml = async ({
   xmlContent,
   diagramId,
   updateAttributes,
   extension,
 }: {
-  imageFile: string;
   xmlContent: string;
   diagramId: string;
   updateAttributes: DrawioNodeViewProps["updateAttributes"];
@@ -48,68 +29,46 @@ export const uploadDiagramFiles = async ({
   if (!diagramId || !extension?.options.uploadDiagram) return;
 
   try {
-    // Create diagram files with error handling
-    const { imageFile: newImageFile, xmlFile: newXmlFile } = createDiagramFiles(imageFile, xmlContent, diagramId);
+    const xmlFile = new File([xmlContent], `${diagramId}.drawio`, { type: "application/xml" });
+    const xmlUrl = await extension.options.uploadDiagram(`${diagramId}`, xmlFile);
 
-    // Upload both files
-    const [imageUrl, xmlUrl] = await Promise.all([
-      extension.options.uploadDiagram(`${diagramId}`, newImageFile),
-      extension.options.uploadDiagram(`${diagramId}`, newXmlFile),
-    ]);
-
-    // Update attributes with the uploaded file URLs/IDs
     updateAttributes({
-      [EDrawioAttributeNames.IMAGE_SRC]: imageUrl,
       [EDrawioAttributeNames.XML_SRC]: xmlUrl,
     });
 
-    return { imageUrl, xmlUrl };
+    return { xmlUrl };
   } catch (error) {
-    console.error("Error uploading diagram files:", error);
+    console.error("Error uploading diagram XML:", error);
     throw error;
   }
 };
 
-export const reuploadDiagramFiles = async ({
-  imageFile,
+export const reuploadDiagramXml = async ({
   xmlContent,
   diagramId,
   updateAttributes,
   extension,
-  imageSrc,
   xmlSrc,
 }: {
-  imageFile: string;
   xmlContent: string;
   diagramId: string;
   updateAttributes: DrawioNodeViewProps["updateAttributes"];
   extension: TDrawioExtension;
-  imageSrc: string;
   xmlSrc: string;
 }) => {
-  if (!diagramId || !extension?.options.reuploadDiagram) {
-    return;
-  }
+  if (!diagramId || !extension?.options.reuploadDiagram) return;
 
   try {
-    // Create diagram files with error handling
-    const { imageFile: newImageFile, xmlFile: newXmlFile } = createDiagramFiles(imageFile, xmlContent, diagramId);
+    const xmlFile = new File([xmlContent], `${diagramId}.drawio`, { type: "application/xml" });
+    const xmlUrl = await extension.options.reuploadDiagram(`${diagramId}`, xmlFile, xmlSrc);
 
-    // Reupload both files using the original asset IDs
-    const [imageUrl, xmlUrl] = await Promise.all([
-      extension.options.reuploadDiagram(`${diagramId}`, newImageFile, imageSrc),
-      extension.options.reuploadDiagram(`${diagramId}`, newXmlFile, xmlSrc),
-    ]);
-
-    // Update attributes with the uploaded file URLs/IDs
     updateAttributes({
-      [EDrawioAttributeNames.IMAGE_SRC]: imageUrl,
       [EDrawioAttributeNames.XML_SRC]: xmlUrl,
     });
 
-    return { imageUrl, xmlUrl };
+    return { xmlUrl };
   } catch (error) {
-    console.error("Error reuploading diagram files:", error);
+    console.error("Error reuploading diagram XML:", error);
     throw error;
   }
 };

@@ -7,6 +7,9 @@
   align-items: stretch;
   border-radius: 0.375rem;
   position: relative;
+  /* Provide space for selection outline to avoid clipping at edges */
+  padding-left: 4px;
+  padding-right: 4px;
 
   /* Browser-level virtualization - skip rendering for offscreen column lists */
   content-visibility: auto;
@@ -50,11 +53,8 @@
   &::before {
     content: "";
     position: absolute;
-    top: -2px;
-    left: -8px;
-    right: -8px;
-    bottom: -2px;
-    border: 2px solid var(--border-color-accent-strong);
+    inset: 0;
+    outline: 2px solid var(--border-color-accent-strong);
     border-radius: 0.375rem;
     pointer-events: none;
     z-index: 1;
